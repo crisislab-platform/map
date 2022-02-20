@@ -1,0 +1,189 @@
+import "mapbox-gl/dist/mapbox-gl.css";
+
+import React, {
+	useRef,
+} from "react";
+import mapboxgl, {
+	AttributionControl,
+	GeolocateControl,
+	Map as MapboxMap,
+	Marker,
+	NavigationControl,
+	ScaleControl,
+} from "mapbox-gl";
+
+mapboxgl.accessToken = "pk.eyJ1IjoiemFkZXZpZ2dlcnMiLCJhIjoiY2t5dGF6cGpvMWMydTJ3cGhrb2ZhOTdlZCJ9.myQ3YnPgbI-QkuBlClYfCw"
+
+const mapStyles = {
+	normal: "mapbox://styles/zadeviggers/ckypfzqia407v15qo1lruw30b",
+	satelite: "mapbox://styles/zadeviggers/ckyteodd6000414pbra6c7e9x",
+};
+
+export default function MapApp(props) {
+	const mapContainerRef = useRef(null);
+
+	React.useEffect(() => {
+		if (mapContainerRef.current) {
+			const newMap = new MapboxMap({
+				container: mapContainerRef.current,
+				style: mapStyles.normal,
+				center: [174.8, -41.325],
+				zoom: 4.8,
+			});
+			const attributionControl = new AttributionControl();
+			newMap.addControl(attributionControl, "top-left");
+			const navigationControl = new NavigationControl({
+				visualizePitch: true,
+				showZoom: true,
+				showCompass: true,
+			});
+			newMap.addControl(navigationControl, "top-left");
+			const geoLocateControl = new GeolocateControl({
+				positionOptions: {
+					enableHighAccuracy: true,
+				},
+				showUserLocation: false,
+			});
+			newMap.addControl(geoLocateControl, "top-left").addControl(
+				new ScaleControl({
+					maxWidth: 150,
+					unit: "metric",
+				}),
+				"bottom-left",
+			);
+
+			function onError(e) {
+				console.log("Failed to load map. Error: ", e);
+			}
+			// function onLoad() {
+			// 	newMap.addSource("geonet-source", {
+			// 		type: "vector",
+			// 		url: "mapbox://zadeviggers.ckyti0ozu2wkk20rvo89kd6ur-6jsd8",
+			// 	});
+			// 	newMap.addLayer({
+			// 		id: "geonet-layer",
+			// 		type: "symbol",
+			// 		source: "geonet-source",
+			// 		"source-layer": "stations",
+			// 		layout: {
+			// 			visibility: "none",
+			// 			"text-field": ["get", "Name"],
+			// 			"text-size": 12,
+			// 			"icon-image": ["image", "border-dot-13"],
+			// 		},
+			// 		paint: {
+			// 			"text-color": theme.palette.text.primary,
+			// 			"text-halo-width": 1,
+			// 			"text-halo-color": "#ffffff",
+			// 			"icon-color": theme.palette.secondary.main,
+			// 		},
+			// 	});
+			// 	// Fault lines
+			// 	newMap.addSource("fault-lines-source", {
+			// 		type: "vector",
+			// 		url: "mapbox://zadeviggers.8hjwpez9",
+			// 	});
+			// 	newMap.addLayer({
+			// 		id: "fault-lines-layer",
+			// 		type: "line",
+			// 		source: "fault-lines-source",
+			// 		"source-layer": "New_Zealand_Active_Faults_Database_1250k",
+			// 		layout: {
+			// 			// Make the layer visible by default.
+			// 			visibility: "visible",
+			// 			"line-join": "round",
+			// 			"line-cap": "round",
+			// 		},
+			// 		paint: {
+			// 			"line-color": theme.palette.error.main,
+			// 		},
+			// 	});
+			// 	newMap.addLayer({
+			// 		id: "fault-lines-labels-layer",
+			// 		type: "symbol",
+			// 		source: "fault-lines-source",
+			// 		"source-layer": "New_Zealand_Active_Faults_Database_1250k",
+			// 		layout: {
+			// 			visibility: "visible",
+			// 			"text-field": ["get", "Name"],
+			// 			"text-size": 12,
+			// 			"symbol-placement": "line-center",
+			// 		},
+			// 		paint: {
+			// 			"text-color": theme.palette.text.primary,
+			// 			"text-halo-width": 1,
+			// 			"text-halo-color": "#ffffff",
+			// 			// Other theme - try out later
+			// 			// "text-color": theme.palette.error.main,
+			// 			// "text-halo-width": 1,
+			// 			// "text-halo-color": "#000000",
+			// 		},
+			// 	});
+			// 	function getSunPosition() {
+			// 		const center = newMap.getCenter();
+			// 		const sunPos = SunCalc.getPosition(
+			// 			new Date(),
+			// 			center.lat,
+			// 			center.lng,
+			// 		);
+			// 		const sunAzimuth = 180 + (sunPos.azimuth * 180) / Math.PI;
+			// 		const sunAltitude = 90 - (sunPos.altitude * 180) / Math.PI;
+			// 		return [sunAzimuth, sunAltitude];
+			// 	}
+			// 	newMap.addLayer({
+			// 		id: "sky",
+			// 		type: "sky",
+			// 		paint: {
+			// 			"sky-opacity": [
+			// 				"interpolate",
+			// 				["linear"],
+			// 				["zoom"],
+			// 				0,
+			// 				0,
+			// 				5,
+			// 				0.3,
+			// 				8,
+			// 				1,
+			// 			],
+			// 			// set up the sky layer for atmospheric scattering
+			// 			"sky-type": "atmosphere",
+			// 			// explicitly set the position of the sun rather than allowing the sun to be attached to the main light source
+			// 			"sky-atmosphere-sun": getSunPosition(),
+			// 			// set the intensity of the sun as a light source (0-100 with higher values corresponding to brighter skies)
+			// 			"sky-atmosphere-sun-intensity": 5,
+			// 		},
+			// 	});
+			// 	setMap(newMap);
+			// }
+			newMap.on("error", onError);
+			// newMap.on("load", onLoad);
+
+			return () => {
+				newMap.off("error", onError);
+				// newMap.off("load", onLoad);
+				newMap.removeControl(navigationControl);
+				newMap.removeControl(geoLocateControl);
+				newMap.removeControl(attributionControl);
+				newMap.remove();
+			};
+		}
+	}, [mapContainerRef]);
+
+
+	return (
+			<div
+				style={{
+					position: "absolute",
+					top: 0,
+					bottom: 0,
+					left: 0,
+					right: 0,
+                    // height: "100%",
+                    // width: "100%",
+                    ...props.style,
+				}}
+				className="map-container"
+				ref={mapContainerRef}
+			/>
+	);
+}
