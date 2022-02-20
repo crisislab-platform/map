@@ -65,15 +65,16 @@ export default function SearchBar() {
 
     const zoomValues = {
       postcode: 14,
+      place: 14,
       poi: 16,
       address: 16,
-      region: 13,
+      region: 12,
     }
 
     window.map?.flyTo({
       center: value.center,
       zoom: zoomValues[value.place_type],
-      speed: 0.6,
+      speed: 0.8,
       curve: 2
     });
 
