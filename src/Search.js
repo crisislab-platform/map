@@ -71,12 +71,26 @@ export default function SearchBar() {
       region: 12,
     }
 
-    window.map?.flyTo({
-      center: value.center,
-      zoom: zoomValues[value.place_type],
-      speed: 0.8,
-      curve: 2
-    });
+
+    if (value.bbox) {
+      window.map?.fitBounds(value.bbox, {
+        // padding: {
+        //   top: 100,
+        //   bottom: 100,
+        //   left: 100,
+        //   right: 100
+        // },
+        speed: 0.8,
+        curve: 2
+      });
+    } else {
+      window.map?.flyTo({
+        center: value.center,
+        zoom: zoomValues[value.place_type],
+        speed: 0.8,
+        curve: 2
+      });
+    }
 
     navigate("/search?" + searchParams.toString());
 

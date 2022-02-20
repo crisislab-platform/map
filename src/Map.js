@@ -28,6 +28,7 @@ export default function MapApp(props) {
 				zoom: 4.8,
 			});
 			window.map = newMap
+
 			const attributionControl = new AttributionControl();
 			newMap.addControl(attributionControl, "top-left");
 			const navigationControl = new NavigationControl({
@@ -53,6 +54,77 @@ export default function MapApp(props) {
 			function onError(e) {
 				console.log("Failed to load map. Error: ", e);
 			}
+
+			function onLoad() {
+				// Insert the layer beneath any symbol layer.
+				const layers = newMap.getStyle().layers;
+				const labelLayerId = layers.find(
+					(layer) => layer.type === 'symbol' && layer.layout['text-field']
+				).id;
+
+				// The 'building' layer in the Mapbox Streets
+				// vector tileset contains building height data
+				// from OpenStreetMap.
+				newMap.addLayer(
+					{
+						'id': 'add-3d-buildings',
+						'source': 'composite',
+						'source-layer': 'building',
+						'filter': ['==', 'extrude', 'true'],
+						'type': 'fill-extrusion',
+						'minzoom': 15,
+						'paint': {
+							'fill-extrusion-color': '#aaa',
+
+							// Use an 'interpolate' expression to
+							// add a smooth transition effect to
+							// the buildings as the user zooms in.
+							'fill-extrusion-height': [
+								'interpolate',
+								['linear'],
+								['zoom'],
+								15,
+								0,
+								15.05,
+								['get', 'height']
+							],
+							'fill-extrusion-base': [
+								'interpolate',
+								['linear'],
+								['zoom'],
+								15,
+								0,
+								15.05,
+								['get', 'min_height']
+							],
+							'fill-extrusion-opacity': 0.6
+						}
+					},
+					labelLayerId
+				);
+
+
+				newMap.addSource('mapbox-dem', {
+					'type': 'raster-dem',
+					'url': 'mapbox://mapbox.mapbox-terrain-dem-v1',
+					'tileSize': 512,
+					'maxzoom': 14
+				});
+				// add the DEM source as a terrain layer with exaggerated height
+				newMap.setTerrain({ 'source': 'mapbox-dem', 'exaggeration': 1.5 });
+
+				// add a sky layer that will show when the map is highly pitched
+				newMap.addLayer({
+					'id': 'sky',
+					'type': 'sky',
+					'paint': {
+						'sky-type': 'atmosphere',
+						'sky-atmosphere-sun': [0.0, 0.0],
+						'sky-atmosphere-sun-intensity': 15
+					}
+				});
+			}
+
 			// function onLoad() {
 			// 	newMap.addSource("geonet-source", {
 			// 		type: "vector",
@@ -154,11 +226,11 @@ export default function MapApp(props) {
 			// 	setMap(newMap);
 			// }
 			newMap.on("error", onError);
-			// newMap.on("load", onLoad);
+			newMap.on("load", onLoad);
 
 			return () => {
 				newMap.off("error", onError);
-				// newMap.off("load", onLoad);
+				newMap.off("load", onLoad);
 				newMap.removeControl(navigationControl);
 				newMap.removeControl(geoLocateControl);
 				newMap.removeControl(attributionControl);
