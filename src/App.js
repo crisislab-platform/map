@@ -127,7 +127,7 @@ export default function App() {
                   alignItems: "center",
                 }}
               >
-                <Typography variant="h4" style={{ color: "white" }}>
+                <Typography variant="h5" style={{ color: "white" }}>
                   Loading map...
                 </Typography>
               </div>

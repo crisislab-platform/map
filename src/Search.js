@@ -62,6 +62,21 @@ export default function SearchBar() {
     if (value.bbox) {
       searchParams.set("bbox", JSON.stringify(value.bbox));
     }
+
+    const zoomValues = {
+      postcode: 14,
+      poi: 16,
+      address: 16,
+      region: 13,
+    }
+
+    window.map?.flyTo({
+      center: value.center,
+      zoom: zoomValues[value.place_type],
+      speed: 0.6,
+      curve: 2
+    });
+
     navigate("/search?" + searchParams.toString());
 
   }

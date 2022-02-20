@@ -14,13 +14,10 @@ import mapboxgl, {
 
 mapboxgl.accessToken = "pk.eyJ1IjoiYmVuaG9uZyIsImEiOiJja3p2Mmt6c2IwOHhkMnZwOWluN3l4amF0In0.B2hVpXHvnuZkzGzo3VeW7w"
 
-const mapStyles = {
-	normal: "mapbox://styles/zadeviggers/ckypfzqia407v15qo1lruw30b",
-	satelite: "mapbox://styles/zadeviggers/ckyteodd6000414pbra6c7e9x",
-};
 
 export default function MapApp(props) {
 	const mapContainerRef = useRef(null);
+
 
 	React.useEffect(() => {
 		if (mapContainerRef.current) {
@@ -30,6 +27,7 @@ export default function MapApp(props) {
 				center: [174.8, -41.325],
 				zoom: 4.8,
 			});
+			window.map = newMap
 			const attributionControl = new AttributionControl();
 			newMap.addControl(attributionControl, "top-left");
 			const navigationControl = new NavigationControl({
@@ -171,19 +169,19 @@ export default function MapApp(props) {
 
 
 	return (
-			<div
-				style={{
-					position: "absolute",
-					top: 0,
-					bottom: 0,
-					left: 0,
-					right: 0,
-                    // height: "100%",
-                    // width: "100%",
-                    ...props.style,
-				}}
-				className="map-container"
-				ref={mapContainerRef}
-			/>
+		<div
+			style={{
+				position: "absolute",
+				top: 0,
+				bottom: 0,
+				left: 0,
+				right: 0,
+				// height: "100%",
+				// width: "100%",
+				...props.style,
+			}}
+			className="map-container"
+			ref={mapContainerRef}
+		/>
 	);
 }
