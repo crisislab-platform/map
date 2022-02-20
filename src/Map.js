@@ -26,7 +26,7 @@ export default function MapApp(props) {
 		if (mapContainerRef.current) {
 			const newMap = new MapboxMap({
 				container: mapContainerRef.current,
-				style: mapStyles.normal,
+				style: "mapbox://styles/mapbox/streets-v11",
 				center: [174.8, -41.325],
 				zoom: 4.8,
 			});

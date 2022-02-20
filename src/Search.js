@@ -122,6 +122,7 @@ export default function SearchBar() {
           size="medium"
           label="Find a sensor..."
           variant="outlined"
+          autoComplete='off'
           value={value}
           onChange={(e) => setValue(e.target.value)}
           InputProps={{
@@ -130,7 +131,7 @@ export default function SearchBar() {
                 <SearchIcon />
               </InputAdornment>
             ),
-            disableUnderline: true
+            disableUnderline: true,
           }}
         />
       </Box>
