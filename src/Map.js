@@ -12,7 +12,7 @@ import mapboxgl, {
 	ScaleControl,
 } from "mapbox-gl";
 
-mapboxgl.accessToken = "pk.eyJ1IjoiemFkZXZpZ2dlcnMiLCJhIjoiY2t5dGF6cGpvMWMydTJ3cGhrb2ZhOTdlZCJ9.myQ3YnPgbI-QkuBlClYfCw"
+mapboxgl.accessToken = "pk.eyJ1IjoiYmVuaG9uZyIsImEiOiJja3p2Mmt6c2IwOHhkMnZwOWluN3l4amF0In0.B2hVpXHvnuZkzGzo3VeW7w"
 
 const mapStyles = {
 	normal: "mapbox://styles/zadeviggers/ckypfzqia407v15qo1lruw30b",

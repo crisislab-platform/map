@@ -20,7 +20,7 @@ import styles from "./Search.module.css";
 import { useNavigate, useLocation } from "react-router-dom";
 import { ArrowBack } from "@mui/icons-material";
 
-const MAPBOX_TOKEN = "pk.eyJ1IjoiemFkZXZpZ2dlcnMiLCJhIjoiY2t5dGF6cGpvMWMydTJ3cGhrb2ZhOTdlZCJ9.myQ3YnPgbI-QkuBlClYfCw"
+const MAPBOX_TOKEN = "pk.eyJ1IjoiYmVuaG9uZyIsImEiOiJja3p2Mmt6c2IwOHhkMnZwOWluN3l4amF0In0.B2hVpXHvnuZkzGzo3VeW7w"
 
 // MapBox Search
 export default function SearchBar() {
