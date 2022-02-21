@@ -117,85 +117,143 @@ export default function SearchBar() {
 
 
   return (
-    <Paper
-      elevation={10}
-      sx={{
-        width: "90%",
-        margin: "5%",
-        boxShadow:
-          "0 2px 6px rgb(0 0 0 / 30%), 0 -1px 0 rgb(0 0 0 / 2%)",
-        borderRadius: "10px",
-        position: "absolute",
-        zIndex: 999
-      }}
-      // onMouseEnter={() => setMouseOver(true)}
-      // onMouseLeave={() => setMouseOver(false)}
+    <Box
+      onMouseEnter={() => setHasFocus(true)}
       onFocus={() => setHasFocus(true)}
-      onBlur={() => !(results.length > 0 && value) && setHasFocus(false)}
-      className={styles.box}
+      onMouseLeave={() => setTimeout(() => setHasFocus(false), 100)}
+      style={{
+        pointerEvents: (results.length > 0 && value && hasFocus) ? "all" : "none",
+      }}
     >
-      {/* Show back button if location is not / */}
-      <Box sx={{ display: "flex", alignItems: "center", marginInline: "2%" }}>
-        <IconButton
-          onClick={() => {
-            reset()
-            if (!(results.length > 0 && value && hasFocus))
-              navigate("/")
-          }}
-          style={{ flexGrow: 0, marginRight: -5, transition: "opacity 0.2s", opacity: (location.pathname !== "/" || (results.length > 0 && value) || hasFocus) ? 1 : 0 }}
-        >
-          <ArrowBack fontSize="medium" />
-        </IconButton>
+      <Paper
+        elevation={0}
+        sx={{
+          width: "90%",
+          margin: "5%",
+          borderRadius: "10px",
+          position: "absolute",
+          zIndex: 999,
+          pointerEvents: "all"
+        }}
+        // onMouseEnter={() => setMouseOver(true)}
+        // onMouseLeave={() => setMouseOver(false)}
+        className={styles.box}
+      >
+        {/* Show back button if location is not / */}
+        <Box sx={{ display: "flex", alignItems: "center", marginInline: "2%" }}>
+          <IconButton
+            onClick={() => {
+              reset()
+              if (!(results.length > 0 && value && hasFocus))
+                navigate("/")
+            }}
+            style={{ flexGrow: 0, marginRight: -5, transition: "opacity 0.2s", opacity: (location.pathname !== "/" || value) ? 1 : 0 }}
+          >
+            <ArrowBack fontSize="medium" />
+          </IconButton>
 
+          <TextField
+            style={{ flexGrow: 1 }}
+            size="medium"
+            label="Find a sensor..."
+            variant="outlined"
+            autoComplete='off'
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <SearchIcon />
+                </InputAdornment>
+              ),
+              disableUnderline: true,
+            }}
+          />
+        </Box>
+      </Paper>
+      <Paper
+        elevation={10}
+        sx={{
+          width: "90%",
+          margin: "5%",
+          boxShadow:
+            "0 2px 6px rgb(0 0 0 / 30%), 0 -1px 0 rgb(0 0 0 / 2%)",
+          borderRadius: "10px",
+          position: "absolute",
+          zIndex: 997,
+          transition: "opacity 0.2s",
+          opacity: (results.length > 0 && value && hasFocus) ? 0 : 1,
+        }}
+        // onMouseEnter={() => setMouseOver(true)}
+        // onMouseLeave={() => setMouseOver(false)}
+        onFocus={() => setHasFocus(true)}
+        onBlur={() => setTimeout(() => setHasFocus(false), 100)}
+        className={styles.box}
+      >
+        {/* Show back button if location is not / */}
         <TextField
-          style={{ flexGrow: 1 }}
           size="medium"
-          label="Find a sensor..."
           variant="outlined"
           autoComplete='off'
-          value={value}
-          onChange={(e) => setValue(e.target.value)}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <SearchIcon />
-              </InputAdornment>
-            ),
-            disableUnderline: true,
-          }}
         />
-      </Box>
-      {results.length > 0 && value && hasFocus && (
-        <>
-          <Divider />
-          <List disablePadding dense className={styles.list}>
-            {results.map((result, i) => (
-              <ListItem disableGutters>
-                <ListItemButton
-                  selected={selectedIndex === i}
-                  disablePadding
-                  onClick={() => {
-                    select(result);
-                  }}>
-                  <ListItemIcon>
-                    {[
-                      "postcode",
-                      "address",
-                      "region",
-                      "place",
-                    ].includes(result.place_type[0]) ? (
-                      <LocationCityIcon />
-                    ) : (
-                      <LocationOnIcon />
-                    )}
-                  </ListItemIcon>
-                  <ListItemText primary={result.place_name} />
-                </ListItemButton>
-              </ListItem>
-            ))}
-          </List>
-        </>
-      )}
-    </Paper>
+      </Paper>
+      <Paper
+        elevation={10}
+        sx={{
+          width: "90%",
+          margin: "5%",
+          boxShadow:
+            "0 2px 6px rgb(0 0 0 / 30%), 0 -1px 0 rgb(0 0 0 / 2%)",
+          borderRadius: "10px",
+          position: "absolute",
+          zIndex: 998,
+          opacity: (results.length > 0 && value && hasFocus) ? 1 : 0,
+          transition: "opacity 0.2s",
+        }}
+        // onMouseEnter={() => setMouseOver(true)}
+        // onMouseLeave={() => setMouseOver(false)}
+        onFocus={() => setHasFocus(true)}
+        onBlur={() => setTimeout(() => setHasFocus(false), 100)}
+        className={styles.box}
+      >
+        {/* Show back button if location is not / */}
+        <TextField
+          size="medium"
+          variant="outlined"
+          autoComplete='off'
+        />
+        {results.length > 0 && (
+          <>
+            <Divider />
+            <List disablePadding dense className={styles.list}>
+              {results.map((result, i) => (
+                <ListItem disableGutters>
+                  <ListItemButton
+                    selected={selectedIndex === i}
+                    disablePadding
+                    onClick={() => {
+                      select(result);
+                    }}>
+                    <ListItemIcon>
+                      {[
+                        "postcode",
+                        "address",
+                        "region",
+                        "place",
+                      ].includes(result.place_type[0]) ? (
+                        <LocationCityIcon />
+                      ) : (
+                        <LocationOnIcon />
+                      )}
+                    </ListItemIcon>
+                    <ListItemText primary={result.place_name} />
+                  </ListItemButton>
+                </ListItem>
+              ))}
+            </List>
+          </>
+        )}
+      </Paper>
+    </Box >
   );
 }
