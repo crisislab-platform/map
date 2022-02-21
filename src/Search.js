@@ -147,14 +147,14 @@ export default function SearchBar() {
               if (!(results.length > 0 && value && hasFocus))
                 navigate("/")
             }}
-            style={{ flexGrow: 0, marginRight: -5, transition: "opacity 0.2s", opacity: (location.pathname !== "/" || value) ? 1 : 0 }}
+            style={{ flexGrow: 0, marginRight: (location.pathname !== "/" || value) ? -5 : -40, transition: "opacity 0.2s, margin-right 0.2s ease-out", opacity: (location.pathname !== "/" || value) ? 1 : 0 }}
           >
             <ArrowBack fontSize="medium" />
           </IconButton>
 
           <TextField
-            style={{ flexGrow: 1 }}
-            size="medium"
+            style={{ flexGrow: 1, marginTop: 7, marginBottom: 7 }}
+            size="small"
             label="Find a sensor..."
             variant="outlined"
             autoComplete='off'
@@ -167,10 +167,16 @@ export default function SearchBar() {
                 </InputAdornment>
               ),
               disableUnderline: true,
+              sx: {
+                "& .MuiOutlinedInput-notchedOutline": {
+                  display: 'none'
+                }
+              }
             }}
           />
         </Box>
       </Paper>
+
       <Paper
         elevation={10}
         sx={{
@@ -192,7 +198,8 @@ export default function SearchBar() {
       >
         {/* Show back button if location is not / */}
         <TextField
-          size="medium"
+          size="small"
+          style={{ marginTop: 7, marginBottom: 7 }}
           variant="outlined"
           autoComplete='off'
         />
@@ -218,9 +225,10 @@ export default function SearchBar() {
       >
         {/* Show back button if location is not / */}
         <TextField
-          size="medium"
+          size="small"
           variant="outlined"
           autoComplete='off'
+          style={{ marginTop: 7, marginBottom: 7 }}
         />
         {results.length > 0 && (
           <>
