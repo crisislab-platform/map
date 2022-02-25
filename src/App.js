@@ -6,18 +6,18 @@ import Toolbar from '@mui/material/Toolbar';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
-import { createTheme, ThemeProvider } from '@mui/material';
+import { createTheme, ThemeProvider, responsiveFontSizes } from '@mui/material';
 import Search from "./Search";
 import Routes from './Routes';
 import SensorsContext from './SensorsContext';
 
 const Map = React.lazy(() => import("./Map"));
 
-const theme = createTheme({
+const theme = responsiveFontSizes(createTheme({
   typography: {
     fontFamily: 'Roboto Slab, serif',
   },
-});
+}), { breakpoints: ['sm', 'md', 'lg', 'xl'], factor: 4 });
 
 const drawerWidth = 500;
 
@@ -77,65 +77,65 @@ export default function App() {
 
   return (
     <ThemeProvider theme={theme}>
-      <SensorsContext.Provider value={[ sensors, setSensors ]}>
-      <Box sx={{
-        display: 'flex',
-        position: "absolute",
-        top: 0,
-        bottom: 0,
-        left: 0,
-        right: 0,
-      }}>
-        <CssBaseline />
-        <Drawer
-          sx={{
-            width: drawerWidth,
-            flexShrink: 0,
-            '& .MuiDrawer-paper': {
+      <SensorsContext.Provider value={[sensors, setSensors]}>
+        <Box sx={{
+          display: 'flex',
+          position: "absolute",
+          top: 0,
+          bottom: 0,
+          left: 0,
+          right: 0,
+        }}>
+          <CssBaseline />
+          <Drawer
+            sx={{
               width: drawerWidth,
-              boxSizing: 'border-box',
-            },
-          }}
-          variant="permanent"
-          anchor="left"
-        >
+              flexShrink: 0,
+              '& .MuiDrawer-paper': {
+                width: drawerWidth,
+                boxSizing: 'border-box',
+              },
+            }}
+            variant="permanent"
+            anchor="left"
+          >
 
-          <Search onSelect={onLocationSelected} />
+            <Search onSelect={onLocationSelected} />
 
-          <Routes />
+            <Routes />
 
-        </Drawer>
+          </Drawer>
 
-        <Box
-          component="main"
-          sx={{ flexGrow: 1, bgcolor: 'background.default', p: 3, position: 'relative', height: "100%" }}
-        >
+          <Box
+            component="main"
+            sx={{ flexGrow: 1, bgcolor: 'background.default', p: 3, position: 'relative', height: "100%" }}
+          >
 
-          <React.Suspense
-            fallback={
-              // div with text in middle
-              <div
-                style={{
-                  position: "absolute",
-                  top: 0,
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
-                  backgroundColor: "#78bced",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                <Typography variant="h5" style={{ color: "white" }}>
-                  Loading map...
-                </Typography>
-              </div>
-            }>
-            <Map />
-          </React.Suspense>
+            <React.Suspense
+              fallback={
+                // div with text in middle
+                <div
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    backgroundColor: "#78bced",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <Typography variant="h5" style={{ color: "white" }}>
+                    Loading map...
+                  </Typography>
+                </div>
+              }>
+              <Map />
+            </React.Suspense>
+          </Box>
         </Box>
-      </Box>
       </SensorsContext.Provider>
     </ThemeProvider>
   );

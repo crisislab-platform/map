@@ -45,42 +45,42 @@ export default function Search() {
 
     return (
         <Fade in>
-                <Box sx={{
-                    paddingInline: 0,
-                    paddingBlock: 6,
-                    marginTop: 7,
+            <Box sx={{
+                paddingInline: 0,
+                paddingBlock: 6,
+                marginTop: 6,
+            }}>
+                <Typography variant="h6" sx={{
+                    fontWeight: "bold",
+                    marginInline: 4
                 }}>
-                    <Typography variant="h6" sx={{
-                        fontWeight: "bold",
-                        marginInline: 4
-                    }}>
-                        {bbox ? "Sensors in" : "Sensors near"}
-                        {" "}
-                        {name}
-                        :
-                    </Typography>
+                    {bbox ? "Sensors in" : "Sensors near"}
+                    {" "}
+                    {name}
+                    :
+                </Typography>
 
-                    {results.length > 0 && (
-                        <List>
-                            {results.map(sensor => (
-                                <ListItem button sx={{paddingInline: 4}}>
-                                    <ListItemIcon>
-                                        <RPiIcon fontSize="large" />
-                                    </ListItemIcon>
-                                    <ListItemText 
-                                    primary={sensor.type} 
+                {results.length > 0 && (
+                    <List>
+                        {results.map(sensor => (
+                            <ListItem button sx={{ paddingInline: 4 }}>
+                                <ListItemIcon>
+                                    <RPiIcon fontSize="large" />
+                                </ListItemIcon>
+                                <ListItemText
+                                    primary={sensor.type}
                                     secondary={
-                                        (bbox ? "" : (sensor.distance > 1000 ? 
-                                            Math.round(sensor.distance / 100) / 10 + " kilometers away" : 
-                                            sensor.distance + " meters away") + " • ") + 
-                                            "ID: " + sensor.id + " • " + (sensor.online ? "Online" : "Offline")
-                                    } 
-                                    />
-                                </ListItem>
-                            ))}
-                        </List>
-                    )}
-                </Box>
+                                        (bbox ? "" : (sensor.distance > 1000 ?
+                                            Math.round(sensor.distance / 100) / 10 + " kilometers away" :
+                                            sensor.distance + " meters away") + " • ") +
+                                        "ID: " + sensor.id + " • " + (sensor.online ? "Online" : "Offline")
+                                    }
+                                />
+                            </ListItem>
+                        ))}
+                    </List>
+                )}
+            </Box>
         </Fade>
     );
 }

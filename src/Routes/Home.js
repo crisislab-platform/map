@@ -2,15 +2,33 @@ import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import Fade from '@mui/material/Fade';
+import ButtonBase from '@mui/material/ButtonBase';
+import React from 'react';
 
 const FlexSquare = (props) => (
-    <div style={{ flexGrow: 1, flexShrink: 0, position: "relative" }}>
-        <Paper style={{ backgroundColor: props.color, width: "100%", paddingBottom: '100%' }} />
-        <Typography variant="body1" style={{ width: '100%', position: "absolute", textAlign: 'center' }}>{props.text}</Typography>
-    </div>
+    <ButtonBase {...props} elevation={0} button style={{ flexGrow: 1, flexShrink: 0, borderRadius: 8, position: "relative", backgroundColor: "none", ...props.style }} >
+        <div style={{
+            outline: "2px solid #FFFFFF",
+            outlineColor: props.selected ? "#1a73e8" : "transparent",
+            transition: "outline-color 0.5s",
+            padding: "2px",
+            borderRadius: 8,
+            width: "100%"
+        }}>
+            <Paper style={{ backgroundColor: props.color, width: "100%", paddingBottom: '100%', borderRadius: 6 }} elevation={0} />
+        </div>
+        <Typography variant="body1" style={{ width: '100%', lineHeight: "1em", position: "absolute", bottom: -1.2 - (props.lines || 0) * 0.5 + "em", textAlign: 'center' }}>{props.text}</Typography>
+    </ButtonBase>
 )
 
 export default function Home() {
+    const [selectedStyle, setSelectedStyle] = React.useState(window.map?.getStyle()?.metadata["mapbox:origin"] || "streets-v11");
+
+    function setStyle(style) {
+        window.map?.setStyle("mapbox://styles/mapbox/" + style);
+        setSelectedStyle(style);
+    }
+
     return (
         <Fade in>
             <Box>
@@ -20,7 +38,7 @@ export default function Home() {
                     <Box sx={{
                         paddingInline: 1,
                         paddingBlock: 3,
-                        marginTop: 8,
+                        marginTop: 7,
                     }}>
                         <Typography variant="h3" sx={{
                             fontWeight: "bold",
@@ -39,15 +57,29 @@ export default function Home() {
 
                 </Box>
 
-                <Box sx={{ position: "absolute", bottom: 20, width: "100%", padding: 4 }}>
+                <Box sx={{ position: "absolute", bottom: 10, width: "100%", padding: 4 }}>
                     <Typography variant="h6" sx={{ marginTop: 10, marginBottom: 1 }}>
                         Base map:
                     </Typography>
 
-                    <Box sx={{ display: "flex", gap: 9, marginInline: 2 }}>
-                        <FlexSquare color="pink" text="2D" />
-                        <FlexSquare color="orange" text="Satellite" />
-                        <FlexSquare color="cyan" text="Terrain" />
+                    <Box sx={{ display: "flex", gap: 2, marginInline: 2 }}>
+                        {[
+                            { text: "Streets", color: "pink", id: "streets-v11" },
+                            { text: "Satellite", color: "blue", id: "satellite-v9" },
+                            { text: "Satellite streets", color: "blue", id: "satellite-streets-v11", lines: 2 },
+                            { text: "Outdoors", color: "green", id: "outdoors-v11" },
+                            // { text: "Light", color: "yellow", id: "light-v10" },
+                            { text: "Dark", color: "black", id: "dark-v10" }
+                        ].map(style => (
+                            <FlexSquare
+                                key={style.id}
+                                selected={selectedStyle === style.id}
+                                onClick={() => setStyle(style.id)}
+                                color={style.color}
+                                text={style.text}
+                                lines={style.lines}
+                            />
+                        ))}
                     </Box>
 
                     <Typography variant="h6" sx={{ marginTop: 3, marginBottom: 1 }}>
@@ -55,7 +87,8 @@ export default function Home() {
                     </Typography>
 
                     <Box sx={{ display: "flex", gap: 9, marginInline: 2 }}>
-                        <FlexSquare color="cyan" text="Sensors" />
+
+                        <FlexSquare color="cyan" text="Sensors" selected={selectedStyle} />
                         <FlexSquare color="pink" text="GNS" />
                         <FlexSquare color="orange" text="Fault Lines" />
                     </Box>

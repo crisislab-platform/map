@@ -41,7 +41,14 @@ export default function SearchBar() {
         )}.json?country=nz&proximity=175%2C-41&types=postcode%2Cpoi%2Caddress%2Cregion%2Cplace&language=en&access_token=${MAPBOX_TOKEN}`;
         const response = await fetch(url);
         const json = await response.json();
-        setResults(json.features);
+        if (json.features.length) {
+          setResults(json.features);
+          setHasFocus(true);
+        } else {
+          setHasFocus(false);
+          setTimeout(() => setResults(json.features), 200);
+        }
+
       }
     })();
   }, [value]);
@@ -50,7 +57,7 @@ export default function SearchBar() {
     setHasFocus(false);
     setValue("");
     setMouseOver(false);
-    setResults([]);
+    setTimeout(() => setResults([]), 200);
     setSelectedIndex(0);
   }
 
@@ -241,7 +248,11 @@ export default function SearchBar() {
                     disablePadding
                     onClick={() => {
                       select(result);
-                    }}>
+                    }}
+                    style={{
+                      paddingLeft: 18
+                    }}
+                  >
                     <ListItemIcon>
                       {[
                         "postcode",
@@ -254,7 +265,7 @@ export default function SearchBar() {
                         <LocationOnIcon />
                       )}
                     </ListItemIcon>
-                    <ListItemText primary={result.place_name} />
+                    <ListItemText style={{ marginLeft: -16 }} primary={result.place_name} />
                   </ListItemButton>
                 </ListItem>
               ))}
