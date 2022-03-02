@@ -65,7 +65,15 @@ export default function Search() {
                 {results.length > 0 && (
                     <List>
                         {results.map(sensor => (
-                            <ListItem button sx={{ paddingInline: 4 }} onClick={() => navigate("/sensor/" + sensor.id)}>
+                            <ListItem button sx={{ paddingInline: 4 }} onClick={() => {
+                                window.map?.flyTo({
+                                    center: [sensor.longitude, sensor.latitude],
+                                    zoom: 16,
+                                    speed: 1.2,
+                                    curve: 1
+                                });
+                                navigate("/sensor/" + sensor.id)
+                            }}>
                                 <ListItemIcon>
                                     <RPiIcon fontSize="large" />
                                 </ListItemIcon>
