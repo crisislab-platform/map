@@ -62,7 +62,7 @@ export default function Home() {
                         Base map:
                     </Typography>
 
-                    <Box sx={{ display: "flex", gap: 2, marginInline: 2 }}>
+                    <Box sx={{ display: "flex", gap: 2, marginInline: 1 }}>
                         {[
                             { text: "Streets", color: "pink", id: "streets-v11" },
                             { text: "Satellite", color: "blue", id: "satellite-v9" },

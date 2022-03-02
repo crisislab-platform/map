@@ -50,7 +50,7 @@ export default function Sensor() {
                 </Box>
                 <iframe
                     src={"https://ingest-worker.benhong.workers.dev/consume/" + sensor.id}
-                    style={{ width: "100%", height: "calc(100vh - 220px)", marginTop: 10 }}
+                    style={{ width: "100%", height: "calc(100vh - 220px)", marginTop: 10, paddingInline: 10 }}
                     frameBorder="0"
                 >
                 </iframe>
