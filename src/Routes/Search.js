@@ -12,10 +12,12 @@ import { useSearchParams } from 'react-router-dom';
 import { getDistance } from 'geolib';
 import RPiIcon from './RPiIcon';
 import { Fade } from '@mui/material';
+import { useNavigate, useLocation } from "react-router-dom";
 
 export default function Search() {
     const [sensors] = React.useContext(SensorsContext);
     const [searchParams] = useSearchParams();
+    const navigate = useNavigate();
     const name = searchParams.get('name');
     const center = JSON.parse(searchParams.get('center'));
     const bbox = searchParams.get('bbox') && JSON.parse(searchParams.get('bbox'));
@@ -63,7 +65,7 @@ export default function Search() {
                 {results.length > 0 && (
                     <List>
                         {results.map(sensor => (
-                            <ListItem button sx={{ paddingInline: 4 }}>
+                            <ListItem button sx={{ paddingInline: 4 }} onClick={() => navigate("/sensor/" + sensor.id)}>
                                 <ListItemIcon>
                                     <RPiIcon fontSize="large" />
                                 </ListItemIcon>
