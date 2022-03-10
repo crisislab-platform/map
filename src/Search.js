@@ -19,8 +19,10 @@ import Box from "@mui/material/Box";
 import styles from "./Search.module.css";
 import { useNavigate, useLocation } from "react-router-dom";
 import { ArrowBack } from "@mui/icons-material";
+import MapContext from "./MapContext";
 
-const MAPBOX_TOKEN = "pk.eyJ1IjoiYmVuaG9uZyIsImEiOiJja3p2Mmt6c2IwOHhkMnZwOWluN3l4amF0In0.B2hVpXHvnuZkzGzo3VeW7w"
+const MAPBOX_TOKEN =
+  "pk.eyJ1IjoiYmVuaG9uZyIsImEiOiJja3p2Mmt6c2IwOHhkMnZwOWluN3l4amF0In0.B2hVpXHvnuZkzGzo3VeW7w";
 
 // MapBox Search
 export default function SearchBar() {
@@ -28,16 +30,16 @@ export default function SearchBar() {
   const [results, setResults] = React.useState([]);
   const [selectedIndex, setSelectedIndex] = React.useState(0);
   const [hasFocus, setHasFocus] = React.useState(false);
+  const [map, setMap] = React.useContext(MapContext);
   const [mouseOver, setMouseOver] = React.useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
   React.useEffect(() => {
-
     (async () => {
       if (value) {
         const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(
-          value,
+          value
         )}.json?country=nz&proximity=175%2C-41&types=postcode%2Cpoi%2Caddress%2Cregion%2Cplace&language=en&access_token=${MAPBOX_TOKEN}`;
         const response = await fetch(url);
         const json = await response.json();
@@ -48,7 +50,6 @@ export default function SearchBar() {
           setHasFocus(false);
           setTimeout(() => setResults(json.features), 200);
         }
-
       }
     })();
   }, [value]);
@@ -62,7 +63,7 @@ export default function SearchBar() {
   }
 
   function select(value) {
-    reset()
+    reset();
     const searchParams = new URLSearchParams();
     searchParams.set("name", value.text);
     searchParams.set("center", JSON.stringify(value.center));
@@ -76,11 +77,10 @@ export default function SearchBar() {
       poi: 16,
       address: 16,
       region: 12,
-    }
-
+    };
 
     if (value.bbox) {
-      window.map?.fitBounds(value.bbox, {
+      map?.fitBounds(value.bbox, {
         // padding: {
         //   top: 100,
         //   bottom: 100,
@@ -88,21 +88,19 @@ export default function SearchBar() {
         //   right: 100
         // },
         speed: 0.8,
-        curve: 2
+        curve: 2,
       });
     } else {
-      window.map?.flyTo({
+      map?.flyTo({
         center: value.center,
         zoom: zoomValues[value.place_type],
         speed: 0.8,
-        curve: 2
+        curve: 2,
       });
     }
 
     navigate("/search?" + searchParams.toString());
-
   }
-
 
   React.useEffect(() => {
     function handleKey(e) {
@@ -120,8 +118,7 @@ export default function SearchBar() {
     return () => window.removeEventListener("keydown", handleKey);
   }, [selectedIndex, results]);
 
-  console.log(location)
-
+  console.log(location);
 
   return (
     <Box
@@ -129,7 +126,7 @@ export default function SearchBar() {
       onFocus={() => setHasFocus(true)}
       onMouseLeave={() => setTimeout(() => setHasFocus(false), 100)}
       style={{
-        pointerEvents: (results.length > 0 && value && hasFocus) ? "all" : "none",
+        pointerEvents: results.length > 0 && value && hasFocus ? "all" : "none",
       }}
     >
       <Paper
@@ -140,7 +137,7 @@ export default function SearchBar() {
           borderRadius: "10px",
           position: "absolute",
           zIndex: 999,
-          pointerEvents: "all"
+          pointerEvents: "all",
         }}
         // onMouseEnter={() => setMouseOver(true)}
         // onMouseLeave={() => setMouseOver(false)}
@@ -150,11 +147,15 @@ export default function SearchBar() {
         <Box sx={{ display: "flex", alignItems: "center", marginInline: "2%" }}>
           <IconButton
             onClick={() => {
-              reset()
-              if (!(results.length > 0 && value && hasFocus))
-                navigate("/")
+              reset();
+              if (!(results.length > 0 && value && hasFocus)) navigate("/");
             }}
-            style={{ flexGrow: 0, marginRight: (location.pathname !== "/" || value) ? -5 : -40, transition: "opacity 0.2s, margin-right 0.2s ease-out", opacity: (location.pathname !== "/" || value) ? 1 : 0 }}
+            style={{
+              flexGrow: 0,
+              marginRight: location.pathname !== "/" || value ? -5 : -40,
+              transition: "opacity 0.2s, margin-right 0.2s ease-out",
+              opacity: location.pathname !== "/" || value ? 1 : 0,
+            }}
           >
             <ArrowBack fontSize="medium" />
           </IconButton>
@@ -164,7 +165,7 @@ export default function SearchBar() {
             size="small"
             label="Find a sensor..."
             variant="outlined"
-            autoComplete='off'
+            autoComplete="off"
             value={value}
             onChange={(e) => setValue(e.target.value)}
             InputProps={{
@@ -176,9 +177,9 @@ export default function SearchBar() {
               disableUnderline: true,
               sx: {
                 "& .MuiOutlinedInput-notchedOutline": {
-                  display: 'none'
-                }
-              }
+                  display: "none",
+                },
+              },
             }}
           />
         </Box>
@@ -189,13 +190,12 @@ export default function SearchBar() {
         sx={{
           width: "90%",
           margin: "5%",
-          boxShadow:
-            "0 2px 6px rgb(0 0 0 / 30%), 0 -1px 0 rgb(0 0 0 / 2%)",
+          boxShadow: "0 2px 6px rgb(0 0 0 / 30%), 0 -1px 0 rgb(0 0 0 / 2%)",
           borderRadius: "10px",
           position: "absolute",
           zIndex: 997,
           transition: "opacity 0.2s",
-          opacity: (results.length > 0 && value && hasFocus) ? 0 : 1,
+          opacity: results.length > 0 && value && hasFocus ? 0 : 1,
         }}
         // onMouseEnter={() => setMouseOver(true)}
         // onMouseLeave={() => setMouseOver(false)}
@@ -208,7 +208,7 @@ export default function SearchBar() {
           size="small"
           style={{ marginTop: 7, marginBottom: 7 }}
           variant="outlined"
-          autoComplete='off'
+          autoComplete="off"
         />
       </Paper>
       <Paper
@@ -216,12 +216,11 @@ export default function SearchBar() {
         sx={{
           width: "90%",
           margin: "5%",
-          boxShadow:
-            "0 2px 6px rgb(0 0 0 / 30%), 0 -1px 0 rgb(0 0 0 / 2%)",
+          boxShadow: "0 2px 6px rgb(0 0 0 / 30%), 0 -1px 0 rgb(0 0 0 / 2%)",
           borderRadius: "10px",
           position: "absolute",
           zIndex: 998,
-          opacity: (results.length > 0 && value && hasFocus) ? 1 : 0,
+          opacity: results.length > 0 && value && hasFocus ? 1 : 0,
           transition: "opacity 0.2s",
         }}
         // onMouseEnter={() => setMouseOver(true)}
@@ -234,7 +233,7 @@ export default function SearchBar() {
         <TextField
           size="small"
           variant="outlined"
-          autoComplete='off'
+          autoComplete="off"
           style={{ marginTop: 7, marginBottom: 7 }}
         />
         {results.length > 0 && (
@@ -250,22 +249,22 @@ export default function SearchBar() {
                       select(result);
                     }}
                     style={{
-                      paddingLeft: 18
+                      paddingLeft: 18,
                     }}
                   >
                     <ListItemIcon>
-                      {[
-                        "postcode",
-                        "address",
-                        "region",
-                        "place",
-                      ].includes(result.place_type[0]) ? (
+                      {["postcode", "address", "region", "place"].includes(
+                        result.place_type[0]
+                      ) ? (
                         <LocationCityIcon />
                       ) : (
                         <LocationOnIcon />
                       )}
                     </ListItemIcon>
-                    <ListItemText style={{ marginLeft: -16 }} primary={result.place_name} />
+                    <ListItemText
+                      style={{ marginLeft: -16 }}
+                      primary={result.place_name}
+                    />
                   </ListItemButton>
                 </ListItem>
               ))}
@@ -273,6 +272,6 @@ export default function SearchBar() {
           </>
         )}
       </Paper>
-    </Box >
+    </Box>
   );
 }
