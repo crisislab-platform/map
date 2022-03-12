@@ -41,7 +41,7 @@ export default function Search() {
     // Find the top 5 closest sensors to the location
     const [longitude, latitude] = center;
     // Use geolib to calculate the distance between the center and each sensor
-    results = sensors
+    results = Object.values(sensors)
       .map((sensor) => {
         const { latitude: sensorLatitude, longitude: sensorLongitude } = sensor;
         return {
@@ -102,9 +102,9 @@ export default function Search() {
                     (bbox
                       ? ""
                       : (sensor.distance > 1000
-                          ? Math.round(sensor.distance / 100) / 10 +
-                            " kilometers away"
-                          : sensor.distance + " meters away") + " • ") +
+                        ? Math.round(sensor.distance / 100) / 10 +
+                        " kilometers away"
+                        : sensor.distance + " meters away") + " • ") +
                     "ID: " +
                     sensor.id +
                     " • " +
