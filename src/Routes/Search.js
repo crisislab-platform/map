@@ -28,7 +28,7 @@ export default function Search() {
 
   if (bbox) {
     // Look for sensors inside the bounding box
-    results = sensors.filter((sensor) => {
+    results = Object.values(sensors).filter((sensor) => {
       const { latitude, longitude } = sensor;
       return (
         bbox[1] <= latitude &&
