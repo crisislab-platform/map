@@ -17,7 +17,7 @@ export default function Sensor() {
     const [sensors] = React.useContext(SensorsContext);
     const { id } = useParams();
 
-    const sensor = sensors.find(sensor => sensor.id === parseInt(id));
+    const sensor = sensors[id]
 
     if (!sensor) {
         return null

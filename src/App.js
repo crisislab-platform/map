@@ -39,7 +39,7 @@ export default function App() {
 
   React.useEffect(() => {
     if (map)
-      for (const sensor of sensors) {
+      for (const sensor of Object.values(sensors)) {
         const markerElement = document.createElement("div");
         markerElement.setAttribute("title", `Sensor #${sensor.id}`);
         markerElement.classList.add("crisislab-sensor-marker");
