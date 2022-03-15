@@ -33,7 +33,13 @@ export default function App() {
     (async () => {
       const res = await fetch(`https://shakemap.benhong.me/api/v1/sensors`);
       const data = await res.json();
-      setSensors(data.sensors);
+      const newSensors = {};
+      Object.values(data.sensors).forEach((sensor) => {
+        if (sensor.latitude && sensor.longitude) {
+          newSensors[sensor.id] = sensor;
+        }
+      });
+      setSensors(newSensors);
     })();
   }, []);
 
