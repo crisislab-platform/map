@@ -6,7 +6,7 @@ export default function setupMap(map, geoJSON, onClick) {
         data: geoJSON,
         cluster: true,
         clusterMaxZoom: 14, // Max zoom to cluster points on
-        clusterRadius: 50 // Radius of each cluster when clustering points (defaults to 50)
+        clusterRadius: 30 // Radius of each cluster when clustering points (defaults to 50)
     });
 
     map.addLayer({
@@ -77,9 +77,10 @@ export default function setupMap(map, geoJSON, onClick) {
             (err, zoom) => {
                 if (err) return;
 
-                map.easeTo({
+                map.flyTo({
                     center: features[0].geometry.coordinates,
-                    zoom: zoom
+                    zoom: zoom + 2,
+                    duration: 1000
                 });
             }
         );
