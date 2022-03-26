@@ -10,6 +10,7 @@ import Search from "./Search";
 import Routes from "./Routes";
 import SensorsContext from "./SensorsContext";
 import MapContext from "./MapContext";
+import setupGeoJSON from "./setupGeoJSON";
 
 const Map = React.lazy(() => import("./Map"));
 
@@ -27,6 +28,7 @@ const drawerWidth = 500;
 export default function App() {
   const [sensors, setSensors] = React.useState([]);
   const [map, setMap] = React.useState(null);
+  const [mapLoaded, setMapLoaded] = React.useState(false);
   const navigate = useNavigate();
 
   React.useEffect(() => {
@@ -43,42 +45,84 @@ export default function App() {
     })();
   }, []);
 
-  React.useEffect(() => {
-    if (map)
-      for (const sensor of Object.values(sensors)) {
-        const markerElement = document.createElement("div");
-        markerElement.setAttribute("title", `Sensor #${sensor.id}`);
-        markerElement.classList.add("crisislab-sensor-marker");
-        if ("online" in sensor) {
-          if (sensor.online === true) {
-            markerElement.classList.add("online");
-          } else if (sensor.online === false) {
-            markerElement.classList.add("offline");
-          }
-        }
-        markerElement.onclick = () => {
-          map?.flyTo({
-            center: [sensor.longitude, sensor.latitude],
-            zoom: 16,
-            speed: 1.4,
-            curve: 1,
-          });
-          navigate(`/sensor/${sensor.id}`);
-        };
+  // React.useEffect(() => {
+  //   if (map)
+  //     for (const sensor of Object.values(sensors)) {
+  //       const markerElement = document.createElement("div");
+  //       markerElement.setAttribute("title", `Sensor #${sensor.id}`);
+  //       markerElement.classList.add("crisislab-sensor-marker");
+  //       if ("online" in sensor) {
+  //         if (sensor.online === true) {
+  //           markerElement.classList.add("online");
+  //         } else if (sensor.online === false) {
+  //           markerElement.classList.add("offline");
+  //         }
+  //       }
+  //       markerElement.onclick = () => {
+  //         map?.flyTo({
+  //           center: [sensor.longitude, sensor.latitude],
+  //           zoom: 16,
+  //           speed: 1.4,
+  //           curve: 1,
+  //         });
+  //         navigate(`/sensor/${sensor.id}`);
+  //       };
 
-        let marker = new Marker({
-          element: markerElement,
-          anchor: "bottom",
+  //       let marker = new Marker({
+  //         element: markerElement,
+  //         anchor: "bottom",
+  //       });
+  //       marker.setLngLat([sensor.longitude, sensor.latitude]);
+  //       marker.addTo(map);
+  //     }
+  // }, [sensors, map]);
+
+  React.useEffect(() => {
+    if (mapLoaded && sensors && Object.keys(sensors).length) {
+      // Construct geoJSON
+      const geoJSON = {
+        type: "FeatureCollection",
+        features: Object.values(sensors).map((sensor) => ({
+          type: "Feature",
+          geometry: {
+            type: "Point",
+            coordinates: [sensor.longitude, sensor.latitude],
+          },
+          properties: {
+            id: sensor.id,
+            color: 'online' in sensor ? sensor.online ? '#157f1f' : '#d00000' : '#11b4da',
+          },
+        }))
+
+      };
+
+      setupGeoJSON(map, geoJSON, (e) => {
+        const coordinates = e.features[0].geometry.coordinates.slice();
+
+        // Ensure that if the map is zoomed out such that
+        // multiple copies of the feature are visible, the
+        // popup appears over the copy being pointed to.
+        while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+          coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+        }
+
+        map?.flyTo({
+          center: [e.lngLat.lng, e.lngLat.lat],
+          zoom: 16,
+          speed: 1.4,
+          curve: 1,
         });
-        marker.setLngLat([sensor.longitude, sensor.latitude]);
-        marker.addTo(map);
-      }
-  }, [sensors, map]);
+
+        navigate(`/sensor/${e.features[0].properties.id}`);
+      });
+
+    }
+  }, [mapLoaded, sensors]);
 
   return (
     <ThemeProvider theme={theme}>
       <SensorsContext.Provider value={[sensors, setSensors]}>
-        <MapContext.Provider value={[map, setMap]}>
+        <MapContext.Provider value={[map, setMap, mapLoaded, setMapLoaded]}>
           <Box
             sx={{
               display: "flex",

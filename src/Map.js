@@ -17,7 +17,7 @@ mapboxgl.accessToken =
 
 export default function MapApp(props) {
   const mapContainerRef = useRef(null);
-  const [map, setMap] = React.useContext(MapContext);
+  const [map, setMap, mapLoaded, setMapLoaded] = React.useContext(MapContext);
 
   React.useEffect(() => {
     if (mapContainerRef.current) {
@@ -56,6 +56,7 @@ export default function MapApp(props) {
       }
 
       function onLoad() {
+        setMapLoaded(true);
         // Insert the layer beneath any symbol layer.
         // map.addSource('composite', { type: 'vector', url: 'mapbox://mapbox.mapbox-streets-v7' });
 
