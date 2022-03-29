@@ -48,9 +48,9 @@ export default function setupMap(map, geoJSON, onClick) {
         filter: ['!', ['has', 'point_count']],
         paint: {
             'circle-color': ['get', 'color'],
-            'circle-radius': 6,
-            'circle-stroke-width': 2,
-            'circle-stroke-color': '#fff'
+            'circle-radius': ['interpolate', ['linear'], ['zoom'], 10, 6, 25, 18],
+            'circle-stroke-width': ['interpolate', ['linear'], ['zoom'], 10, 2, 25, 6],
+            'circle-stroke-color': ['get', 'border']
         }
     });
 

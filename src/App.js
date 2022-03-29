@@ -33,7 +33,7 @@ export default function App() {
 
   React.useEffect(() => {
     (async () => {
-      const res = await fetch(`https://shakemap.benhong.me/api/v1/sensors`);
+      const res = await fetch('https://internship-worker.benhong.workers.dev/api/v1/sensors');
       const data = await res.json();
       const newSensors = {};
       Object.values(data.sensors).forEach((sensor) => {
@@ -91,6 +91,7 @@ export default function App() {
           properties: {
             id: sensor.id,
             color: 'online' in sensor ? sensor.online ? '#157f1f' : '#d00000' : '#11b4da',
+            border: 'online' in sensor ? sensor.online ? '#55d02e' : '#ff7a7a' : '#ffffff',
           },
         }))
 
@@ -107,8 +108,8 @@ export default function App() {
         }
 
         map?.flyTo({
-          center: [e.lngLat.lng, e.lngLat.lat],
-          zoom: 16,
+          center: [coordinates[0], coordinates[1]],
+          zoom: 17,
           speed: 1.4,
           curve: 1,
         });
