@@ -1,31 +1,31 @@
-import SearchIcon from '@mui/icons-material/Search';
-import OutlinedInput from '@mui/material/OutlinedInput';
-import FormControl from '@mui/material/FormControl';
-import IconButton from '@mui/material/IconButton';
-import InputAdornment from '@mui/material/InputAdornment';
-import InputLabel from '@mui/material/InputLabel';
-import Paper from '@mui/material/Paper';
-import TextField from '@mui/material/TextField';
-import * as React from 'react';
-import Divider from '@mui/material/Divider';
-import LocationOnIcon from '@mui/icons-material/LocationOn';
-import LocationCityIcon from '@mui/icons-material/LocationCity';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import Box from '@mui/material/Box';
-import styles from './Search.module.css';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { ArrowBack } from '@mui/icons-material';
-import MapContext from './MapContext';
+import SearchIcon from "@mui/icons-material/Search";
+import OutlinedInput from "@mui/material/OutlinedInput";
+import FormControl from "@mui/material/FormControl";
+import IconButton from "@mui/material/IconButton";
+import InputAdornment from "@mui/material/InputAdornment";
+import InputLabel from "@mui/material/InputLabel";
+import Paper from "@mui/material/Paper";
+import TextField from "@mui/material/TextField";
+import * as React from "react";
+import Divider from "@mui/material/Divider";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
+import LocationCityIcon from "@mui/icons-material/LocationCity";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemButton from "@mui/material/ListItemButton";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
+import Box from "@mui/material/Box";
+import styles from "./Search.module.css";
+import { useNavigate, useLocation } from "react-router-dom";
+import { ArrowBack } from "@mui/icons-material";
+import MapContext from "./MapContext";
 
-const MAPBOX_TOKEN = 'pk.eyJ1IjoiemFkZXZpZ2dlcnMiLCJhIjoiY2t5dGF6cGpvMWMydTJ3cGhrb2ZhOTdlZCJ9.myQ3YnPgbI-QkuBlClYfCw';
+const MAPBOX_TOKEN = "pk.eyJ1IjoiemFkZXZpZ2dlcnMiLCJhIjoiY2t5dGF6cGpvMWMydTJ3cGhrb2ZhOTdlZCJ9.myQ3YnPgbI-QkuBlClYfCw";
 
 // MapBox Search
 export default function SearchBar() {
-	const [value, setValue] = React.useState('');
+	const [value, setValue] = React.useState("");
 	const [results, setResults] = React.useState([]);
 	const [selectedIndex, setSelectedIndex] = React.useState(0);
 	const [hasFocus, setHasFocus] = React.useState(false);
@@ -55,7 +55,7 @@ export default function SearchBar() {
 
 	function reset() {
 		setHasFocus(false);
-		setValue('');
+		setValue("");
 		setMouseOver(false);
 		setTimeout(() => setResults([]), 200);
 		setSelectedIndex(0);
@@ -64,10 +64,10 @@ export default function SearchBar() {
 	function select(value) {
 		reset();
 		const searchParams = new URLSearchParams();
-		searchParams.set('name', value.text);
-		searchParams.set('center', JSON.stringify(value.center));
+		searchParams.set("name", value.text);
+		searchParams.set("center", JSON.stringify(value.center));
 		if (value.bbox) {
-			searchParams.set('bbox', JSON.stringify(value.bbox));
+			searchParams.set("bbox", JSON.stringify(value.bbox));
 		}
 
 		const zoomValues = {
@@ -98,23 +98,23 @@ export default function SearchBar() {
 			});
 		}
 
-		navigate('/search?' + searchParams.toString());
+		navigate("/search?" + searchParams.toString());
 	}
 
 	React.useEffect(() => {
 		function handleKey(e) {
-			if (e.key === 'ArrowDown') {
+			if (e.key === "ArrowDown") {
 				setSelectedIndex(Math.min(selectedIndex + 1, results.length - 1));
 			}
-			if (e.key === 'ArrowUp') {
+			if (e.key === "ArrowUp") {
 				setSelectedIndex(Math.max(selectedIndex - 1, 0));
 			}
-			if (e.key === 'Enter') {
+			if (e.key === "Enter") {
 				select(results[selectedIndex]);
 			}
 		}
-		window.addEventListener('keydown', handleKey);
-		return () => window.removeEventListener('keydown', handleKey);
+		window.addEventListener("keydown", handleKey);
+		return () => window.removeEventListener("keydown", handleKey);
 	}, [selectedIndex, results]);
 
 	console.log(location);
@@ -125,33 +125,33 @@ export default function SearchBar() {
 			onFocus={() => setHasFocus(true)}
 			onMouseLeave={() => setTimeout(() => setHasFocus(false), 100)}
 			style={{
-				pointerEvents: results.length > 0 && value && hasFocus ? 'all' : 'none',
+				pointerEvents: results.length > 0 && value && hasFocus ? "all" : "none",
 			}}>
 			<Paper
 				elevation={0}
 				sx={{
-					width: '90%',
-					margin: '5%',
-					borderRadius: '10px',
-					position: 'absolute',
+					width: "90%",
+					margin: "5%",
+					borderRadius: "10px",
+					position: "absolute",
 					zIndex: 999,
-					pointerEvents: 'all',
+					pointerEvents: "all",
 				}}
 				// onMouseEnter={() => setMouseOver(true)}
 				// onMouseLeave={() => setMouseOver(false)}
 				className={styles.box}>
 				{/* Show back button if location is not / */}
-				<Box sx={{ display: 'flex', alignItems: 'center', marginInline: '2%' }}>
+				<Box sx={{ display: "flex", alignItems: "center", marginInline: "2%" }}>
 					<IconButton
 						onClick={() => {
 							reset();
-							if (!(results.length > 0 && value && hasFocus)) navigate('/');
+							if (!(results.length > 0 && value && hasFocus)) navigate("/");
 						}}
 						style={{
 							flexGrow: 0,
-							marginRight: location.pathname !== '/' || value ? -5 : -40,
-							transition: 'opacity 0.2s, margin-right 0.2s ease-out',
-							opacity: location.pathname !== '/' || value ? 1 : 0,
+							marginRight: location.pathname !== "/" || value ? -5 : -40,
+							transition: "opacity 0.2s, margin-right 0.2s ease-out",
+							opacity: location.pathname !== "/" || value ? 1 : 0,
 						}}>
 						<ArrowBack fontSize="medium" />
 					</IconButton>
@@ -170,10 +170,9 @@ export default function SearchBar() {
 									<SearchIcon />
 								</InputAdornment>
 							),
-							disableUnderline: true,
 							sx: {
-								'& .MuiOutlinedInput-notchedOutline': {
-									display: 'none',
+								"& .MuiOutlinedInput-notchedOutline": {
+									display: "none",
 								},
 							},
 						}}
@@ -184,13 +183,13 @@ export default function SearchBar() {
 			<Paper
 				elevation={10}
 				sx={{
-					width: '90%',
-					margin: '5%',
-					boxShadow: '0 2px 6px rgb(0 0 0 / 30%), 0 -1px 0 rgb(0 0 0 / 2%)',
-					borderRadius: '10px',
-					position: 'absolute',
+					width: "90%",
+					margin: "5%",
+					boxShadow: "0 2px 6px rgb(0 0 0 / 30%), 0 -1px 0 rgb(0 0 0 / 2%)",
+					borderRadius: "10px",
+					position: "absolute",
 					zIndex: 997,
-					transition: 'opacity 0.2s',
+					transition: "opacity 0.2s",
 					opacity: results.length > 0 && value && hasFocus ? 0 : 1,
 				}}
 				// onMouseEnter={() => setMouseOver(true)}
@@ -209,14 +208,14 @@ export default function SearchBar() {
 			<Paper
 				elevation={10}
 				sx={{
-					width: '90%',
-					margin: '5%',
-					boxShadow: '0 2px 6px rgb(0 0 0 / 30%), 0 -1px 0 rgb(0 0 0 / 2%)',
-					borderRadius: '10px',
-					position: 'absolute',
+					width: "90%",
+					margin: "5%",
+					boxShadow: "0 2px 6px rgb(0 0 0 / 30%), 0 -1px 0 rgb(0 0 0 / 2%)",
+					borderRadius: "10px",
+					position: "absolute",
 					zIndex: 998,
 					opacity: results.length > 0 && value && hasFocus ? 1 : 0,
-					transition: 'opacity 0.2s',
+					transition: "opacity 0.2s",
 				}}
 				// onMouseEnter={() => setMouseOver(true)}
 				// onMouseLeave={() => setMouseOver(false)}
@@ -246,7 +245,7 @@ export default function SearchBar() {
 											paddingLeft: 18,
 										}}>
 										<ListItemIcon>
-											{['postcode', 'address', 'region', 'place'].includes(
+											{["postcode", "address", "region", "place"].includes(
 												result.place_type[0],
 											) ? (
 												<LocationCityIcon />
