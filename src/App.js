@@ -1,18 +1,18 @@
-import * as React from 'react';
-import Box from '@mui/material/Box';
-import Drawer from '@mui/material/Drawer';
-import CssBaseline from '@mui/material/CssBaseline';
-import Typography from '@mui/material/Typography';
-import { createTheme, ThemeProvider, responsiveFontSizes } from '@mui/material';
-import { Marker } from 'mapbox-gl';
-import { useNavigate } from 'react-router-dom';
-import Search from './Search';
-import Routes from './Routes';
-import SensorsContext from './SensorsContext';
-import MapContext from './MapContext';
-import setupGeoJSON from './setupGeoJSON';
+import * as React from 'react'
+import Box from '@mui/material/Box'
+import Drawer from '@mui/material/Drawer'
+import CssBaseline from '@mui/material/CssBaseline'
+import Typography from '@mui/material/Typography'
+import { createTheme, ThemeProvider, responsiveFontSizes } from '@mui/material'
+import { Marker } from 'mapbox-gl'
+import { useNavigate } from 'react-router-dom'
+import Search from './Search'
+import Routes from './Routes'
+import SensorsContext from './SensorsContext'
+import MapContext from './MapContext'
+import setupGeoJSON from './setupGeoJSON'
 
-const Map = React.lazy(() => import('./Map'));
+const Map = React.lazy(() => import('./Map'))
 
 const theme = responsiveFontSizes(
 	createTheme({
@@ -21,29 +21,29 @@ const theme = responsiveFontSizes(
 		},
 	}),
 	{ breakpoints: ['sm', 'md', 'lg', 'xl'], factor: 4 },
-);
+)
 
-const drawerWidth = 500;
+const drawerWidth = 500
 
 export default function App() {
-	const [sensors, setSensors] = React.useState([]);
-	const [map, setMap] = React.useState(null);
-	const [mapLoaded, setMapLoaded] = React.useState(false);
-	const navigate = useNavigate();
+	const [sensors, setSensors] = React.useState([])
+	const [map, setMap] = React.useState(null)
+	const [mapLoaded, setMapLoaded] = React.useState(false)
+	const navigate = useNavigate()
 
 	React.useEffect(() => {
-		(async () => {
-			const res = await fetch('https://internship-worker.benhong.workers.dev/api/v1/sensors');
-			const data = await res.json();
-			const newSensors = {};
+		;(async () => {
+			const res = await fetch('https://internship-worker.benhong.workers.dev/api/v1/sensors')
+			const data = await res.json()
+			const newSensors = {}
 			Object.values(data.sensors).forEach((sensor) => {
 				if (sensor.latitude && sensor.longitude) {
-					newSensors[sensor.id] = sensor;
+					newSensors[sensor.id] = sensor
 				}
-			});
-			setSensors(newSensors);
-		})();
-	}, []);
+			})
+			setSensors(newSensors)
+		})()
+	}, [])
 
 	// React.useEffect(() => {
 	//   if (map)
@@ -94,16 +94,16 @@ export default function App() {
 						border: 'online' in sensor ? (sensor.online ? '#55d02e' : '#ff7a7a') : '#ffffff',
 					},
 				})),
-			};
+			}
 
 			setupGeoJSON(map, geoJSON, (e) => {
-				const coordinates = e.features[0].geometry.coordinates.slice();
+				const coordinates = e.features[0].geometry.coordinates.slice()
 
 				// Ensure that if the map is zoomed out such that
 				// multiple copies of the feature are visible, the
 				// popup appears over the copy being pointed to.
 				while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-					coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+					coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360
 				}
 
 				map?.flyTo({
@@ -111,12 +111,12 @@ export default function App() {
 					zoom: 17,
 					speed: 1.4,
 					curve: 1,
-				});
+				})
 
-				navigate(`/sensor/${e.features[0].properties.id}`);
-			});
+				navigate(`/sensor/${e.features[0].properties.id}`)
+			})
 		}
-	}, [mapLoaded, sensors]);
+	}, [mapLoaded, sensors])
 
 	return (
 		<ThemeProvider theme={theme}>
@@ -184,5 +184,5 @@ export default function App() {
 				</MapContext.Provider>
 			</SensorsContext.Provider>
 		</ThemeProvider>
-	);
+	)
 }

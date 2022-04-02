@@ -1,6 +1,6 @@
-import 'mapbox-gl/dist/mapbox-gl.css';
+import 'mapbox-gl/dist/mapbox-gl.css'
 
-import React, { useRef } from 'react';
+import React, { useRef } from 'react'
 import mapboxgl, {
 	AttributionControl,
 	GeolocateControl,
@@ -8,15 +8,15 @@ import mapboxgl, {
 	Marker,
 	NavigationControl,
 	ScaleControl,
-} from 'mapbox-gl';
-import SunCalc from 'suncalc';
-import MapContext from './MapContext';
+} from 'mapbox-gl'
+import SunCalc from 'suncalc'
+import MapContext from './MapContext'
 
-mapboxgl.accessToken = 'pk.eyJ1IjoiemFkZXZpZ2dlcnMiLCJhIjoiY2t5dGF6cGpvMWMydTJ3cGhrb2ZhOTdlZCJ9.myQ3YnPgbI-QkuBlClYfCw';
+mapboxgl.accessToken = 'pk.eyJ1IjoiemFkZXZpZ2dlcnMiLCJhIjoiY2t5dGF6cGpvMWMydTJ3cGhrb2ZhOTdlZCJ9.myQ3YnPgbI-QkuBlClYfCw'
 
 export default function MapApp(props) {
-	const mapContainerRef = useRef(null);
-	const [map, setMap, mapLoaded, setMapLoaded] = React.useContext(MapContext);
+	const mapContainerRef = useRef(null)
+	const [map, setMap, mapLoaded, setMapLoaded] = React.useContext(MapContext)
 
 	React.useEffect(() => {
 		if (mapContainerRef.current) {
@@ -25,37 +25,37 @@ export default function MapApp(props) {
 				style: 'mapbox://styles/mapbox/streets-v11',
 				center: [174.8, -41.325],
 				zoom: 4.8,
-			});
-			setMap(map);
+			})
+			setMap(map)
 
-			const attributionControl = new AttributionControl();
-			map.addControl(attributionControl, 'top-left');
+			const attributionControl = new AttributionControl()
+			map.addControl(attributionControl, 'top-left')
 			const navigationControl = new NavigationControl({
 				visualizePitch: true,
 				showZoom: true,
 				showCompass: true,
-			});
-			map.addControl(navigationControl, 'top-left');
+			})
+			map.addControl(navigationControl, 'top-left')
 			const geoLocateControl = new GeolocateControl({
 				positionOptions: {
 					enableHighAccuracy: true,
 				},
 				showUserLocation: false,
-			});
+			})
 			map.addControl(geoLocateControl, 'top-left').addControl(
 				new ScaleControl({
 					maxWidth: 150,
 					unit: 'metric',
 				}),
 				'bottom-left',
-			);
+			)
 
 			function onError(e) {
-				console.log('Failed to load map. Error: ', e);
+				console.log('Failed to load map. Error: ', e)
 			}
 
 			function onLoad() {
-				setMapLoaded(true);
+				setMapLoaded(true)
 				// Insert the layer beneath any symbol layer.
 				// map.addSource('composite', { type: 'vector', url: 'mapbox://mapbox.mapbox-streets-v7' });
 
@@ -109,11 +109,11 @@ export default function MapApp(props) {
 				// map.setTerrain({ 'source': 'mapbox-dem', 'exaggeration': 1.5 });
 
 				function getSunPosition() {
-					const center = map.getCenter();
-					const sunPos = SunCalc.getPosition(new Date(), center.lat, center.lng);
-					const sunAzimuth = 180 + (sunPos.azimuth * 180) / Math.PI;
-					const sunAltitude = 90 - (sunPos.altitude * 180) / Math.PI;
-					return [sunAzimuth, sunAltitude];
+					const center = map.getCenter()
+					const sunPos = SunCalc.getPosition(new Date(), center.lat, center.lng)
+					const sunAzimuth = 180 + (sunPos.azimuth * 180) / Math.PI
+					const sunAltitude = 90 - (sunPos.altitude * 180) / Math.PI
+					return [sunAzimuth, sunAltitude]
 				}
 				map.addLayer({
 					id: 'sky',
@@ -127,7 +127,7 @@ export default function MapApp(props) {
 						// set the intensity of the sun as a light source (0-100 with higher values corresponding to brighter skies)
 						'sky-atmosphere-sun-intensity': 5,
 					},
-				});
+				})
 			}
 
 			// function onLoad() {
@@ -196,19 +196,19 @@ export default function MapApp(props) {
 			// 	});
 			// 	setMap(map);
 			// }
-			map.on('error', onError);
-			map.on('load', onLoad);
+			map.on('error', onError)
+			map.on('load', onLoad)
 
 			return () => {
-				map.off('error', onError);
-				map.off('load', onLoad);
-				map.removeControl(navigationControl);
-				map.removeControl(geoLocateControl);
-				map.removeControl(attributionControl);
-				map.remove();
-			};
+				map.off('error', onError)
+				map.off('load', onLoad)
+				map.removeControl(navigationControl)
+				map.removeControl(geoLocateControl)
+				map.removeControl(attributionControl)
+				map.remove()
+			}
 		}
-	}, [mapContainerRef]);
+	}, [mapContainerRef])
 
 	return (
 		<div
@@ -225,5 +225,5 @@ export default function MapApp(props) {
 			className="map-container"
 			ref={mapContainerRef}
 		/>
-	);
+	)
 }

@@ -1,73 +1,73 @@
-import SearchIcon from '@mui/icons-material/Search';
-import OutlinedInput from '@mui/material/OutlinedInput';
-import FormControl from '@mui/material/FormControl';
-import IconButton from '@mui/material/IconButton';
-import InputAdornment from '@mui/material/InputAdornment';
-import InputLabel from '@mui/material/InputLabel';
-import Paper from '@mui/material/Paper';
-import TextField from '@mui/material/TextField';
-import * as React from 'react';
-import Divider from '@mui/material/Divider';
-import LocationOnIcon from '@mui/icons-material/LocationOn';
-import LocationCityIcon from '@mui/icons-material/LocationCity';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import Box from '@mui/material/Box';
-import styles from './Search.module.css';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { ArrowBack } from '@mui/icons-material';
-import MapContext from './MapContext';
+import SearchIcon from '@mui/icons-material/Search'
+import OutlinedInput from '@mui/material/OutlinedInput'
+import FormControl from '@mui/material/FormControl'
+import IconButton from '@mui/material/IconButton'
+import InputAdornment from '@mui/material/InputAdornment'
+import InputLabel from '@mui/material/InputLabel'
+import Paper from '@mui/material/Paper'
+import TextField from '@mui/material/TextField'
+import * as React from 'react'
+import Divider from '@mui/material/Divider'
+import LocationOnIcon from '@mui/icons-material/LocationOn'
+import LocationCityIcon from '@mui/icons-material/LocationCity'
+import List from '@mui/material/List'
+import ListItem from '@mui/material/ListItem'
+import ListItemButton from '@mui/material/ListItemButton'
+import ListItemIcon from '@mui/material/ListItemIcon'
+import ListItemText from '@mui/material/ListItemText'
+import Box from '@mui/material/Box'
+import styles from './Search.module.css'
+import { useNavigate, useLocation } from 'react-router-dom'
+import { ArrowBack } from '@mui/icons-material'
+import MapContext from './MapContext'
 
-const MAPBOX_TOKEN = 'pk.eyJ1IjoiemFkZXZpZ2dlcnMiLCJhIjoiY2t5dGF6cGpvMWMydTJ3cGhrb2ZhOTdlZCJ9.myQ3YnPgbI-QkuBlClYfCw';
+const MAPBOX_TOKEN = 'pk.eyJ1IjoiemFkZXZpZ2dlcnMiLCJhIjoiY2t5dGF6cGpvMWMydTJ3cGhrb2ZhOTdlZCJ9.myQ3YnPgbI-QkuBlClYfCw'
 
 // MapBox Search
 export default function SearchBar() {
-	const [value, setValue] = React.useState('');
-	const [results, setResults] = React.useState([]);
-	const [selectedIndex, setSelectedIndex] = React.useState(0);
-	const [hasFocus, setHasFocus] = React.useState(false);
-	const [map, setMap] = React.useContext(MapContext);
-	const [mouseOver, setMouseOver] = React.useState(false);
-	const navigate = useNavigate();
-	const location = useLocation();
+	const [value, setValue] = React.useState('')
+	const [results, setResults] = React.useState([])
+	const [selectedIndex, setSelectedIndex] = React.useState(0)
+	const [hasFocus, setHasFocus] = React.useState(false)
+	const [map, setMap] = React.useContext(MapContext)
+	const [mouseOver, setMouseOver] = React.useState(false)
+	const navigate = useNavigate()
+	const location = useLocation()
 
 	React.useEffect(() => {
-		(async () => {
+		;(async () => {
 			if (value) {
 				const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(
 					value,
-				)}.json?country=nz&proximity=175%2C-41&types=postcode%2Cpoi%2Caddress%2Cregion%2Cplace&language=en&access_token=${MAPBOX_TOKEN}`;
-				const response = await fetch(url);
-				const json = await response.json();
+				)}.json?country=nz&proximity=175%2C-41&types=postcode%2Cpoi%2Caddress%2Cregion%2Cplace&language=en&access_token=${MAPBOX_TOKEN}`
+				const response = await fetch(url)
+				const json = await response.json()
 				if (json.features.length) {
-					setResults(json.features);
-					setHasFocus(true);
+					setResults(json.features)
+					setHasFocus(true)
 				} else {
-					setHasFocus(false);
-					setTimeout(() => setResults(json.features), 200);
+					setHasFocus(false)
+					setTimeout(() => setResults(json.features), 200)
 				}
 			}
-		})();
-	}, [value]);
+		})()
+	}, [value])
 
 	function reset() {
-		setHasFocus(false);
-		setValue('');
-		setMouseOver(false);
-		setTimeout(() => setResults([]), 200);
-		setSelectedIndex(0);
+		setHasFocus(false)
+		setValue('')
+		setMouseOver(false)
+		setTimeout(() => setResults([]), 200)
+		setSelectedIndex(0)
 	}
 
 	function select(value) {
-		reset();
-		const searchParams = new URLSearchParams();
-		searchParams.set('name', value.text);
-		searchParams.set('center', JSON.stringify(value.center));
+		reset()
+		const searchParams = new URLSearchParams()
+		searchParams.set('name', value.text)
+		searchParams.set('center', JSON.stringify(value.center))
 		if (value.bbox) {
-			searchParams.set('bbox', JSON.stringify(value.bbox));
+			searchParams.set('bbox', JSON.stringify(value.bbox))
 		}
 
 		const zoomValues = {
@@ -76,7 +76,7 @@ export default function SearchBar() {
 			poi: 16,
 			address: 16,
 			region: 12,
-		};
+		}
 
 		if (value.bbox) {
 			map?.fitBounds(value.bbox, {
@@ -88,36 +88,36 @@ export default function SearchBar() {
 				// },
 				speed: 0.8,
 				curve: 2,
-			});
+			})
 		} else {
 			map?.flyTo({
 				center: value.center,
 				zoom: zoomValues[value.place_type],
 				speed: 0.8,
 				curve: 2,
-			});
+			})
 		}
 
-		navigate('/search?' + searchParams.toString());
+		navigate('/search?' + searchParams.toString())
 	}
 
 	React.useEffect(() => {
 		function handleKey(e) {
 			if (e.key === 'ArrowDown') {
-				setSelectedIndex(Math.min(selectedIndex + 1, results.length - 1));
+				setSelectedIndex(Math.min(selectedIndex + 1, results.length - 1))
 			}
 			if (e.key === 'ArrowUp') {
-				setSelectedIndex(Math.max(selectedIndex - 1, 0));
+				setSelectedIndex(Math.max(selectedIndex - 1, 0))
 			}
 			if (e.key === 'Enter') {
-				select(results[selectedIndex]);
+				select(results[selectedIndex])
 			}
 		}
-		window.addEventListener('keydown', handleKey);
-		return () => window.removeEventListener('keydown', handleKey);
-	}, [selectedIndex, results]);
+		window.addEventListener('keydown', handleKey)
+		return () => window.removeEventListener('keydown', handleKey)
+	}, [selectedIndex, results])
 
-	console.log(location);
+	console.log(location)
 
 	return (
 		<Box
@@ -144,8 +144,8 @@ export default function SearchBar() {
 				<Box sx={{ display: 'flex', alignItems: 'center', marginInline: '2%' }}>
 					<IconButton
 						onClick={() => {
-							reset();
-							if (!(results.length > 0 && value && hasFocus)) navigate('/');
+							reset()
+							if (!(results.length > 0 && value && hasFocus)) navigate('/')
 						}}
 						style={{
 							flexGrow: 0,
@@ -240,7 +240,7 @@ export default function SearchBar() {
 										selected={selectedIndex === i}
 										disablePadding
 										onClick={() => {
-											select(result);
+											select(result)
 										}}
 										style={{
 											paddingLeft: 18,
@@ -263,5 +263,5 @@ export default function SearchBar() {
 				)}
 			</Paper>
 		</Box>
-	);
+	)
 }
