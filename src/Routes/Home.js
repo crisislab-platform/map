@@ -3,7 +3,7 @@ import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import Fade from '@mui/material/Fade';
 import ButtonBase from '@mui/material/ButtonBase';
-import React from 'react';
+import { useContext, useState } from 'react';
 import MapContext from '../MapContext';
 
 const FlexSquare = (props) => (
@@ -53,9 +53,10 @@ const FlexSquare = (props) => (
 );
 
 export default function Home() {
-	const [map] = React.useContext(MapContext);
+	const [map] = useContext(MapContext);
 
-	const [selectedStyle, setSelectedStyle] = React.useState('streets-v11');
+	const [selectedStyle, setSelectedStyle] = useState('streets-v11');
+	const [faultLinesEnabled, setFaultLinesEnabled] = useState(false);
 
 	function setStyle(style) {
 		map?.setStyle('mapbox://styles/mapbox/' + style);
@@ -120,6 +121,13 @@ export default function Home() {
 								lines={style.lines}
 							/>
 						))}
+						<FlexSquare
+							selected={faultLinesEnabled}
+							onClick={() => setFaultLinesEnabled((oldState) => !oldState)}
+							color="red"
+							text="Fault lines"
+							lines={2}
+						/>
 					</Box>
 
 					{/* <Typography variant="h6" sx={{ marginTop: 3, marginBottom: 1 }}>
