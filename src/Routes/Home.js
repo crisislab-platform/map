@@ -1,10 +1,10 @@
-import Box from '@mui/material/Box'
-import Paper from '@mui/material/Paper'
-import Typography from '@mui/material/Typography'
-import Fade from '@mui/material/Fade'
-import ButtonBase from '@mui/material/ButtonBase'
-import React from 'react'
-import MapContext from '../MapContext'
+import Box from '@mui/material/Box';
+import Paper from '@mui/material/Paper';
+import Typography from '@mui/material/Typography';
+import Fade from '@mui/material/Fade';
+import ButtonBase from '@mui/material/ButtonBase';
+import React from 'react';
+import MapContext from '../MapContext';
 
 const FlexSquare = (props) => (
 	<ButtonBase
@@ -50,16 +50,16 @@ const FlexSquare = (props) => (
 			{props.text}
 		</Typography>
 	</ButtonBase>
-)
+);
 
 export default function Home() {
-	const [map] = React.useContext(MapContext)
+	const [map] = React.useContext(MapContext);
 
-	const [selectedStyle, setSelectedStyle] = React.useState('streets-v11')
+	const [selectedStyle, setSelectedStyle] = React.useState('streets-v11');
 
 	function setStyle(style) {
-		map?.setStyle('mapbox://styles/mapbox/' + style)
-		setSelectedStyle(style)
+		map?.setStyle('mapbox://styles/mapbox/' + style);
+		setSelectedStyle(style);
 	}
 
 	return (
@@ -158,5 +158,5 @@ export default function Home() {
 				</Box>
 			</Box>
 		</Fade>
-	)
+	);
 }

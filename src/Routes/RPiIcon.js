@@ -1,4 +1,4 @@
-import SvgIcon from '@mui/material/SvgIcon'
+import SvgIcon from '@mui/material/SvgIcon';
 
 export default function RPiIcon(props) {
 	return (
@@ -8,5 +8,5 @@ export default function RPiIcon(props) {
 				transform="translate(-2.60336 0.00002)"
 			/>
 		</SvgIcon>
-	)
+	);
 }

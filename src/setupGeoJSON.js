@@ -7,7 +7,7 @@ export default function setupMap(map, geoJSON, onClick) {
 		cluster: true,
 		clusterMaxZoom: 14, // Max zoom to cluster points on
 		clusterRadius: 30, // Radius of each cluster when clustering points (defaults to 50)
-	})
+	});
 
 	map.addLayer({
 		id: 'clusters',
@@ -23,7 +23,7 @@ export default function setupMap(map, geoJSON, onClick) {
 			'circle-color': ['step', ['get', 'point_count'], '#51bbd6', 100, '#f1f075', 750, '#f28cb1'],
 			'circle-radius': ['step', ['get', 'point_count'], 20, 100, 30, 750, 40],
 		},
-	})
+	});
 
 	map.addLayer({
 		id: 'unclustered-point',
@@ -36,7 +36,7 @@ export default function setupMap(map, geoJSON, onClick) {
 			'circle-stroke-width': ['interpolate', ['linear'], ['zoom'], 10, 2, 25, 6],
 			'circle-stroke-color': ['get', 'border'],
 		},
-	})
+	});
 
 	map.addLayer(
 		{
@@ -51,42 +51,42 @@ export default function setupMap(map, geoJSON, onClick) {
 			},
 		},
 		'unclustered-point',
-	)
+	);
 
 	// inspect a cluster on click
 	map.on('click', 'clusters', (e) => {
 		const features = map.queryRenderedFeatures(e.point, {
 			layers: ['clusters'],
-		})
-		const clusterId = features[0].properties.cluster_id
+		});
+		const clusterId = features[0].properties.cluster_id;
 		map.getSource('earthquakes').getClusterExpansionZoom(clusterId, (err, zoom) => {
-			if (err) return
+			if (err) return;
 
 			map.flyTo({
 				center: features[0].geometry.coordinates,
 				zoom: zoom + 2,
 				duration: 1000,
-			})
-		})
-	})
+			});
+		});
+	});
 
 	// When a click event occurs on a feature in
 	// the unclustered-point layer, open a popup at
 	// the location of the feature, with
 	// description HTML from its properties.
-	map.on('click', 'unclustered-point', onClick)
+	map.on('click', 'unclustered-point', onClick);
 
 	map.on('mouseenter', 'clusters', () => {
-		map.getCanvas().style.cursor = 'pointer'
-	})
+		map.getCanvas().style.cursor = 'pointer';
+	});
 	map.on('mouseleave', 'clusters', () => {
-		map.getCanvas().style.cursor = ''
-	})
+		map.getCanvas().style.cursor = '';
+	});
 
 	map.on('mouseenter', 'unclustered-point', () => {
-		map.getCanvas().style.cursor = 'pointer'
-	})
+		map.getCanvas().style.cursor = 'pointer';
+	});
 	map.on('mouseleave', 'unclustered-point', () => {
-		map.getCanvas().style.cursor = ''
-	})
+		map.getCanvas().style.cursor = '';
+	});
 }

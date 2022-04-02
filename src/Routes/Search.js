@@ -1,57 +1,57 @@
-import Box from '@mui/material/Box'
-import Paper from '@mui/material/Paper'
-import Typography from '@mui/material/Typography'
-import SensorsContext from '../SensorsContext'
-import React from 'react'
-import List from '@mui/material/List'
-import ListItem from '@mui/material/ListItem'
-import ListItemButton from '@mui/material/ListItemButton'
-import ListItemIcon from '@mui/material/ListItemIcon'
-import ListItemText from '@mui/material/ListItemText'
-import { useSearchParams } from 'react-router-dom'
-import { getDistance } from 'geolib'
-import RPiIcon from './RPiIcon'
-import { Fade } from '@mui/material'
-import { useNavigate, useLocation } from 'react-router-dom'
-import MapContext from '../MapContext'
+import Box from '@mui/material/Box';
+import Paper from '@mui/material/Paper';
+import Typography from '@mui/material/Typography';
+import SensorsContext from '../SensorsContext';
+import React from 'react';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import { useSearchParams } from 'react-router-dom';
+import { getDistance } from 'geolib';
+import RPiIcon from './RPiIcon';
+import { Fade } from '@mui/material';
+import { useNavigate, useLocation } from 'react-router-dom';
+import MapContext from '../MapContext';
 
 export default function Search() {
-	const [sensors] = React.useContext(SensorsContext)
-	const [searchParams] = useSearchParams()
-	const navigate = useNavigate()
-	const name = searchParams.get('name')
-	const center = JSON.parse(searchParams.get('center'))
-	const bbox = searchParams.get('bbox') && JSON.parse(searchParams.get('bbox'))
-	const [map] = React.useContext(MapContext)
+	const [sensors] = React.useContext(SensorsContext);
+	const [searchParams] = useSearchParams();
+	const navigate = useNavigate();
+	const name = searchParams.get('name');
+	const center = JSON.parse(searchParams.get('center'));
+	const bbox = searchParams.get('bbox') && JSON.parse(searchParams.get('bbox'));
+	const [map] = React.useContext(MapContext);
 
-	let results
+	let results;
 
 	if (bbox) {
 		// Look for sensors inside the bounding box
 		results = Object.values(sensors).filter((sensor) => {
-			const { latitude, longitude } = sensor
-			return bbox[1] <= latitude && bbox[3] >= latitude && bbox[0] <= longitude && bbox[2] >= longitude
-		})
+			const { latitude, longitude } = sensor;
+			return bbox[1] <= latitude && bbox[3] >= latitude && bbox[0] <= longitude && bbox[2] >= longitude;
+		});
 	} else {
 		// Find the top 5 closest sensors to the location
-		const [longitude, latitude] = center
+		const [longitude, latitude] = center;
 		// Use geolib to calculate the distance between the center and each sensor
 		results = Object.values(sensors)
 			.map((sensor) => {
-				const { latitude: sensorLatitude, longitude: sensorLongitude } = sensor
+				const { latitude: sensorLatitude, longitude: sensorLongitude } = sensor;
 				return {
 					...sensor,
 					distance: getDistance(
 						{ latitude, longitude },
 						{ latitude: sensorLatitude, longitude: sensorLongitude },
 					),
-				}
+				};
 			})
 			.sort((a, b) => a.distance - b.distance)
-			.slice(0, 5)
+			.slice(0, 5);
 	}
 
-	console.log('Sensors:', sensors)
+	console.log('Sensors:', sensors);
 
 	return (
 		<Fade in>
@@ -82,8 +82,8 @@ export default function Search() {
 										zoom: 16,
 										speed: 1.2,
 										curve: 1,
-									})
-									navigate('/sensor/' + sensor.id)
+									});
+									navigate('/sensor/' + sensor.id);
 								}}>
 								<ListItemIcon>
 									<RPiIcon fontSize="large" />
@@ -108,5 +108,5 @@ export default function Search() {
 				)}
 			</Box>
 		</Fade>
-	)
+	);
 }
