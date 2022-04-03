@@ -1,27 +1,27 @@
-import * as React from 'react';
-import Box from '@mui/material/Box';
-import Drawer from '@mui/material/Drawer';
-import CssBaseline from '@mui/material/CssBaseline';
-import Typography from '@mui/material/Typography';
-import { createTheme, ThemeProvider, responsiveFontSizes } from '@mui/material';
-import { Marker } from 'mapbox-gl';
-import { useNavigate } from 'react-router-dom';
-import Search from './Search';
-import Routes from './Routes';
-import SensorsContext from './SensorsContext';
-import MapContext from './MapContext';
-import setupGeoJSON from './setupGeoJSON';
+import * as React from "react";
+import Box from "@mui/material/Box";
+import Drawer from "@mui/material/Drawer";
+import CssBaseline from "@mui/material/CssBaseline";
+import Typography from "@mui/material/Typography";
+import { createTheme, ThemeProvider, responsiveFontSizes } from "@mui/material";
+import { Marker } from "mapbox-gl";
+import { useNavigate } from "react-router-dom";
+import Search from "./Search";
+import Routes from "./Routes";
+import SensorsContext from "./SensorsContext";
+import MapContext from "./MapContext";
+import setupGeoJSON from "./setupGeoJSON";
 
-const Map = React.lazy(() => import('./Map'));
+const Map = React.lazy(() => import("./Map"));
 
-const theme = responsiveFontSizes(
-	createTheme({
-		typography: {
-			fontFamily: 'Roboto Slab, serif',
-		},
-	}),
-	{ breakpoints: ['sm', 'md', 'lg', 'xl'], factor: 4 },
-);
+// const theme = responsiveFontSizes(
+// 	createTheme({
+// 		typography: {
+// 			fontFamily: 'Roboto Slab, serif',
+// 		},
+// 	}),
+// 	{ breakpoints: ['sm', 'md', 'lg', 'xl'], factor: 4 },
+// );
 
 const drawerWidth = 500;
 
@@ -33,7 +33,7 @@ export default function App() {
 
 	React.useEffect(() => {
 		(async () => {
-			const res = await fetch('https://internship-worker.benhong.workers.dev/api/v1/sensors');
+			const res = await fetch("https://internship-worker.benhong.workers.dev/api/v1/sensors");
 			const data = await res.json();
 			const newSensors = {};
 			Object.values(data.sensors).forEach((sensor) => {
@@ -81,17 +81,17 @@ export default function App() {
 		if (mapLoaded && sensors && Object.keys(sensors).length) {
 			// Construct geoJSON
 			const geoJSON = {
-				type: 'FeatureCollection',
+				type: "FeatureCollection",
 				features: Object.values(sensors).map((sensor) => ({
-					type: 'Feature',
+					type: "Feature",
 					geometry: {
-						type: 'Point',
+						type: "Point",
 						coordinates: [sensor.longitude, sensor.latitude],
 					},
 					properties: {
 						id: sensor.id,
-						color: 'online' in sensor ? (sensor.online ? '#157f1f' : '#d00000') : '#11b4da',
-						border: 'online' in sensor ? (sensor.online ? '#55d02e' : '#ff7a7a') : '#ffffff',
+						color: "online" in sensor ? (sensor.online ? "#157f1f" : "#d00000") : "#11b4da",
+						border: "online" in sensor ? (sensor.online ? "#55d02e" : "#ff7a7a") : "#ffffff",
 					},
 				})),
 			};
@@ -119,70 +119,70 @@ export default function App() {
 	}, [mapLoaded, sensors]);
 
 	return (
-		<ThemeProvider theme={theme}>
-			<SensorsContext.Provider value={[sensors, setSensors]}>
-				<MapContext.Provider value={[map, setMap, mapLoaded, setMapLoaded]}>
-					<Box
+		// <ThemeProvider theme={theme}>
+		<SensorsContext.Provider value={[sensors, setSensors]}>
+			<MapContext.Provider value={[map, setMap, mapLoaded, setMapLoaded]}>
+				<Box
+					sx={{
+						display: "flex",
+						position: "absolute",
+						top: 0,
+						bottom: 0,
+						left: 0,
+						right: 0,
+					}}>
+					<CssBaseline />
+					<Drawer
 						sx={{
-							display: 'flex',
-							position: 'absolute',
-							top: 0,
-							bottom: 0,
-							left: 0,
-							right: 0,
-						}}>
-						<CssBaseline />
-						<Drawer
-							sx={{
+							width: drawerWidth,
+							flexShrink: 0,
+							"& .MuiDrawer-paper": {
 								width: drawerWidth,
-								flexShrink: 0,
-								'& .MuiDrawer-paper': {
-									width: drawerWidth,
-									boxSizing: 'border-box',
-								},
-							}}
-							variant="permanent"
-							anchor="left">
-							<Search />
+								boxSizing: "border-box",
+							},
+						}}
+						variant="permanent"
+						anchor="left">
+						<Search />
 
-							<Routes />
-						</Drawer>
+						<Routes />
+					</Drawer>
 
-						<Box
-							component="main"
-							sx={{
-								flexGrow: 1,
-								bgcolor: 'background.default',
-								p: 3,
-								position: 'relative',
-								height: '100%',
-							}}>
-							<React.Suspense
-								fallback={
-									// div with text in middle
-									<div
-										style={{
-											position: 'absolute',
-											top: 0,
-											bottom: 0,
-											left: 0,
-											right: 0,
-											backgroundColor: '#78bced',
-											display: 'flex',
-											justifyContent: 'center',
-											alignItems: 'center',
-										}}>
-										<Typography variant="h5" style={{ color: 'white' }}>
-											Loading map...
-										</Typography>
-									</div>
-								}>
-								<Map />
-							</React.Suspense>
-						</Box>
+					<Box
+						component="main"
+						sx={{
+							flexGrow: 1,
+							bgcolor: "background.default",
+							p: 3,
+							position: "relative",
+							height: "100%",
+						}}>
+						<React.Suspense
+							fallback={
+								// div with text in middle
+								<div
+									style={{
+										position: "absolute",
+										top: 0,
+										bottom: 0,
+										left: 0,
+										right: 0,
+										backgroundColor: "#78bced",
+										display: "flex",
+										justifyContent: "center",
+										alignItems: "center",
+									}}>
+									<Typography variant="h5" style={{ color: "white" }}>
+										Loading map...
+									</Typography>
+								</div>
+							}>
+							<Map />
+						</React.Suspense>
 					</Box>
-				</MapContext.Provider>
-			</SensorsContext.Provider>
-		</ThemeProvider>
+				</Box>
+			</MapContext.Provider>
+		</SensorsContext.Provider>
+		// </ThemeProvider>
 	);
 }
