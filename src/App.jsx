@@ -25,7 +25,7 @@ export default function App() {
 
 	React.useEffect(() => {
 		(async () => {
-			const res = await fetch("https://internship-worker.benhong.workers.dev/api/v1/sensors");
+			const res = await fetch("https://internship-worker.benhong.workers.dev/v0/sensors");
 			const data = await res.json();
 			const newSensors = {};
 			Object.values(data.sensors).forEach((sensor) => {

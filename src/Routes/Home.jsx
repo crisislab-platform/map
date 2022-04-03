@@ -84,13 +84,29 @@ export default function Home() {
 		function onMouseEnter() {
 			showFaultLineLabels(true);
 			if (map && map.loaded) {
-				map.setPaintProperty("fault-lines-layer", "line-width", 8);
+				map.setPaintProperty("fault-lines-layer", "line-width", [
+					"interpolate",
+					["linear"],
+					["zoom"],
+					5,
+					4,
+					18,
+					16,
+				]);
 			}
 		}
 		function onMouseLeave() {
 			showFaultLineLabels(false);
 			if (map && map.loaded) {
-				map.setPaintProperty("fault-lines-layer", "line-width", 3);
+				map.setPaintProperty("fault-lines-layer", "line-width", [
+					"interpolate",
+					["linear"],
+					["zoom"],
+					5,
+					2,
+					18,
+					12,
+				]);
 			}
 		}
 
