@@ -56,6 +56,7 @@ export default function MapApp(props) {
 			}
 
 			function onLoad() {
+				console.log("onload");
 				setMapLoaded(true);
 				// Insert the layer beneath any symbol layer.
 				// map.addSource('composite', { type: 'vector', url: 'mapbox://mapbox.mapbox-streets-v7' });
@@ -140,14 +141,14 @@ export default function MapApp(props) {
 					source: "fault-lines-source",
 					"source-layer": "New_Zealand_Active_Faults_Database_1250k",
 					layout: {
-						// Make the layer visible by default.
-						visibility: "visible",
+						// Make the layer hidden by default.
+						visibility: "none",
 						"line-join": "round",
 						"line-cap": "round",
-						"line-width": 30,
 					},
 					paint: {
 						"line-color": theme.palette.error.main,
+						"line-width": 3,
 					},
 				});
 				map.addLayer({
@@ -156,9 +157,9 @@ export default function MapApp(props) {
 					source: "fault-lines-source",
 					"source-layer": "New_Zealand_Active_Faults_Database_1250k",
 					layout: {
-						visibility: "visible",
+						visibility: "none", // Hide by default
 						"text-field": ["get", "Name"],
-						"text-size": 12,
+						"text-size": 14,
 						"symbol-placement": "line-center",
 					},
 					paint: {

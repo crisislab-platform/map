@@ -56,7 +56,7 @@ export default function Home() {
 	const [map] = useContext(MapContext);
 
 	const [selectedStyle, setSelectedStyle] = useState("streets-v11");
-	const [faultLinesEnabled, setFaultLinesEnabled] = useState(true);
+	const [faultLinesEnabled, setFaultLinesEnabled] = useState(false);
 
 	function setStyle(style) {
 		map?.setStyle("mapbox://styles/mapbox/" + style);
@@ -64,28 +64,37 @@ export default function Home() {
 	}
 
 	useEffect(() => {
-		if (map && map.loaded && map.getLayer("fault-lines-layer") && map.getLayer("fault-lines-labels-layer")) {
-			if (faultLinesEnabled) {
-				map.setLayoutProperty("fault-lines-layer", "visibility", "visible").setLayoutProperty(
-					"fault-lines-labels-layer",
-					"visibility",
-					"none",
-				);
-			} else {
-				map.setLayoutProperty("fault-lines-layer", "visibility", "none").setLayoutProperty(
-					"fault-lines-labels-layer",
-					"visibility",
-					"none",
-				);
+		function showFaultLines(show) {
+			if (map && map.loaded && map.getLayer("fault-lines-layer")) {
+				map.setLayoutProperty("fault-lines-layer", "visibility", show ? "visible" : "none");
 			}
-			const onMouseEnter = () => {
-				console.log("mouse enter");
-				map.setLayoutProperty("fault-lines-labels-layer", "visibility", "visible");
-			};
-			const onMouseLeave = () => {
-				console.log("mouse leave");
-				map.setLayoutProperty("fault-lines-labels-layer", "visibility", "none");
-			};
+		}
+		function showFaultLineLabels(show) {
+			if (map && map.loaded && map.getLayer("fault-lines-labels-layer")) {
+				map.setLayoutProperty("fault-lines-labels-layer", "visibility", show ? "visible" : "none");
+			}
+		}
+
+		if (faultLinesEnabled) {
+			showFaultLines(true);
+		} else {
+			showFaultLines(false);
+			showFaultLineLabels(false);
+		}
+		function onMouseEnter() {
+			showFaultLineLabels(true);
+			if (map && map.loaded) {
+				map.setPaintProperty("fault-lines-layer", "line-width", 8);
+			}
+		}
+		function onMouseLeave() {
+			showFaultLineLabels(false);
+			if (map && map.loaded) {
+				map.setPaintProperty("fault-lines-layer", "line-width", 3);
+			}
+		}
+
+		if (map && map.loaded) {
 			map.on("mouseenter", "fault-lines-layer", onMouseEnter);
 			map.on("mouseleave", "fault-lines-layer", onMouseLeave);
 
