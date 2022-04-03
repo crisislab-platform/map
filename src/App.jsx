@@ -10,18 +10,18 @@ import SensorsContext from "./SensorsContext";
 import { ThemeProvider } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import setupGeoJSON from "./setupGeoJSON";
-import { theme } from "./theme.js";
+import { theme } from "beryllium";
 import { useNavigate } from "react-router-dom";
 
 const Map = React.lazy(() => import("./Map"));
 
 const drawerWidth = 500;
-
 export default function App() {
 	const [sensors, setSensors] = React.useState([]);
 	const [map, setMap] = React.useState(null);
 	const [mapLoaded, setMapLoaded] = React.useState(false);
 	const navigate = useNavigate();
+	window.theme = theme;
 
 	React.useEffect(() => {
 		(async () => {

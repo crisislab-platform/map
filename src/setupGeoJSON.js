@@ -1,4 +1,4 @@
-import { theme } from "./theme.js";
+import { theme } from "beryllium";
 
 function makeCircleColourGetter(text = false) {
 	console.log(text);
