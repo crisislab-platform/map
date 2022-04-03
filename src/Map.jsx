@@ -99,7 +99,7 @@ export default function MapApp(props) {
 					},
 					paint: {
 						"line-color": theme.palette.error.main,
-						"line-width": 3,
+						"line-width": ["interpolate", ["linear"], ["zoom"], 5, 2, 18, 12],
 					},
 				});
 				map.addLayer({
