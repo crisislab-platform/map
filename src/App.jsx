@@ -1,27 +1,19 @@
 import * as React from "react";
+
 import Box from "@mui/material/Box";
-import Drawer from "@mui/material/Drawer";
 import CssBaseline from "@mui/material/CssBaseline";
-import Typography from "@mui/material/Typography";
-import { createTheme, ThemeProvider, responsiveFontSizes } from "@mui/material";
-import { Marker } from "mapbox-gl";
-import { useNavigate } from "react-router-dom";
-import Search from "./Search";
-import Routes from "./Routes";
-import SensorsContext from "./SensorsContext";
+import Drawer from "@mui/material/Drawer";
 import MapContext from "./MapContext";
+import Routes from "./Routes";
+import Search from "./Search";
+import SensorsContext from "./SensorsContext";
+import { ThemeProvider } from "@mui/material";
+import Typography from "@mui/material/Typography";
 import setupGeoJSON from "./setupGeoJSON";
+import { theme } from "./theme.js";
+import { useNavigate } from "react-router-dom";
 
 const Map = React.lazy(() => import("./Map"));
-
-// const theme = responsiveFontSizes(
-// 	createTheme({
-// 		typography: {
-// 			fontFamily: 'Roboto Slab, serif',
-// 		},
-// 	}),
-// 	{ breakpoints: ['sm', 'md', 'lg', 'xl'], factor: 4 },
-// );
 
 const drawerWidth = 500;
 
@@ -96,7 +88,7 @@ export default function App() {
 				})),
 			};
 
-			setupGeoJSON(map, geoJSON, (e) => {
+			return setupGeoJSON(map, geoJSON, (e) => {
 				const coordinates = e.features[0].geometry.coordinates.slice();
 
 				// Ensure that if the map is zoomed out such that
@@ -119,70 +111,70 @@ export default function App() {
 	}, [mapLoaded, sensors]);
 
 	return (
-		// <ThemeProvider theme={theme}>
-		<SensorsContext.Provider value={[sensors, setSensors]}>
-			<MapContext.Provider value={[map, setMap, mapLoaded, setMapLoaded]}>
-				<Box
-					sx={{
-						display: "flex",
-						position: "absolute",
-						top: 0,
-						bottom: 0,
-						left: 0,
-						right: 0,
-					}}>
-					<CssBaseline />
-					<Drawer
-						sx={{
-							width: drawerWidth,
-							flexShrink: 0,
-							"& .MuiDrawer-paper": {
-								width: drawerWidth,
-								boxSizing: "border-box",
-							},
-						}}
-						variant="permanent"
-						anchor="left">
-						<Search />
-
-						<Routes />
-					</Drawer>
-
+		<ThemeProvider theme={theme}>
+			<SensorsContext.Provider value={[sensors, setSensors]}>
+				<MapContext.Provider value={[map, setMap, mapLoaded, setMapLoaded]}>
 					<Box
-						component="main"
 						sx={{
-							flexGrow: 1,
-							bgcolor: "background.default",
-							p: 3,
-							position: "relative",
-							height: "100%",
+							display: "flex",
+							position: "absolute",
+							top: 0,
+							bottom: 0,
+							left: 0,
+							right: 0,
 						}}>
-						<React.Suspense
-							fallback={
-								// div with text in middle
-								<div
-									style={{
-										position: "absolute",
-										top: 0,
-										bottom: 0,
-										left: 0,
-										right: 0,
-										backgroundColor: "#78bced",
-										display: "flex",
-										justifyContent: "center",
-										alignItems: "center",
-									}}>
-									<Typography variant="h5" style={{ color: "white" }}>
-										Loading map...
-									</Typography>
-								</div>
-							}>
-							<Map />
-						</React.Suspense>
+						<CssBaseline />
+						<Drawer
+							sx={{
+								width: drawerWidth,
+								flexShrink: 0,
+								"& .MuiDrawer-paper": {
+									width: drawerWidth,
+									boxSizing: "border-box",
+								},
+							}}
+							variant="permanent"
+							anchor="left">
+							<Search />
+
+							<Routes />
+						</Drawer>
+
+						<Box
+							component="main"
+							sx={{
+								flexGrow: 1,
+								bgcolor: "background.default",
+								p: 3,
+								position: "relative",
+								height: "100%",
+							}}>
+							<React.Suspense
+								fallback={
+									// div with text in middle
+									<div
+										style={{
+											position: "absolute",
+											top: 0,
+											bottom: 0,
+											left: 0,
+											right: 0,
+											backgroundColor: "#78bced",
+											display: "flex",
+											justifyContent: "center",
+											alignItems: "center",
+										}}>
+										<Typography variant="h5" style={{ color: "white" }}>
+											Loading map...
+										</Typography>
+									</div>
+								}>
+								<Map />
+							</React.Suspense>
+						</Box>
 					</Box>
-				</Box>
-			</MapContext.Provider>
-		</SensorsContext.Provider>
-		// </ThemeProvider>
+				</MapContext.Provider>
+			</SensorsContext.Provider>
+		</ThemeProvider>
 	);
 }

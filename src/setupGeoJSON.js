@@ -1,6 +1,21 @@
+import { theme } from "./theme.js";
+
+function makeCircleColourGetter(text = false) {
+	console.log(text);
+	return [
+		"step",
+		["get", "point_count"],
+		text ? "#ffffff" : theme.palette.primary.light,
+		100,
+		text ? "#ffffff" : theme.palette.warning.light,
+		750,
+		text ? "#ffffff" : theme.palette.error.light,
+	];
+}
+
 export default function setupMap(map, geoJSON, onClick) {
-	map.addSource('earthquakes', {
-		type: 'geojson',
+	map.addSource("earthquakes", {
+		type: "geojson",
 		// Point to GeoJSON data. This example visualizes all M1.0+ earthquakes
 		// from 12/22/15 to 1/21/16 as logged by USGS' Earthquake hazards program.
 		data: geoJSON,
@@ -10,56 +25,59 @@ export default function setupMap(map, geoJSON, onClick) {
 	});
 
 	map.addLayer({
-		id: 'clusters',
-		type: 'circle',
-		source: 'earthquakes',
-		filter: ['has', 'point_count'],
+		id: "clusters",
+		type: "circle",
+		source: "earthquakes",
+		filter: ["has", "point_count"],
 		paint: {
 			// Use step expressions (https://docs.mapbox.com/mapbox-gl-js/style-spec/#expressions-step)
 			// with three steps to implement three types of circles:
 			//   * Blue, 20px circles when point count is less than 100
 			//   * Yellow, 30px circles when point count is between 100 and 750
 			//   * Pink, 40px circles when point count is greater than or equal to 750
-			'circle-color': ['step', ['get', 'point_count'], '#51bbd6', 100, '#f1f075', 750, '#f28cb1'],
-			'circle-radius': ['step', ['get', 'point_count'], 20, 100, 30, 750, 40],
+			"circle-color": makeCircleColourGetter(),
+			"circle-radius": ["step", ["get", "point_count"], 20, 100, 30, 750, 40],
 		},
 	});
 
 	map.addLayer({
-		id: 'unclustered-point',
-		type: 'circle',
-		source: 'earthquakes',
-		filter: ['!', ['has', 'point_count']],
+		id: "unclustered-point",
+		type: "circle",
+		source: "earthquakes",
+		filter: ["!", ["has", "point_count"]],
 		paint: {
-			'circle-color': ['get', 'color'],
-			'circle-radius': ['interpolate', ['linear'], ['zoom'], 10, 6, 25, 18],
-			'circle-stroke-width': ['interpolate', ['linear'], ['zoom'], 10, 2, 25, 6],
-			'circle-stroke-color': ['get', 'border'],
+			"circle-color": ["get", "color"],
+			"circle-radius": ["interpolate", ["linear"], ["zoom"], 10, 6, 25, 18],
+			"circle-stroke-width": ["interpolate", ["linear"], ["zoom"], 10, 2, 25, 6],
+			"circle-stroke-color": ["get", "border"],
 		},
 	});
 
 	map.addLayer(
 		{
-			id: 'cluster-count',
-			type: 'symbol',
-			source: 'earthquakes',
-			filter: ['has', 'point_count'],
+			id: "cluster-count",
+			type: "symbol",
+			source: "earthquakes",
+			filter: ["has", "point_count"],
 			layout: {
-				'text-field': '{point_count_abbreviated}',
-				'text-font': ['Roboto Slab Regular'],
-				'text-size': 12,
+				"text-field": "{point_count_abbreviated}",
+				"text-font": ["Roboto Slab Regular"],
+				"text-size": 12,
+			},
+			paint: {
+				"text-color": makeCircleColourGetter(true),
 			},
 		},
-		'unclustered-point',
+		"unclustered-point",
 	);
 
 	// inspect a cluster on click
-	map.on('click', 'clusters', (e) => {
+	map.on("click", "clusters", (e) => {
 		const features = map.queryRenderedFeatures(e.point, {
-			layers: ['clusters'],
+			layers: ["clusters"],
 		});
 		const clusterId = features[0].properties.cluster_id;
-		map.getSource('earthquakes').getClusterExpansionZoom(clusterId, (err, zoom) => {
+		map.getSource("earthquakes").getClusterExpansionZoom(clusterId, (err, zoom) => {
 			if (err) return;
 
 			map.flyTo({
@@ -74,19 +92,26 @@ export default function setupMap(map, geoJSON, onClick) {
 	// the unclustered-point layer, open a popup at
 	// the location of the feature, with
 	// description HTML from its properties.
-	map.on('click', 'unclustered-point', onClick);
+	map.on("click", "unclustered-point", onClick);
 
-	map.on('mouseenter', 'clusters', () => {
-		map.getCanvas().style.cursor = 'pointer';
+	map.on("mouseenter", "clusters", () => {
+		map.getCanvas().style.cursor = "pointer";
 	});
-	map.on('mouseleave', 'clusters', () => {
-		map.getCanvas().style.cursor = '';
+	map.on("mouseleave", "clusters", () => {
+		map.getCanvas().style.cursor = "";
 	});
 
-	map.on('mouseenter', 'unclustered-point', () => {
-		map.getCanvas().style.cursor = 'pointer';
+	map.on("mouseenter", "unclustered-point", () => {
+		map.getCanvas().style.cursor = "pointer";
 	});
-	map.on('mouseleave', 'unclustered-point', () => {
-		map.getCanvas().style.cursor = '';
+	map.on("mouseleave", "unclustered-point", () => {
+		map.getCanvas().style.cursor = "";
 	});
+
+	return () => {
+		map.removeSource("earthquakes");
+		map.removeLayer("clusters");
+		map.removeLayer("unclustered-point");
+		map.removeLayer("cluster-count");
+	};
 }

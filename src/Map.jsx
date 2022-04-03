@@ -1,6 +1,5 @@
 import "mapbox-gl/dist/mapbox-gl.css";
-import { useTheme } from "@mui/material";
-import { useRef, useContext, useEffect } from "react";
+
 import mapboxgl, {
 	AttributionControl,
 	GeolocateControl,
@@ -9,8 +8,11 @@ import mapboxgl, {
 	NavigationControl,
 	ScaleControl,
 } from "mapbox-gl";
-import SunCalc from "suncalc";
+import { useContext, useEffect, useRef } from "react";
+
 import MapContext from "./MapContext";
+import SunCalc from "suncalc";
+import { useTheme } from "@mui/material";
 
 mapboxgl.accessToken = "pk.eyJ1IjoiemFkZXZpZ2dlcnMiLCJhIjoiY2t5dGF6cGpvMWMydTJ3cGhrb2ZhOTdlZCJ9.myQ3YnPgbI-QkuBlClYfCw";
 
@@ -58,57 +60,6 @@ export default function MapApp(props) {
 			function onLoad() {
 				console.log("onload");
 				setMapLoaded(true);
-				// Insert the layer beneath any symbol layer.
-				// map.addSource('composite', { type: 'vector', url: 'mapbox://mapbox.mapbox-streets-v7' });
-
-				// The 'building' layer in the Mapbox Streets
-				// vector tileset contains building height data
-				// from OpenStreetMap.
-				// map.addLayer(
-				// 	{
-				// 		'id': 'buildings',
-				// 		'source': 'composite',
-				// 		'source-layer': 'building',
-				// 		'filter': ['==', 'extrude', 'true'],
-				// 		'type': 'fill-extrusion',
-				// 		'minzoom': 15,
-				// 		'paint': {
-				// 			'fill-extrusion-color': '#aaa',
-
-				// 			// Use an 'interpolate' expression to
-				// 			// add a smooth transition effect to
-				// 			// the buildings as the user zooms in.
-				// 			'fill-extrusion-height': [
-				// 				'interpolate',
-				// 				['linear'],
-				// 				['zoom'],
-				// 				15,
-				// 				0,
-				// 				15.05,
-				// 				['get', 'height']
-				// 			],
-				// 			'fill-extrusion-base': [
-				// 				'interpolate',
-				// 				['linear'],
-				// 				['zoom'],
-				// 				15,
-				// 				0,
-				// 				15.05,
-				// 				['get', 'min_height']
-				// 			],
-				// 			'fill-extrusion-opacity': 0.6
-				// 		}
-				// 	},
-				// );
-
-				// map.addSource('mapbox-dem', {
-				// 	'type': 'raster-dem',
-				// 	'url': 'mapbox://mapbox.mapbox-terrain-dem-v1',
-				// 	'tileSize': 512,
-				// 	'maxzoom': 14
-				// });
-				// // add the DEM source as a terrain layer with exaggerated height
-				// map.setTerrain({ 'source': 'mapbox-dem', 'exaggeration': 1.5 });
 
 				function getSunPosition() {
 					const center = map.getCenter();
@@ -172,6 +123,12 @@ export default function MapApp(props) {
 						// "text-halo-color": "#000000",
 					},
 				});
+
+				return () => {
+					map.removeSource("fault-lines-source");
+					map.removeLayer("fault-lines-layer");
+					map.removeLayer("falt-lines-labels-layer");
+				};
 			}
 
 			// function onLoad() {

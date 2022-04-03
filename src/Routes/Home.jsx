@@ -1,16 +1,16 @@
+import { useContext, useEffect, useState } from "react";
+
 import Box from "@mui/material/Box";
+import ButtonBase from "@mui/material/ButtonBase";
+import Fade from "@mui/material/Fade";
+import MapContext from "../MapContext";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
-import Fade from "@mui/material/Fade";
-import ButtonBase from "@mui/material/ButtonBase";
-import { useContext, useState, useEffect } from "react";
-import MapContext from "../MapContext";
 
 const FlexSquare = (props) => (
 	<ButtonBase
 		{...props}
 		elevation={0}
-		button
 		style={{
 			flexGrow: 1,
 			flexShrink: 0,

@@ -20,6 +20,7 @@
 		"@emotion/styled": "^11.8.1",
 		"@mui/icons-material": "5.4",
 		"@mui/material": "5.4",
+		"color-shorthand-hex-to-six-digit": "^4.0.12",
 		"geolib": "^3.3.3",
 		"mapbox-gl": "^2.7.1",
 		"react": "17",
