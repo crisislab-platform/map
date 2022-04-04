@@ -1,27 +1,27 @@
-import Box from '@mui/material/Box';
-import Paper from '@mui/material/Paper';
-import Typography from '@mui/material/Typography';
-import SensorsContext from '../SensorsContext';
-import React from 'react';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import { useSearchParams } from 'react-router-dom';
-import { getDistance } from 'geolib';
-import RPiIcon from './RPiIcon';
-import { Fade } from '@mui/material';
-import { useNavigate, useLocation } from 'react-router-dom';
-import MapContext from '../MapContext';
+import Box from "@mui/material/Box";
+import Paper from "@mui/material/Paper";
+import Typography from "@mui/material/Typography";
+import SensorsContext from "../SensorsContext";
+import React from "react";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemButton from "@mui/material/ListItemButton";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
+import { useSearchParams } from "react-router-dom";
+import { getDistance } from "geolib";
+import RPiIcon from "./RPiIcon";
+import { Fade } from "@mui/material";
+import { useNavigate, useLocation } from "react-router-dom";
+import MapContext from "../MapContext";
 
 export default function Search() {
 	const [sensors] = React.useContext(SensorsContext);
 	const [searchParams] = useSearchParams();
 	const navigate = useNavigate();
-	const name = searchParams.get('name');
-	const center = JSON.parse(searchParams.get('center'));
-	const bbox = searchParams.get('bbox') && JSON.parse(searchParams.get('bbox'));
+	const name = searchParams.get("name");
+	const center = JSON.parse(searchParams.get("center"));
+	const bbox = searchParams.get("bbox") && JSON.parse(searchParams.get("bbox"));
 	const [map] = React.useContext(MapContext);
 
 	let results;
@@ -51,7 +51,7 @@ export default function Search() {
 			.slice(0, 5);
 	}
 
-	console.log('Sensors:', sensors);
+	console.log("Sensors:", sensors);
 
 	return (
 		<Fade in>
@@ -64,10 +64,10 @@ export default function Search() {
 				<Typography
 					variant="h6"
 					sx={{
-						fontWeight: 'bold',
+						fontWeight: "bold",
 						marginInline: 4,
 					}}>
-					{bbox ? 'Sensors in' : 'Sensors near'} {name}:
+					{bbox ? "Sensors in" : "Sensors near"} {name}:
 				</Typography>
 
 				{results.length > 0 && (
@@ -78,12 +78,12 @@ export default function Search() {
 								sx={{ paddingInline: 4 }}
 								onClick={() => {
 									map?.flyTo({
-										center: [sensor.longitude, sensor.latitude],
+										center: sensor.location,
 										zoom: 16,
 										speed: 1.2,
 										curve: 1,
 									});
-									navigate('/sensor/' + sensor.id);
+									navigate("/sensor/" + sensor.id);
 								}}>
 								<ListItemIcon>
 									<RPiIcon fontSize="large" />
@@ -92,14 +92,14 @@ export default function Search() {
 									primary={sensor.type}
 									secondary={
 										(bbox
-											? ''
+											? ""
 											: (sensor.distance > 1000
-													? Math.round(sensor.distance / 100) / 10 + ' kilometers away'
-													: sensor.distance + ' meters away') + ' • ') +
-										'ID: ' +
+													? Math.round(sensor.distance / 100) / 10 + " kilometers away"
+													: sensor.distance + " meters away") + " • ") +
+										"ID: " +
 										sensor.id +
-										' • ' +
-										(sensor.online ? 'Online' : 'Offline')
+										" • " +
+										(sensor.online ? "Online" : "Offline")
 									}
 								/>
 							</ListItem>
