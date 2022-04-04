@@ -1,7 +1,8 @@
 import { Box, ButtonBase, Typography, Paper, useTheme, Stack } from "@mui/material";
+import LayersOutlinedIcon from "@mui/icons-material/LayersOutlined";
 // import FlexSquare from "../FlexSquare";
 import MapContext from "../../MapContext";
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 // import Styles from "./Switcher.module.css";
 const FlexSquare = (props) => (
 	<ButtonBase
@@ -61,8 +62,71 @@ function Switcher(props) {
 	const [map] = useContext(MapContext);
 
 	const [hasFocus, setHasFocus] = useState(false);
-	const [rendered, setRendered] = useState(false);
 	const [selectedStyle, setSelectedStyle] = useState("streets-v11");
+	const [faultLinesEnabled, setFaultLinesEnabled] = useState(false);
+
+	function setStyle(style) {
+		map?.setStyle("mapbox://styles/mapbox/" + style);
+		setSelectedStyle(style);
+	}
+
+	useEffect(() => {
+		function showFaultLines(show) {
+			if (map && map.loaded && map.getLayer("fault-lines-layer")) {
+				map.setLayoutProperty("fault-lines-layer", "visibility", show ? "visible" : "none");
+			}
+		}
+		function showFaultLineLabels(show) {
+			if (map && map.loaded && map.getLayer("fault-lines-labels-layer")) {
+				map.setLayoutProperty("fault-lines-labels-layer", "visibility", show ? "visible" : "none");
+			}
+		}
+
+		if (faultLinesEnabled) {
+			showFaultLines(true);
+		} else {
+			showFaultLines(false);
+			showFaultLineLabels(false);
+		}
+		function onMouseEnter() {
+			showFaultLineLabels(true);
+			if (map && map.loaded) {
+				map.setPaintProperty("fault-lines-layer", "line-width", [
+					"interpolate",
+					["linear"],
+					["zoom"],
+					5,
+					4,
+					18,
+					16,
+				]);
+			}
+		}
+		function onMouseLeave() {
+			showFaultLineLabels(false);
+			if (map && map.loaded) {
+				map.setPaintProperty("fault-lines-layer", "line-width", [
+					"interpolate",
+					["linear"],
+					["zoom"],
+					5,
+					2,
+					18,
+					12,
+				]);
+			}
+		}
+
+		if (map && map.loaded) {
+			map.on("mouseenter", "fault-lines-layer", onMouseEnter);
+			map.on("mouseleave", "fault-lines-layer", onMouseLeave);
+
+			return () => {
+				map.off("mouseenter", "fault-lines-layer", onMouseEnter);
+				map.off("mouseleave", "fault-lines-layer", onMouseLeave);
+			};
+		}
+	}, [map, faultLinesEnabled]);
 
 	const styles = [
 		{ text: "Streets", color: "pink", id: "streets-v11" },
@@ -108,7 +172,7 @@ function Switcher(props) {
 					display: "inline-block",
 					// zIndex: 999,
 					backgroundColor: "white",
-					borderRadius: 4,
+					borderRadius: 3,
 					padding: 0.5,
 					paddingBottom: 2,
 					opacity: hasFocus ? 1 : 0,
@@ -125,6 +189,12 @@ function Switcher(props) {
 						lines={style.lines}
 					/>
 				))}
+				<FlexSquare
+					selected={faultLinesEnabled}
+					onClick={() => setFaultLinesEnabled((oldState) => !oldState)}
+					color="red"
+					text="Fault lines"
+				/>
 			</Paper>
 
 			<Paper
@@ -145,17 +215,32 @@ function Switcher(props) {
 						boxShadow: "rgb(0 0 0 / 73%) 0px -40px 30px -30px inset",
 						pointerEvents: "auto",
 					}}>
-					<Typography
-						variant="caption"
-						style={{
+					<Stack
+						direction="row"
+						alignItems="center"
+						justifyContent="center"
+						gap={0.3}
+						sx={{
 							position: "absolute",
-							bottom: "1px",
+							bottom: 4,
+							left: -1,
 							textAlign: "center",
 							width: "100%",
 							color: "white",
 						}}>
-						{selectedStyleDetails.text}
-					</Typography>
+						<LayersOutlinedIcon
+							style={{
+								fontSize: "1.5em",
+								// position: "relative",
+								// top: "0.3em",
+								// lineHeight: "50px",
+								// display: "inline-block",
+							}}
+						/>
+						<Typography variant="caption" style={{}}>
+							Layers
+						</Typography>
+					</Stack>
 				</Paper>
 			</Paper>
 		</Stack>
