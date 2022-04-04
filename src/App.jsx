@@ -12,6 +12,7 @@ import Typography from "@mui/material/Typography";
 import setupGeoJSON from "./setupGeoJSON";
 import { theme } from "./theme.js";
 import { useNavigate } from "react-router-dom";
+import MapSwitcher from "./components/MapSwitcher";
 
 const Map = React.lazy(() => import("./Map"));
 
@@ -29,7 +30,7 @@ export default function App() {
 			const data = await res.json();
 			const newSensors = {};
 			Object.values(data.sensors).forEach((sensor) => {
-				if (sensor.latitude && sensor.longitude) {
+				if (sensor.location) {
 					newSensors[sensor.id] = sensor;
 				}
 			});
@@ -78,7 +79,7 @@ export default function App() {
 					type: "Feature",
 					geometry: {
 						type: "Point",
-						coordinates: [sensor.longitude, sensor.latitude],
+						coordinates: sensor.location,
 					},
 					properties: {
 						id: sensor.id,
@@ -172,6 +173,7 @@ export default function App() {
 								<Map />
 							</React.Suspense>
 						</Box>
+						<MapSwitcher />
 					</Box>
 				</MapContext.Provider>
 			</SensorsContext.Provider>
