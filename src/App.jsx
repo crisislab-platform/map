@@ -1,19 +1,21 @@
 import * as React from "react";
 
+import { createTheme, responsiveFontSizes } from "@mui/material";
+
 import Box from "@mui/material/Box";
 import CssBaseline from "@mui/material/CssBaseline";
 import Drawer from "@mui/material/Drawer";
 import MapContext from "./MapContext";
+import MapSwitcher from "./components/MapSwitcher";
 import Routes from "./Routes";
 import Search from "./Search";
 import SensorsContext from "./SensorsContext";
 import { ThemeProvider } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import setupGeoJSON from "./setupGeoJSON";
-// import { theme } from "beryllium";
 import { useNavigate } from "react-router-dom";
-import MapSwitcher from "./components/MapSwitcher";
-import { createTheme, responsiveFontSizes } from "@mui/material";
+
+// import { theme } from "beryllium";
 
 let theme = createTheme({
 	palette: {
@@ -130,8 +132,8 @@ export default function App() {
 
 				map?.flyTo({
 					center: [coordinates[0], coordinates[1]],
-					zoom: 17,
-					speed: 1.4,
+					zoom: map?.getZoom() || 17,
+					speed: 0.2,
 					curve: 1,
 				});
 
