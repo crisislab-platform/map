@@ -1,29 +1,20 @@
+import { Box, CssBaseline, Typography } from "@mui/material";
 import React, { Suspense, useEffect, useState } from "react";
-import { createTheme, responsiveFontSizes } from "@mui/material";
 
-import Box from "@mui/material/Box";
-import CssBaseline from "@mui/material/CssBaseline";
-import Drawer from "@mui/material/Drawer";
 import MapContext from "./MapContext";
 import MapSwitcher from "./components/MapSwitcher";
-import Routes from "./Routes";
-import Search from "./Search";
 import SensorsContext from "./SensorsContext";
-import { ThemeProvider } from "@mui/material";
-import Typography from "@mui/material/Typography";
+import Sidebar from "./Sidebar.jsx";
 import setupGeoJSON from "./setupGeoJSON";
-import { theme } from "beryllium";
 import { useNavigate } from "react-router-dom";
 
 const Map = React.lazy(() => import("./Map"));
 
-const drawerWidth = 500;
 export default function App() {
 	const [sensors, setSensors] = useState([]);
 	const [map, setMap] = useState(null);
 	const [mapLoaded, setMapLoaded] = useState(false);
 	const navigate = useNavigate();
-	window.theme = theme;
 
 	useEffect(() => {
 		(async () => {
@@ -81,71 +72,55 @@ export default function App() {
 	}, [mapLoaded, sensors]);
 
 	return (
-		<ThemeProvider theme={theme}>
-			<SensorsContext.Provider value={[sensors, setSensors]}>
-				<MapContext.Provider value={[map, setMap, mapLoaded, setMapLoaded]}>
+		<SensorsContext.Provider value={[sensors, setSensors]}>
+			<MapContext.Provider value={[map, setMap, mapLoaded, setMapLoaded]}>
+				<Box
+					sx={{
+						display: "flex",
+						position: "absolute",
+						top: 0,
+						bottom: 0,
+						left: 0,
+						right: 0,
+					}}>
+					<CssBaseline />
+					<Sidebar />
+
 					<Box
+						component="main"
 						sx={{
-							display: "flex",
-							position: "absolute",
-							top: 0,
-							bottom: 0,
-							left: 0,
-							right: 0,
+							flexGrow: 1,
+							bgcolor: "background.default",
+							p: 3,
+							position: "relative",
+							height: "100%",
 						}}>
-						<CssBaseline />
-						<Drawer
-							sx={{
-								width: drawerWidth,
-								flexShrink: 0,
-								"& .MuiDrawer-paper": {
-									width: drawerWidth,
-									boxSizing: "border-box",
-								},
-							}}
-							variant="permanent"
-							anchor="left">
-							<Search />
-
-							<Routes />
-						</Drawer>
-
-						<Box
-							component="main"
-							sx={{
-								flexGrow: 1,
-								bgcolor: "background.default",
-								p: 3,
-								position: "relative",
-								height: "100%",
-							}}>
-							<Suspense
-								fallback={
-									// div with text in middle
-									<div
-										style={{
-											position: "absolute",
-											top: 0,
-											bottom: 0,
-											left: 0,
-											right: 0,
-											backgroundColor: "#78bced",
-											display: "flex",
-											justifyContent: "center",
-											alignItems: "center",
-										}}>
-										<Typography variant="h5" style={{ color: "white" }}>
-											Loading map...
-										</Typography>
-									</div>
-								}>
-								<Map />
-							</Suspense>
-						</Box>
-						<MapSwitcher />
+						<Suspense
+							fallback={
+								// div with text in middle
+								<div
+									style={{
+										position: "absolute",
+										top: 0,
+										bottom: 0,
+										left: 0,
+										right: 0,
+										backgroundColor: "#78bced",
+										display: "flex",
+										justifyContent: "center",
+										alignItems: "center",
+									}}>
+									<Typography variant="h5" style={{ color: "white" }}>
+										Loading map...
+									</Typography>
+								</div>
+							}>
+							<Map />
+						</Suspense>
 					</Box>
-				</MapContext.Provider>
-			</SensorsContext.Provider>
-		</ThemeProvider>
+					<MapSwitcher />
+				</Box>
+			</MapContext.Provider>
+		</SensorsContext.Provider>
 	);
 }

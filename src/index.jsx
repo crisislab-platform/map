@@ -1,22 +1,23 @@
 import "./index.css";
-// import "@fontsource/nunito/300.css";
-// import "@fontsource/nunito/400.css";
-// import "@fontsource/nunito/500.css";
-// import "@fontsource/nunito/700.css";
 
 import App from "./App";
 import { BrowserRouter } from "react-router-dom";
 import React from "react";
 import ReactDOM from "react-dom";
 import { StyledEngineProvider } from "@mui/material/styles";
+import { ThemeProvider } from "@mui/material";
 import reportWebVitals from "./reportWebVitals";
+import { theme } from "beryllium";
 
+window.theme = theme;
 ReactDOM.render(
 	<React.StrictMode>
 		<StyledEngineProvider injectFirst>
-			<BrowserRouter>
-				<App />
-			</BrowserRouter>
+			<ThemeProvider theme={theme}>
+				<BrowserRouter>
+					<App />
+				</BrowserRouter>
+			</ThemeProvider>
 		</StyledEngineProvider>
 		,
 	</React.StrictMode>,

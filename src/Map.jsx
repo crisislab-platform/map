@@ -31,20 +31,22 @@ export default function MapApp(props) {
 			setMap(map);
 
 			const attributionControl = new AttributionControl();
-			map.addControl(attributionControl, "top-left");
+			map.addControl(attributionControl, "top-right");
 			const navigationControl = new NavigationControl({
 				visualizePitch: true,
 				showZoom: true,
 				showCompass: true,
 			});
-			map.addControl(navigationControl, "top-left");
+			map.addControl(navigationControl, "top-right");
 			const geoLocateControl = new GeolocateControl({
 				positionOptions: {
 					enableHighAccuracy: true,
 				},
 				showUserLocation: false,
 			});
-			map.addControl(geoLocateControl, "top-left").addControl(
+			map.addControl(geoLocateControl, "top-right");
+
+			map.addControl(
 				new ScaleControl({
 					maxWidth: 150,
 					unit: "metric",
@@ -131,72 +133,6 @@ export default function MapApp(props) {
 				};
 			}
 
-			// function onLoad() {
-			// 	map.addSource("geonet-source", {
-			// 		type: "vector",
-			// 		url: "mapbox://zadeviggers.ckyti0ozu2wkk20rvo89kd6ur-6jsd8",
-			// 	});
-			// 	map.addLayer({
-			// 		id: "geonet-layer",
-			// 		type: "symbol",
-			// 		source: "geonet-source",
-			// 		"source-layer": "stations",
-			// 		layout: {
-			// 			visibility: "none",
-			// 			"text-field": ["get", "Name"],
-			// 			"text-size": 12,
-			// 			"icon-image": ["image", "border-dot-13"],
-			// 		},
-			// 		paint: {
-			// 			"text-color": theme.palette.text.primary,
-			// 			"text-halo-width": 1,
-			// 			"text-halo-color": "#ffffff",
-			// 			"icon-color": theme.palette.secondary.main,
-			// 		},
-			// 	});
-			// 	// Fault lines
-			// 	map.addSource("fault-lines-source", {
-			// 		type: "vector",
-			// 		url: "mapbox://zadeviggers.8hjwpez9",
-			// 	});
-			// 	map.addLayer({
-			// 		id: "fault-lines-layer",
-			// 		type: "line",
-			// 		source: "fault-lines-source",
-			// 		"source-layer": "New_Zealand_Active_Faults_Database_1250k",
-			// 		layout: {
-			// 			// Make the layer visible by default.
-			// 			visibility: "visible",
-			// 			"line-join": "round",
-			// 			"line-cap": "round",
-			// 		},
-			// 		paint: {
-			// 			"line-color": theme.palette.error.main,
-			// 		},
-			// 	});
-			// 	map.addLayer({
-			// 		id: "fault-lines-labels-layer",
-			// 		type: "symbol",
-			// 		source: "fault-lines-source",
-			// 		"source-layer": "New_Zealand_Active_Faults_Database_1250k",
-			// 		layout: {
-			// 			visibility: "visible",
-			// 			"text-field": ["get", "Name"],
-			// 			"text-size": 12,
-			// 			"symbol-placement": "line-center",
-			// 		},
-			// 		paint: {
-			// 			"text-color": theme.palette.text.primary,
-			// 			"text-halo-width": 1,
-			// 			"text-halo-color": "#ffffff",
-			// 			// Other theme - try out later
-			// 			// "text-color": theme.palette.error.main,
-			// 			// "text-halo-width": 1,
-			// 			// "text-halo-color": "#000000",
-			// 		},
-			// 	});
-			// setMap(map);
-			// }
 			map.on("error", onError);
 			map.on("load", onLoad);
 
