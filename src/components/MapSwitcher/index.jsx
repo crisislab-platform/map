@@ -85,7 +85,7 @@ export default function Switcher() {
 		showFaultLines(false);
 		showFaultLineLabels(false);
 	}
-	function onMouseEnter() {
+	function onFaultLinesShow() {
 		showFaultLineLabels(true);
 		if (map && map.loaded) {
 			map.setPaintProperty("fault-lines-layer", "line-width", [
@@ -99,7 +99,7 @@ export default function Switcher() {
 			]);
 		}
 	}
-	function onMouseLeave() {
+	function onFaultLinesHide() {
 		showFaultLineLabels(false);
 		if (map && map.loaded) {
 			map.setPaintProperty("fault-lines-layer", "line-width", [
@@ -114,14 +114,25 @@ export default function Switcher() {
 		}
 	}
 
+	function onFaultLinesClick() {
+		if (map && map.loaded && map.getLayer("fault-lines-labels-layer")) {
+			if (map.getLayoutProperty("fault-lines-labels-layer", "visibility") === "visible") {
+				onFaultLinesShow();
+			} else {
+				onFaultLinesHide();
+			}
+		}
+	}
+
 	useEffect(() => {
 		if (map && map.loaded) {
-			map.on("mouseenter", "fault-lines-layer", onMouseEnter);
-			map.on("mouseleave", "fault-lines-layer", onMouseLeave);
-
+			map.on("mouseenter", "fault-lines-layer", onFaultLinesShow);
+			map.on("mouseleave", "fault-lines-layer", onFaultLinesHide);
+			map.on("click", "fault-lines-layer", onFaultLinesClick);
 			return () => {
-				map.off("mouseenter", "fault-lines-layer", onMouseEnter);
-				map.off("mouseleave", "fault-lines-layer", onMouseLeave);
+				map.off("mouseenter", "fault-lines-layer", onFaultLinesShow);
+				map.off("mouseleave", "fault-lines-layer", onFaultLinesHide);
+				map.off("click", "fault-lines-layer", onFaultLinesClick);
 			};
 		}
 	}, [map, faultLinesEnabled, selectedStyle]);
