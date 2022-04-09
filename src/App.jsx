@@ -12,38 +12,9 @@ import SensorsContext from "./SensorsContext";
 import { ThemeProvider } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import setupGeoJSON from "./setupGeoJSON";
+import { theme } from "beryllium";
 import { useNavigate } from "react-router-dom";
 
-// import { theme } from "beryllium";
-
-let theme = createTheme({
-	palette: {
-		primary: {
-			main: "#1162A1",
-		},
-		secondary: {
-			main: "#5ECAEB",
-		},
-		info: {
-			main: "#30B7FF",
-		},
-		success: {
-			main: "#157F1F",
-		},
-		warning: {
-			main: "#FF7700",
-		},
-		error: {
-			main: "#D00000",
-		},
-	},
-	typography: {
-		fontFamily: "acumin-pro, sans-serif",
-	},
-});
-const shadowColour = theme.palette.primary.main;
-
-theme = responsiveFontSizes(theme, { breakpoints: ["sm", "md", "lg", "xl"], factor: 4 });
 const Map = React.lazy(() => import("./Map"));
 
 const drawerWidth = 500;
