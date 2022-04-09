@@ -7,6 +7,7 @@ import MapContext from "../../MapContext";
 function FlexSquare(props) {
 	return (
 		<ButtonBase
+			onClick={props.onClick}
 			elevation={0}
 			style={{
 				width: 55,
