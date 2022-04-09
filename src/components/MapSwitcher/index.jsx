@@ -161,9 +161,6 @@ export default function Switcher() {
 				justifyContent="flex-end"
 				alignItems="center"
 				spacing={2}
-				onClick={() => {
-					setPopupOpen((wasOpen) => !wasOpen);
-				}}
 				onMouseEnter={onPopupOpen}
 				onMouseLeave={onPopupClose}
 				onFocus={onPopupOpen}
@@ -201,6 +198,9 @@ export default function Switcher() {
 				</Paper>
 
 				<Paper
+					onClick={() => {
+						setPopupOpen((wasOpen) => !wasOpen);
+					}}
 					elevation={4}
 					style={{
 						borderRadius: 10,
