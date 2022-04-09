@@ -1,4 +1,4 @@
-import { ButtonBase, ClickAwayListener, Paper, Stack, Typography } from "@mui/material";
+import { ButtonBase, ClickAwayListener, Paper, Stack, Typography, useMediaQuery } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
 
 import LayersOutlinedIcon from "@mui/icons-material/LayersOutlined";
@@ -59,6 +59,7 @@ function FlexSquare(props) {
 
 export default function Switcher() {
 	const [map] = useContext(MapContext);
+	const onBigScreen = useMediaQuery((theme) => theme.breakpoints.up("lg"));
 	const [popupOpen, setPopupOpen] = useState(false);
 	const [selectedStyle, setSelectedStyle] = useState("streets-v11");
 	const [faultLinesEnabled, setFaultLinesEnabled] = useState(false);
@@ -151,13 +152,12 @@ export default function Switcher() {
 		<ClickAwayListener onClickAway={onPopupClose}>
 			<Stack
 				sx={{
-					position: "absolute",
+					position: "fixed",
 					bottom: 35,
 					right: 20,
-					width: "100%",
 					pointerEvents: popupOpen ? "auto" : "none",
 				}}
-				direction="row"
+				direction={onBigScreen ? "row" : "column"}
 				justifyContent="flex-end"
 				alignItems="center"
 				spacing={2}
@@ -167,10 +167,10 @@ export default function Switcher() {
 				onBlur={onPopupClose}>
 				<Paper
 					sx={{
-						// width: 300,
-						height: "80px",
-						display: "inline-block",
-						// zIndex: 999,
+						// height: "80px",
+						display: "flex",
+						flexDirection: onBigScreen ? "row" : "column",
+						gap: onBigScreen ? 1 : 2,
 						backgroundColor: "white",
 						borderRadius: 3,
 						padding: 0.5,
