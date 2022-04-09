@@ -1,68 +1,65 @@
-import { Box, ButtonBase, Paper, Stack, Typography, useTheme } from "@mui/material";
+import { ButtonBase, ClickAwayListener, Paper, Stack, Typography } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
 
 import LayersOutlinedIcon from "@mui/icons-material/LayersOutlined";
 import MapContext from "../../MapContext";
 
-// import FlexSquare from "../FlexSquare";
-
-// import Styles from "./Switcher.module.css";
-const FlexSquare = (props) => (
-	<ButtonBase
-		{...props}
-		elevation={0}
-		style={{
-			width: 55,
-			borderRadius: 12,
-			margin: 4,
-			position: "relative",
-			backgroundColor: "none",
-			...props.style,
-		}}>
-		<div
+function FlexSquare(props) {
+	return (
+		<ButtonBase
+			elevation={0}
 			style={{
-				boxSizing: "border-box",
-				outline: "2px solid #FFFFFF",
-				outlineColor: props.selected ? "#1a73e8" : "transparent",
-				transition: "outline-color 0.5s",
-				padding: "2px",
+				width: 55,
 				borderRadius: 12,
-				outlineOffset: -4,
-				width: "100%",
+				margin: 4,
+				position: "relative",
+				backgroundColor: "none",
+				...props.style,
 			}}>
-			<Paper
+			<div
 				style={{
-					backgroundColor: props.color,
-					width: "100%",
-					paddingBottom: "100%",
 					boxSizing: "border-box",
-					outlineColor: props.selected ? "#FFFFFF" : "transparent",
-					outline: "4px solid transparent",
-					borderRadius: 10,
-					outlineOffset: -4,
+					outline: "2px solid #FFFFFF",
+					outlineColor: props.selected ? "#1a73e8" : "transparent",
 					transition: "outline-color 0.5s",
-				}}
-				elevation={0}
-			/>
-		</div>
-		<Typography
-			variant="caption"
-			style={{
-				width: "100%",
-				lineHeight: "1em",
-				position: "absolute",
-				bottom: -1 - (props.lines || 0) * 0.5 + "em",
-				textAlign: "center",
-			}}>
-			{props.text}
-		</Typography>
-	</ButtonBase>
-);
+					padding: "2px",
+					borderRadius: 12,
+					outlineOffset: -4,
+					width: "100%",
+				}}>
+				<Paper
+					style={{
+						backgroundColor: props.color,
+						width: "100%",
+						paddingBottom: "100%",
+						boxSizing: "border-box",
+						outlineColor: props.selected ? "#FFFFFF" : "transparent",
+						outline: "4px solid transparent",
+						borderRadius: 10,
+						outlineOffset: -4,
+						transition: "outline-color 0.5s",
+					}}
+					elevation={0}
+				/>
+			</div>
+			<Typography
+				variant="caption"
+				style={{
+					width: "100%",
+					lineHeight: "1em",
+					position: "absolute",
+					bottom: -1 - (props.lines || 0) * 0.5 + "em",
+					textAlign: "center",
+				}}>
+				{props.text}
+			</Typography>
+		</ButtonBase>
+	);
+}
 
-function Switcher(props) {
+export default function Switcher() {
 	const [map] = useContext(MapContext);
-
-	const [hasFocus, setHasFocus] = useState(false);
+	const [popupOpen, setPopupOpen] = useState(false);
 	const [selectedStyle, setSelectedStyle] = useState("streets-v11");
 	const [faultLinesEnabled, setFaultLinesEnabled] = useState(false);
 
@@ -132,14 +129,7 @@ function Switcher(props) {
 	const styles = [
 		{ text: "Streets", color: "pink", id: "streets-v11" },
 		{ text: "Satellite", color: "blue", id: "satellite-v9" },
-		// {
-		// 	text: "Satellite streets",
-		// 	color: "blue",
-		// 	id: "satellite-streets-v11",
-		// 	lines: 2,
-		// },
 		{ text: "Outdoors", color: "green", id: "outdoors-v11" },
-		// { text: "Light", color: "yellow", id: "light-v10" },
 		{ text: "Dark", color: "black", id: "dark-v10" },
 	];
 
@@ -150,102 +140,113 @@ function Switcher(props) {
 		setSelectedStyle(style);
 	}
 
-	return (
-		<Stack
-			sx={{
-				position: "absolute",
-				bottom: 35,
-				right: 20,
-				width: "100%",
-				pointerEvents: hasFocus ? "auto" : "none",
-			}}
-			direction="row"
-			justifyContent="flex-end"
-			alignItems="center"
-			spacing={2}
-			onMouseEnter={() => setHasFocus(true)}
-			onFocus={() => setHasFocus(true)}
-			onMouseLeave={() => setHasFocus(false)}>
-			<Paper
-				sx={{
-					// width: 300,
-					height: "80px",
-					display: "inline-block",
-					// zIndex: 999,
-					backgroundColor: "white",
-					borderRadius: 3,
-					padding: 0.5,
-					paddingBottom: 2,
-					opacity: hasFocus ? 1 : 0,
-					transition: "opacity 0.2s",
-				}}
-				elevation={4}>
-				{styles.map((style) => (
-					<FlexSquare
-						key={style.id}
-						selected={selectedStyle === style.id}
-						onClick={() => setStyle(style.id)}
-						color={style.color}
-						text={style.text}
-						lines={style.lines}
-					/>
-				))}
-				<FlexSquare
-					selected={faultLinesEnabled}
-					onClick={() => setFaultLinesEnabled((oldState) => !oldState)}
-					color="red"
-					text="Fault lines"
-				/>
-			</Paper>
+	function onPopupOpen() {
+		setPopupOpen(true);
+	}
+	function onPopupClose() {
+		setPopupOpen(false);
+	}
 
-			<Paper
-				elevation={4}
-				style={{
-					borderRadius: 10,
-					boxSizing: "border-box",
-					outline: "2px solid #FFFFFF",
-				}}>
+	return (
+		<ClickAwayListener onClickAway={onPopupClose}>
+			<Stack
+				sx={{
+					position: "absolute",
+					bottom: 35,
+					right: 20,
+					width: "100%",
+					pointerEvents: popupOpen ? "auto" : "none",
+				}}
+				direction="row"
+				justifyContent="flex-end"
+				alignItems="center"
+				spacing={2}
+				onClick={() => {
+					setPopupOpen((wasOpen) => !wasOpen);
+				}}
+				onMouseEnter={onPopupOpen}
+				onMouseLeave={onPopupClose}
+				onFocus={onPopupOpen}
+				onBlur={onPopupClose}>
 				<Paper
-					style={{
-						backgroundColor: selectedStyleDetails.color,
-						transition: "background-color 0.5s",
-						width: "76px",
-						height: "76px",
-						borderRadius: 10,
-						position: "relative",
-						boxShadow: "rgb(0 0 0 / 73%) 0px -40px 30px -30px inset",
-						pointerEvents: "auto",
-					}}>
-					<Stack
-						direction="row"
-						alignItems="center"
-						justifyContent="center"
-						gap={0.3}
-						sx={{
-							position: "absolute",
-							bottom: 4,
-							left: -1,
-							textAlign: "center",
-							width: "100%",
-							color: "white",
-						}}>
-						<LayersOutlinedIcon
-							style={{
-								fontSize: "1.5em",
-								// position: "relative",
-								// top: "0.3em",
-								// lineHeight: "50px",
-								// display: "inline-block",
-							}}
+					sx={{
+						// width: 300,
+						height: "80px",
+						display: "inline-block",
+						// zIndex: 999,
+						backgroundColor: "white",
+						borderRadius: 3,
+						padding: 0.5,
+						paddingBottom: 2,
+						opacity: popupOpen ? 1 : 0,
+						transition: "opacity 0.2s",
+					}}
+					elevation={4}>
+					{styles.map((style) => (
+						<FlexSquare
+							key={style.id}
+							selected={selectedStyle === style.id}
+							onClick={() => setStyle(style.id)}
+							color={style.color}
+							text={style.text}
+							lines={style.lines}
 						/>
-						<Typography variant="caption" style={{}}>
-							Layers
-						</Typography>
-					</Stack>
+					))}
+					<FlexSquare
+						selected={faultLinesEnabled}
+						onClick={() => setFaultLinesEnabled((oldState) => !oldState)}
+						color="red"
+						text="Fault lines"
+					/>
 				</Paper>
-			</Paper>
-		</Stack>
+
+				<Paper
+					elevation={4}
+					style={{
+						borderRadius: 10,
+						boxSizing: "border-box",
+						outline: "2px solid #FFFFFF",
+					}}>
+					<Paper
+						style={{
+							backgroundColor: selectedStyleDetails.color,
+							transition: "background-color 0.5s",
+							width: "76px",
+							height: "76px",
+							borderRadius: 10,
+							position: "relative",
+							boxShadow: "rgb(0 0 0 / 73%) 0px -40px 30px -30px inset",
+							pointerEvents: "auto",
+						}}>
+						<Stack
+							direction="row"
+							alignItems="center"
+							justifyContent="center"
+							gap={0.3}
+							sx={{
+								position: "absolute",
+								bottom: 4,
+								left: -1,
+								textAlign: "center",
+								width: "100%",
+								color: "white",
+							}}>
+							<LayersOutlinedIcon
+								style={{
+									fontSize: "1.5em",
+									// position: "relative",
+									// top: "0.3em",
+									// lineHeight: "50px",
+									// display: "inline-block",
+								}}
+							/>
+							<Typography variant="caption" style={{}}>
+								Layers
+							</Typography>
+						</Stack>
+					</Paper>
+				</Paper>
+			</Stack>
+		</ClickAwayListener>
 	);
 }
-
-export default Switcher;

@@ -1,5 +1,4 @@
-import * as React from "react";
-
+import React, { Suspense, useEffect, useState } from "react";
 import { createTheme, responsiveFontSizes } from "@mui/material";
 
 import Box from "@mui/material/Box";
@@ -49,13 +48,13 @@ const Map = React.lazy(() => import("./Map"));
 
 const drawerWidth = 500;
 export default function App() {
-	const [sensors, setSensors] = React.useState([]);
-	const [map, setMap] = React.useState(null);
-	const [mapLoaded, setMapLoaded] = React.useState(false);
+	const [sensors, setSensors] = useState([]);
+	const [map, setMap] = useState(null);
+	const [mapLoaded, setMapLoaded] = useState(false);
 	const navigate = useNavigate();
 	window.theme = theme;
 
-	React.useEffect(() => {
+	useEffect(() => {
 		(async () => {
 			const res = await fetch("https://internship-worker.benhong.workers.dev/api/v0/sensors");
 			const data = await res.json();
@@ -69,39 +68,7 @@ export default function App() {
 		})();
 	}, []);
 
-	// React.useEffect(() => {
-	//   if (map)
-	//     for (const sensor of Object.values(sensors)) {
-	//       const markerElement = document.createElement("div");
-	//       markerElement.setAttribute("title", `Sensor #${sensor.id}`);
-	//       markerElement.classList.add("crisislab-sensor-marker");
-	//       if ("online" in sensor) {
-	//         if (sensor.online === true) {
-	//           markerElement.classList.add("online");
-	//         } else if (sensor.online === false) {
-	//           markerElement.classList.add("offline");
-	//         }
-	//       }
-	//       markerElement.onclick = () => {
-	//         map?.flyTo({
-	//           center: [sensor.longitude, sensor.latitude],
-	//           zoom: 16,
-	//           speed: 1.4,
-	//           curve: 1,
-	//         });
-	//         navigate(`/sensor/${sensor.id}`);
-	//       };
-
-	//       let marker = new Marker({
-	//         element: markerElement,
-	//         anchor: "bottom",
-	//       });
-	//       marker.setLngLat([sensor.longitude, sensor.latitude]);
-	//       marker.addTo(map);
-	//     }
-	// }, [sensors, map]);
-
-	React.useEffect(() => {
+	useEffect(() => {
 		if (mapLoaded && sensors && Object.keys(sensors).length) {
 			// Construct geoJSON
 			const geoJSON = {
@@ -181,7 +148,7 @@ export default function App() {
 								position: "relative",
 								height: "100%",
 							}}>
-							<React.Suspense
+							<Suspense
 								fallback={
 									// div with text in middle
 									<div
@@ -202,7 +169,7 @@ export default function App() {
 									</div>
 								}>
 								<Map />
-							</React.Suspense>
+							</Suspense>
 						</Box>
 						<MapSwitcher />
 					</Box>
