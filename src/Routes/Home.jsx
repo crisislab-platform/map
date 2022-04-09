@@ -1,184 +1,41 @@
-import { useContext, useEffect, useState } from "react";
-
-import Box from "@mui/material/Box";
-import ButtonBase from "@mui/material/ButtonBase";
-import Fade from "@mui/material/Fade";
-import MapContext from "../MapContext";
-import Paper from "@mui/material/Paper";
-import Typography from "@mui/material/Typography";
-import FlexSquare from "../components/FlexSquare";
+import { Box, Fade, Stack, Typography } from "@mui/material";
 
 export default function Home() {
-	const [map] = useContext(MapContext);
-
-	const [selectedStyle, setSelectedStyle] = useState("streets-v11");
-	const [faultLinesEnabled, setFaultLinesEnabled] = useState(false);
-
-	function setStyle(style) {
-		map?.setStyle("mapbox://styles/mapbox/" + style);
-		setSelectedStyle(style);
-	}
-
-	useEffect(() => {
-		function showFaultLines(show) {
-			if (map && map.loaded && map.getLayer("fault-lines-layer")) {
-				map.setLayoutProperty("fault-lines-layer", "visibility", show ? "visible" : "none");
-			}
-		}
-		function showFaultLineLabels(show) {
-			if (map && map.loaded && map.getLayer("fault-lines-labels-layer")) {
-				map.setLayoutProperty("fault-lines-labels-layer", "visibility", show ? "visible" : "none");
-			}
-		}
-
-		if (faultLinesEnabled) {
-			showFaultLines(true);
-		} else {
-			showFaultLines(false);
-			showFaultLineLabels(false);
-		}
-		function onMouseEnter() {
-			showFaultLineLabels(true);
-			if (map && map.loaded) {
-				map.setPaintProperty("fault-lines-layer", "line-width", [
-					"interpolate",
-					["linear"],
-					["zoom"],
-					5,
-					4,
-					18,
-					16,
-				]);
-			}
-		}
-		function onMouseLeave() {
-			showFaultLineLabels(false);
-			if (map && map.loaded) {
-				map.setPaintProperty("fault-lines-layer", "line-width", [
-					"interpolate",
-					["linear"],
-					["zoom"],
-					5,
-					2,
-					18,
-					12,
-				]);
-			}
-		}
-
-		if (map && map.loaded) {
-			map.on("mouseenter", "fault-lines-layer", onMouseEnter);
-			map.on("mouseleave", "fault-lines-layer", onMouseLeave);
-
-			return () => {
-				map.off("mouseenter", "fault-lines-layer", onMouseEnter);
-				map.off("mouseleave", "fault-lines-layer", onMouseLeave);
-			};
-		}
-	}, [map, faultLinesEnabled]);
-
 	return (
 		<Fade in>
-			<Box>
-				<Box sx={{ padding: 3 }}>
-					{/* <img src="/crisis_lab_i_small.png" style={{height: 100, marginTop: 20}}></img> */}
-					<Box
+			<Stack sx={{ p: 3, height: "100%" }}>
+				{/* <img src="/crisis_lab_i_small.png" style={{height: 100, marginTop: 20}}></img> */}
+				<Box
+					sx={{
+						paddingInline: 1,
+						paddingBlock: 3,
+						marginTop: 7,
+					}}>
+					<Typography
+						variant="h3"
 						sx={{
-							paddingInline: 1,
-							paddingBlock: 3,
-							marginTop: 7,
+							fontWeight: "bold",
 						}}>
-						<Typography
-							variant="h3"
-							sx={{
-								fontWeight: "bold",
-							}}>
-							Sensor Map
-						</Typography>
-						<Typography
-							variant="h6"
-							sx={{
-								marginTop: 2,
-								fontWeight: 400,
-								lineHeight: "1.4em",
-							}}>
-							See CRISiSLab's experimental EEW sensor network in action!
-						</Typography>
-					</Box>
-				</Box>
-
-				<Box sx={{ position: "absolute", bottom: 10, width: "100%", padding: 4 }}>
-					<Typography variant="h6" sx={{ marginTop: 10, marginBottom: 1 }}>
-						Base map:
+						Sensor Map
 					</Typography>
-
-					<Box sx={{ display: "flex", gap: 2, marginInline: 1 }}>
-						{[
-							{ text: "Streets", color: "pink", id: "streets-v11" },
-							{ text: "Satellite", color: "blue", id: "satellite-v9" },
-							{
-								text: "Satellite streets",
-								color: "blue",
-								id: "satellite-streets-v11",
-								lines: 2,
-							},
-							{ text: "Outdoors", color: "green", id: "outdoors-v11" },
-							// { text: "Light", color: "yellow", id: "light-v10" },
-							{ text: "Dark", color: "black", id: "dark-v10" },
-						].map((style) => (
-							<FlexSquare
-								key={style.id}
-								selected={selectedStyle === style.id}
-								onClick={() => setStyle(style.id)}
-								color={style.color}
-								text={style.text}
-								lines={style.lines}
-							/>
-						))}
-						<FlexSquare
-							selected={faultLinesEnabled}
-							onClick={() => setFaultLinesEnabled((oldState) => !oldState)}
-							color="red"
-							text="Fault lines"
-							lines={2}
-						/>
-					</Box>
-
-					{/* <Typography variant="h6" sx={{ marginTop: 3, marginBottom: 1 }}>
-            Layers:
-          </Typography>
-
-          <Box sx={{ display: "flex", gap: 10, marginInline: 1 }}>
-            {[
-              { text: "EEW", color: "red", id: "eew-v1" },
-              { text: "GNS", color: "red", id: "gns" },
-              { text: "Fault lines", color: "red", id: "gns-2" },
-            ].map((style) => (
-              <FlexSquare
-                key={style.id}
-                // selected={window.map?.getLayer(style.id)?.visibility}
-                onClick={() =>
-                  map?.setLayoutProperty(
-                    style.id,
-                    "visibility",
-                    map?.getLayoutProperty(style.id, "visibility") === "visible"
-                      ? "none"
-                      : "visible"
-                  )
-                }
-                color={style.color}
-                text={style.text}
-              />
-            ))}
-          </Box> */}
-
+					<Typography
+						variant="h6"
+						sx={{
+							marginTop: 2,
+							fontWeight: 400,
+							lineHeight: "1.4em",
+						}}>
+						See CRISiSLab's experimental EEW sensor network in action!
+					</Typography>
+				</Box>
+				<Stack direction="row" gap={2} sx={{ mt: "auto" }}>
 					<Typography variant="h6" sx={{ marginTop: "5vh", marginBottom: 1 }}>
 						A project by:
 					</Typography>
 
 					<img src="/crisis_lab_i_small.png" style={{ height: 100 }}></img>
-				</Box>
-			</Box>
+				</Stack>
+			</Stack>
 		</Fade>
 	);
 }
