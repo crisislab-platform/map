@@ -5,7 +5,7 @@ import MapContext from "./MapContext";
 import MapSwitcher from "./components/MapSwitcher";
 import SensorsContext from "./SensorsContext";
 import Sidebar from "./Sidebar.jsx";
-import setupGeoJSON from "./setupGeoJSON";
+import setupMap from "./setupMap";
 import { useNavigate } from "react-router-dom";
 
 const Map = React.lazy(() => import("./Map"));
@@ -49,7 +49,7 @@ export default function App() {
 				})),
 			};
 
-			return setupGeoJSON(map, geoJSON, (e) => {
+			return setupMap(map, geoJSON, (e) => {
 				const coordinates = e.features[0].geometry.coordinates.slice();
 
 				// Ensure that if the map is zoomed out such that

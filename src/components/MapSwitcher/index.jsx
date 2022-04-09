@@ -20,8 +20,7 @@ function FlexSquare(props) {
 			<div
 				style={{
 					boxSizing: "border-box",
-					outline: "2px solid #FFFFFF",
-					outlineColor: props.selected ? "#1a73e8" : "transparent",
+					outline: `2px solid ${props.selected ? "#1a73e8" : "transparent"}`,
 					transition: "outline-color 0.5s",
 					padding: "2px",
 					borderRadius: 12,
@@ -34,11 +33,10 @@ function FlexSquare(props) {
 						width: "100%",
 						paddingBottom: "100%",
 						boxSizing: "border-box",
-						outlineColor: props.selected ? "#FFFFFF" : "transparent",
-						outline: "4px solid transparent",
+						outline: `4px solid ${props.selected ? "#FFFFFF" : "transparent"}`,
 						borderRadius: 10,
 						outlineOffset: -4,
-						transition: "outline-color 0.5s",
+						transition: "outline 0.5s",
 					}}
 					elevation={0}
 				/>
@@ -70,53 +68,53 @@ export default function Switcher() {
 		setSelectedStyle(style);
 	}
 
+	function showFaultLines(show) {
+		if (map && map.loaded && map.getLayer("fault-lines-layer")) {
+			map.setLayoutProperty("fault-lines-layer", "visibility", show ? "visible" : "none");
+		}
+	}
+	function showFaultLineLabels(show) {
+		if (map && map.loaded && map.getLayer("fault-lines-labels-layer")) {
+			map.setLayoutProperty("fault-lines-labels-layer", "visibility", show ? "visible" : "none");
+		}
+	}
+
+	if (faultLinesEnabled) {
+		showFaultLines(true);
+	} else {
+		showFaultLines(false);
+		showFaultLineLabels(false);
+	}
+	function onMouseEnter() {
+		showFaultLineLabels(true);
+		if (map && map.loaded) {
+			map.setPaintProperty("fault-lines-layer", "line-width", [
+				"interpolate",
+				["linear"],
+				["zoom"],
+				5,
+				4,
+				18,
+				16,
+			]);
+		}
+	}
+	function onMouseLeave() {
+		showFaultLineLabels(false);
+		if (map && map.loaded) {
+			map.setPaintProperty("fault-lines-layer", "line-width", [
+				"interpolate",
+				["linear"],
+				["zoom"],
+				5,
+				2,
+				18,
+				12,
+			]);
+		}
+	}
+
 	useEffect(() => {
-		function showFaultLines(show) {
-			if (map && map.loaded && map.getLayer("fault-lines-layer")) {
-				map.setLayoutProperty("fault-lines-layer", "visibility", show ? "visible" : "none");
-			}
-		}
-		function showFaultLineLabels(show) {
-			if (map && map.loaded && map.getLayer("fault-lines-labels-layer")) {
-				map.setLayoutProperty("fault-lines-labels-layer", "visibility", show ? "visible" : "none");
-			}
-		}
-
-		if (faultLinesEnabled) {
-			showFaultLines(true);
-		} else {
-			showFaultLines(false);
-			showFaultLineLabels(false);
-		}
-		function onMouseEnter() {
-			showFaultLineLabels(true);
-			if (map && map.loaded) {
-				map.setPaintProperty("fault-lines-layer", "line-width", [
-					"interpolate",
-					["linear"],
-					["zoom"],
-					5,
-					4,
-					18,
-					16,
-				]);
-			}
-		}
-		function onMouseLeave() {
-			showFaultLineLabels(false);
-			if (map && map.loaded) {
-				map.setPaintProperty("fault-lines-layer", "line-width", [
-					"interpolate",
-					["linear"],
-					["zoom"],
-					5,
-					2,
-					18,
-					12,
-				]);
-			}
-		}
-
 		if (map && map.loaded) {
 			map.on("mouseenter", "fault-lines-layer", onMouseEnter);
 			map.on("mouseleave", "fault-lines-layer", onMouseLeave);
@@ -126,7 +124,7 @@ export default function Switcher() {
 				map.off("mouseleave", "fault-lines-layer", onMouseLeave);
 			};
 		}
-	}, [map, faultLinesEnabled]);
+	}, [map, faultLinesEnabled, selectedStyle]);
 
 	const styles = [
 		{ text: "Streets", color: "pink", id: "streets-v11" },

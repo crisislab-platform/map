@@ -28,7 +28,7 @@ export default function Sidebar() {
 							top: (theme) => theme.spacing(1),
 							left: (theme) => theme.spacing(1),
 						}}>
-						<MenuIcon />
+						<MenuIcon stroke="white" fill="black" />
 					</IconButton>
 				</Tooltip>
 			)}
