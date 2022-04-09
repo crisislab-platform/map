@@ -8,7 +8,7 @@ specifiers:
   '@mui/icons-material': '5.4'
   '@mui/material': '5.4'
   '@vitejs/plugin-react': ^1.3.0
-  beryllium: ^1.0.2
+  beryllium: ^1.0.3
   color-shorthand-hex-to-six-digit: ^4.0.12
   geolib: ^3.3.3
   mapbox-gl: ^2.7.1
@@ -28,7 +28,7 @@ dependencies:
   '@fontsource/nunito': 4.5.8
   '@mui/icons-material': 5.4.4_@mui+material@5.4.4+react@17.0.2
   '@mui/material': 5.4.4_eb8585ddc00e6d8e3b40a6701d59ed38
-  beryllium: 1.0.2_@mui+material@5.4.4
+  beryllium: 1.0.3_@mui+material@5.4.4
   color-shorthand-hex-to-six-digit: 4.0.12
   geolib: 3.3.3
   mapbox-gl: 2.7.1
@@ -710,8 +710,8 @@ packages:
       resolve: 1.22.0
     dev: false
 
-  /beryllium/1.0.2_@mui+material@5.4.4:
-    resolution: {integrity: sha512-4t0FdglVW5F5FCoRausYEI04RnkGhYSoEJ8XnpZP2P0DL8GfhGVKleSUSA4SIf9zZ4mGXAbwgAHcX6Bc/wQLtw==}
+  /beryllium/1.0.3_@mui+material@5.4.4:
+    resolution: {integrity: sha512-fK8zSYEOQMjghITyH8VTUJqwHeJlnCum4zy+gs5/WNhj4n8RfUKubDw1cXlFyMBUgvu8LQEDBGwv5wJDRgmLKA==}
     peerDependencies:
       '@mui/material': '5'
     dependencies:

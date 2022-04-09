@@ -21,7 +21,7 @@
 		"@fontsource/nunito": "^4.5.8",
 		"@mui/icons-material": "5.4",
 		"@mui/material": "5.4",
-		"beryllium": "^1.0.2",
+		"beryllium": "^1.0.3",
 		"color-shorthand-hex-to-six-digit": "^4.0.12",
 		"geolib": "^3.3.3",
 		"mapbox-gl": "^2.7.1",
