@@ -1,8 +1,11 @@
-import { Box, ButtonBase, Typography, Paper, useTheme, Stack } from "@mui/material";
+import { Box, ButtonBase, Paper, Stack, Typography, useTheme } from "@mui/material";
+import { useContext, useEffect, useState } from "react";
+
 import LayersOutlinedIcon from "@mui/icons-material/LayersOutlined";
-// import FlexSquare from "../FlexSquare";
 import MapContext from "../../MapContext";
-import { useContext, useState, useEffect } from "react";
+
+// import FlexSquare from "../FlexSquare";
+
 // import Styles from "./Switcher.module.css";
 const FlexSquare = (props) => (
 	<ButtonBase
@@ -10,7 +13,6 @@ const FlexSquare = (props) => (
 		elevation={0}
 		style={{
 			width: 55,
-			position: "inline",
 			borderRadius: 12,
 			margin: 4,
 			position: "relative",
@@ -33,7 +35,6 @@ const FlexSquare = (props) => (
 					backgroundColor: props.color,
 					width: "100%",
 					paddingBottom: "100%",
-					borderRadius: 6,
 					boxSizing: "border-box",
 					outlineColor: props.selected ? "#FFFFFF" : "transparent",
 					outline: "4px solid transparent",
