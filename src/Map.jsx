@@ -4,7 +4,6 @@ import mapboxgl, {
 	AttributionControl,
 	GeolocateControl,
 	Map as MapboxMap,
-	Marker,
 	NavigationControl,
 	ScaleControl,
 } from "mapbox-gl";
@@ -128,6 +127,7 @@ export default function MapApp(props) {
 					map.removeSource("fault-lines-source");
 					map.removeLayer("fault-lines-layer");
 					map.removeLayer("falt-lines-labels-layer");
+					map.remove();
 				};
 			}
 
