@@ -19,7 +19,7 @@
 		"@emotion/react": "^11.8.2",
 		"@emotion/styled": "^11.8.1",
 		"@fontsource/nunito": "^4.5.8",
-		"@mui/icons-material": "5.4",
+		"@mui/icons-material": "~5.4.4",
 		"@mui/material": "5.4",
 		"beryllium": "^1.0.3",
 		"color-shorthand-hex-to-six-digit": "^4.0.12",

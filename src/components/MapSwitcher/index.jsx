@@ -1,63 +1,68 @@
-import { ButtonBase, ClickAwayListener, Paper, Stack, Typography, useMediaQuery } from "@mui/material";
+import {
+	ButtonBase,
+	ClickAwayListener,
+	Paper,
+	Stack,
+	Tooltip,
+	Typography,
+	useMediaQuery,
+	useTheme,
+} from "@mui/material";
 import { useContext, useEffect, useState } from "react";
 
+import BoltIcon from "@mui/icons-material/Bolt";
 import LayersOutlinedIcon from "@mui/icons-material/LayersOutlined";
 import MapContext from "../../MapContext";
+import MapIcon from "@mui/icons-material/Map";
+import SatelliteAltIcon from "@mui/icons-material/SatelliteAlt";
+import StraightIcon from "@mui/icons-material/Straight";
+
+const styles = [
+	{ text: "Streets", colour: "primary", id: "streets-v11", Icon: StraightIcon },
+	{ text: "Satellite", colour: "secondary", id: "satellite-v9", Icon: SatelliteAltIcon },
+	{ text: "Outdoors", colour: "success", id: "outdoors-v11", Icon: MapIcon },
+];
+
+const squareSize = 50;
 
 function FlexSquare(props) {
+	const theme = useTheme();
+
+	const colour = theme.palette[props.colour].main;
+
 	return (
-		<ButtonBase
-			onClick={props.onClick}
-			elevation={0}
-			style={{
-				width: 55,
-				borderRadius: 12,
-				margin: 4,
-				position: "relative",
-				backgroundColor: "none",
-				...props.style,
-			}}>
-			<div
-				style={{
-					boxSizing: "border-box",
-					outline: `2px solid ${props.selected ? "#1a73e8" : "transparent"}`,
-					transition: "outline-color 0.5s",
-					padding: "2px",
-					borderRadius: 12,
-					outlineOffset: -4,
-					width: "100%",
+		<Tooltip title={props.text} placement="top">
+			<ButtonBase
+				onClick={props.onClick}
+				elevation={0}
+				sx={{
+					width: squareSize,
+					height: squareSize,
+					borderRadius: theme.spacing(1),
+					backgroundColor: "none",
+					...props.style,
 				}}>
 				<Paper
-					style={{
-						backgroundColor: props.color,
-						width: "100%",
-						paddingBottom: "100%",
-						boxSizing: "border-box",
-						outline: `4px solid ${props.selected ? "#FFFFFF" : "transparent"}`,
-						borderRadius: 10,
-						outlineOffset: -4,
-						transition: "outline 0.5s",
+					sx={{
+						backgroundColor: colour,
+						width: squareSize,
+						height: squareSize,
+						border: `4px solid ${props.selected ? theme.palette[props.colour].dark : "transparent"}`,
+						transition: "border 0.5s",
+						display: "grid",
+						placeItems: "center",
 					}}
-					elevation={0}
-				/>
-			</div>
-			<Typography
-				variant="caption"
-				style={{
-					width: "100%",
-					lineHeight: "1em",
-					position: "absolute",
-					bottom: -1 - (props.lines || 0) * 0.5 + "em",
-					textAlign: "center",
-				}}>
-				{props.text}
-			</Typography>
-		</ButtonBase>
+					elevation={0}>
+					<props.Icon sx={{ display: "block", color: "white" }} />
+				</Paper>
+			</ButtonBase>
+		</Tooltip>
 	);
 }
 
 export default function Switcher() {
 	const [map] = useContext(MapContext);
+	const theme = useTheme();
 	const onBigScreen = useMediaQuery((theme) => theme.breakpoints.up("lg"));
 	const [popupOpen, setPopupOpen] = useState(false);
 	const [selectedStyle, setSelectedStyle] = useState("streets-v11");
@@ -137,13 +142,6 @@ export default function Switcher() {
 		}
 	}, [map, faultLinesEnabled, selectedStyle]);
 
-	const styles = [
-		{ text: "Streets", color: "pink", id: "streets-v11" },
-		{ text: "Satellite", color: "blue", id: "satellite-v9" },
-		{ text: "Outdoors", color: "green", id: "outdoors-v11" },
-		{ text: "Dark", color: "black", id: "dark-v10" },
-	];
-
 	const selectedStyleDetails = styles.find((style) => style.id === selectedStyle);
 
 	function setStyle(style) {
@@ -177,14 +175,12 @@ export default function Switcher() {
 				onBlur={onPopupClose}>
 				<Paper
 					sx={{
-						// height: "80px",
 						display: "flex",
 						flexDirection: onBigScreen ? "row" : "column",
-						gap: onBigScreen ? 1 : 2,
-						backgroundColor: "white",
-						borderRadius: 3,
-						padding: 0.5,
-						paddingBottom: 2,
+						gap: 1,
+						backgroundColor: theme.palette.background.paper,
+						borderRadius: theme.spacing(1),
+						padding: 1,
 						opacity: popupOpen ? 1 : 0,
 						transition: "opacity 0.2s",
 					}}
@@ -194,16 +190,18 @@ export default function Switcher() {
 							key={style.id}
 							selected={selectedStyle === style.id}
 							onClick={() => setStyle(style.id)}
-							color={style.color}
+							colour={style.colour}
 							text={style.text}
 							lines={style.lines}
+							Icon={style.Icon}
 						/>
 					))}
 					<FlexSquare
 						selected={faultLinesEnabled}
 						onClick={() => setFaultLinesEnabled((oldState) => !oldState)}
-						color="red"
+						colour="error"
 						text="Fault lines"
+						Icon={BoltIcon}
 					/>
 				</Paper>
 
@@ -212,18 +210,18 @@ export default function Switcher() {
 						setPopupOpen((wasOpen) => !wasOpen);
 					}}
 					elevation={4}
-					style={{
-						borderRadius: 10,
+					sx={{
+						borderRadius: theme.spacing(1),
 						boxSizing: "border-box",
 						outline: "2px solid #FFFFFF",
 					}}>
 					<Paper
-						style={{
-							backgroundColor: selectedStyleDetails.color,
+						sx={{
+							backgroundColor: theme.palette[selectedStyleDetails.colour].main,
 							transition: "background-color 0.5s",
 							width: "76px",
 							height: "76px",
-							borderRadius: 10,
+							borderRadius: theme.spacing(1),
 							position: "relative",
 							boxShadow: "rgb(0 0 0 / 73%) 0px -40px 30px -30px inset",
 							pointerEvents: "auto",
@@ -242,7 +240,7 @@ export default function Switcher() {
 								color: "white",
 							}}>
 							<LayersOutlinedIcon
-								style={{
+								sx={{
 									fontSize: "1.5em",
 									// position: "relative",
 									// top: "0.3em",
@@ -250,9 +248,7 @@ export default function Switcher() {
 									// display: "inline-block",
 								}}
 							/>
-							<Typography variant="caption" style={{}}>
-								Layers
-							</Typography>
+							<Typography variant="caption">Layers</Typography>
 						</Stack>
 					</Paper>
 				</Paper>
