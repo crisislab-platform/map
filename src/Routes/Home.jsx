@@ -1,4 +1,4 @@
-import { Box, Fade, Stack, Typography } from "@mui/material";
+import { Box, Fade, Link, Stack, Typography } from "@mui/material";
 
 export default function Home() {
 	return (
@@ -35,6 +35,9 @@ export default function Home() {
 
 					<img src="/crisis_lab_i_small.png" style={{ height: 100 }}></img>
 				</Stack>
+				<Link href="https://admin.crisislab.org.nz" rel="noopener norefferer">
+					Admin panel
+				</Link>
 			</Stack>
 		</Fade>
 	);
