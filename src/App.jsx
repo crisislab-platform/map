@@ -1,6 +1,6 @@
 import { Box, CssBaseline, Typography } from "@mui/material";
 import React, { Suspense, useEffect, useState } from "react";
-
+import { createPortal } from "react-dom";
 import MapContext from "./MapContext";
 import MapSwitcher from "./components/MapSwitcher";
 import SensorsContext from "./SensorsContext";
@@ -10,10 +10,52 @@ import { useNavigate } from "react-router-dom";
 
 const Map = React.lazy(() => import("./Map"));
 
+function PopupComponent({ activeSensor, sensors }) {
+	if (!document.getElementById("popup")) {
+		return null;
+	}
+
+	const { geoFeatures, id, online, type } = sensors[activeSensor];
+
+	let location = null;
+
+	if (geoFeatures) {
+		const streetName = geoFeatures[0].text;
+		const locality = geoFeatures[2].text;
+		const region = geoFeatures[3].text;
+		location = `${streetName}, ${locality}, ${region}`;
+	}
+
+	const portal = createPortal(
+		<Box>
+			<Typography
+				variant="h5"
+				sx={{
+					fontWeight: "bold",
+				}}>
+				{location || type}
+			</Typography>
+			<Typography variant="h6">{location ? type : null}</Typography>
+			<Typography variant="body1">{"ID: " + id + " • " + (online ? "Online" : "Offline")}</Typography>
+		</Box>,
+		document.getElementById("popup"),
+	);
+
+	console.log("popup", portal);
+
+	return portal;
+}
+
 export default function App() {
 	const [sensors, setSensors] = useState([]);
 	const [map, setMap] = useState(null);
 	const [mapLoaded, setMapLoaded] = useState(false);
+	const [activeSensor, setActiveSensor] = useState(null);
+	const [rerenderTrigger, setRerenderTrigger] = useState(0);
+	const [popup, setPopup] = useState(null);
+
+	const triggerRerender = () => setRerenderTrigger((a) => a + 1);
+
 	const navigate = useNavigate();
 
 	useEffect(() => {
@@ -49,25 +91,32 @@ export default function App() {
 				})),
 			};
 
-			return setupMap(map, geoJSON, (e) => {
-				const coordinates = e.features[0].geometry.coordinates.slice();
+			return setupMap(
+				map,
+				geoJSON,
+				(e) => {
+					const coordinates = e.features[0].geometry.coordinates.slice();
 
-				// Ensure that if the map is zoomed out such that
-				// multiple copies of the feature are visible, the
-				// popup appears over the copy being pointed to.
-				while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-					coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
-				}
+					// Ensure that if the map is zoomed out such that
+					// multiple copies of the feature are visible, the
+					// popup appears over the copy being pointed to.
+					while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+						coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+					}
 
-				map?.flyTo({
-					center: [coordinates[0], coordinates[1]],
-					zoom: map?.getZoom() || 17,
-					speed: 0.2,
-					curve: 1,
-				});
+					map?.flyTo({
+						center: [coordinates[0], coordinates[1]],
+						zoom: map?.getZoom() || 17,
+						speed: 0.2,
+						curve: 1,
+					});
 
-				navigate(`/sensor/${e.features[0].properties.id}`);
-			});
+					navigate(`/sensor/${e.features[0].properties.id}`);
+				},
+				popup,
+				setActiveSensor,
+				triggerRerender,
+			);
 		}
 	}, [mapLoaded, sensors]);
 
@@ -115,10 +164,11 @@ export default function App() {
 									</Typography>
 								</div>
 							}>
-							<Map />
+							<Map setPopup={setPopup} />
 						</Suspense>
 					</Box>
 					<MapSwitcher />
+					<PopupComponent activeSensor={activeSensor} sensors={sensors} />
 				</Box>
 			</MapContext.Provider>
 		</SensorsContext.Provider>

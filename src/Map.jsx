@@ -6,6 +6,7 @@ import mapboxgl, {
 	Map as MapboxMap,
 	NavigationControl,
 	ScaleControl,
+	Popup,
 } from "mapbox-gl";
 import { useContext, useEffect, useRef } from "react";
 
@@ -29,6 +30,15 @@ export default function MapApp(props) {
 				zoom: 4.8,
 			});
 			setMap(map);
+
+			const popup = new Popup({
+				closeButton: false,
+				closeOnClick: false,
+			});
+
+			popup.setHTML('<div id="popup"></div>');
+
+			props.setPopup(popup);
 
 			const attributionControl = new AttributionControl();
 			map.addControl(attributionControl, "top-right");

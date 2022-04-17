@@ -19,7 +19,6 @@ ReactDOM.render(
 				</BrowserRouter>
 			</ThemeProvider>
 		</StyledEngineProvider>
-		,
 	</React.StrictMode>,
 	document.getElementById("root"),
 );

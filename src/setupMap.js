@@ -13,7 +13,7 @@ function makeCircleColourGetter(text = false) {
 	];
 }
 
-export default function setupMap(map, geoJSON, onClick) {
+export default function setupMap(map, geoJSON, onClick, popup, setActiveSensor, triggerRerender) {
 	map.addSource("earthquakes", {
 		type: "geojson",
 		// Point to GeoJSON data. This example visualizes all M1.0+ earthquakes
@@ -101,11 +101,29 @@ export default function setupMap(map, geoJSON, onClick) {
 		map.getCanvas().style.cursor = "";
 	});
 
-	map.on("mouseenter", "unclustered-point", () => {
+	map.on("mouseenter", "unclustered-point", (e) => {
 		map.getCanvas().style.cursor = "pointer";
+		// Copy coordinates array.
+		const coordinates = e.features[0].geometry.coordinates.slice();
+		const sensorId = e.features[0].properties.id;
+
+		// Ensure that if the map is zoomed out such that multiple
+		// copies of the feature are visible, the popup appears
+		// over the copy being pointed to.
+		while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+			coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+		}
+
+		// Populate the popup and set its coordinates
+		// based on the feature found.
+		popup.setLngLat(coordinates).addTo(map);
+		setActiveSensor(sensorId);
+		triggerRerender();
 	});
+
 	map.on("mouseleave", "unclustered-point", () => {
 		map.getCanvas().style.cursor = "";
+		popup.remove();
 	});
 
 	return () => {

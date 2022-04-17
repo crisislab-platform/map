@@ -28,16 +28,16 @@ export default function Home() {
 						See CRISiSLab's experimental EEW sensor network in action!
 					</Typography>
 				</Box>
-				<Stack direction="row" gap={2} sx={{ mt: "auto" }}>
+				<Box sx={{ m: 1, mb: 2, mt: "auto" }}>
 					<Typography variant="h6" sx={{ marginTop: "5vh", marginBottom: 1 }}>
 						A project by:
 					</Typography>
 
 					<img src="/crisis_lab_i_small.png" style={{ height: 100 }}></img>
-				</Stack>
-				<Link href="https://admin.crisislab.org.nz" rel="noopener norefferer">
+				</Box>
+				{/* <Link href="https://admin.crisislab.org.nz" rel="noopener norefferer">
 					Admin panel
-				</Link>
+				</Link> */}
 			</Stack>
 		</Fade>
 	);

@@ -9,7 +9,7 @@ import { useState } from "react";
 const desktopDrawerWidth = 500;
 
 export default function Sidebar() {
-	const onBigScreen = useMediaQuery((theme) => theme.breakpoints.up("lg"));
+	const onBigScreen = useMediaQuery((theme) => theme.breakpoints.up("md"));
 	const [drawerOpen, setDrawerOpen] = useState(false);
 
 	function onDrawerClose() {
@@ -54,6 +54,9 @@ export default function Sidebar() {
 						</Tooltip>
 					</Stack>
 				)}
+				{/* <img
+					src="/crisis_lab_i_small.png"
+					style={{ height: 100, width: 150, marginTop: 20, marginLeft: 20 }}></img> */}
 				<Search />
 				<Routes />
 			</Drawer>
