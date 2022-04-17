@@ -87,7 +87,7 @@ export default function Sensor() {
 						frameBorder="0"></iframe>
 					<IconButton
 						component={"a"}
-						style={{ position: "absolute", top: -10, right: 10, color: "black" }}
+						style={{ position: "absolute", top: -10, right: 5, color: "black" }}
 						href={"https://ingest-worker.benhong.workers.dev/consume/" + id}
 						target="_blank"
 						rel="noopener noreferrer"
