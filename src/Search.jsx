@@ -124,8 +124,10 @@ export default function SearchBar() {
 			onMouseEnter={() => setHasFocus(true)}
 			onFocus={() => setHasFocus(true)}
 			onMouseLeave={() => setTimeout(() => setHasFocus(false), 100)}
-			style={{
+			sx={{
 				pointerEvents: results.length > 0 && value && hasFocus ? "all" : "none",
+				position: "relative",
+				height: 52,
 			}}>
 			<Paper
 				elevation={0}

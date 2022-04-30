@@ -39,7 +39,7 @@ export default function Sensor() {
 				sx={{
 					paddingInline: 0,
 					paddingTop: 6,
-					marginTop: 6,
+					// marginTop: 6,
 				}}>
 				<Box sx={{ display: "flex", paddingInline: 4 }}>
 					<RPiIcon fontSize="large" sx={{ fontSize: 100, flexGrow: 0 }} />

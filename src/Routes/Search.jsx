@@ -59,7 +59,7 @@ export default function Search() {
 				sx={{
 					paddingInline: 0,
 					paddingBlock: 6,
-					marginTop: 6,
+					// marginTop: 6,
 				}}>
 				<Typography
 					variant="h6"
