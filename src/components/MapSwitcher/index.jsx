@@ -129,7 +129,7 @@ export default function Switcher() {
 		}
 	}
 
-	useEffect(() => {
+	function setupFaultLines() {
 		if (map && map.loaded) {
 			map.on("mouseenter", "fault-lines-layer", onFaultLinesShow);
 			map.on("mouseleave", "fault-lines-layer", onFaultLinesHide);
@@ -140,6 +140,16 @@ export default function Switcher() {
 				map.off("click", "fault-lines-layer", onFaultLinesClick);
 			};
 		}
+	}
+
+	useEffect(() => {
+		const faultLinesCleanup = setupFaultLines();
+		map;
+		return () => {
+			if (faultLinesCleanup) {
+				faultLinesCleanup();
+			}
+		};
 	}, [map, faultLinesEnabled, selectedStyle]);
 
 	const selectedStyleDetails = styles.find((style) => style.id === selectedStyle);

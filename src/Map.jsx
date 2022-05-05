@@ -5,8 +5,8 @@ import mapboxgl, {
 	GeolocateControl,
 	Map as MapboxMap,
 	NavigationControl,
-	ScaleControl,
 	Popup,
+	ScaleControl,
 } from "mapbox-gl";
 import { useContext, useEffect, useRef } from "react";
 
@@ -68,8 +68,7 @@ export default function MapApp(props) {
 				console.log("Failed to load map. Error: ", e);
 			}
 
-			function onLoad() {
-				console.log("onload");
+			function onMapStylesLoad() {
 				setMapLoaded(true);
 
 				function getSunPosition() {
@@ -136,6 +135,7 @@ export default function MapApp(props) {
 				});
 
 				return () => {
+					map.removeLayer("sky");
 					map.removeSource("fault-lines-source");
 					map.removeLayer("fault-lines-layer");
 					map.removeLayer("falt-lines-labels-layer");
@@ -144,11 +144,15 @@ export default function MapApp(props) {
 			}
 
 			map.on("error", onError);
-			map.on("load", onLoad);
+			// `style.load` fires when the map style has loaded
+			// Using this instead of normal `load` means that we can reload the layers
+			// that get removed when the map style changes, because `load` only
+			// fires on the very first map load.
+			map.on("style.load", onMapStylesLoad);
 
 			return () => {
 				map.off("error", onError);
-				map.off("load", onLoad);
+				map.off("style.load", onMapStylesLoad);
 				map.removeControl(navigationControl);
 				map.removeControl(geoLocateControl);
 				map.removeControl(attributionControl);
