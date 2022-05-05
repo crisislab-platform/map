@@ -15,7 +15,6 @@ export default function Home() {
 						<Typography
 							variant="h4"
 							sx={{
-								fontWeight: "bold",
 								fontWeight: 400,
 							}}>
 							EEW Experimental Sensor Network

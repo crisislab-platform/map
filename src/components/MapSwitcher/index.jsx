@@ -227,7 +227,7 @@ export default function Switcher() {
 							pointerEvents: "auto",
 						}}>
 						<Stack
-							direction="row"
+							direction={onBigScreen ? "row" : "column"}
 							alignItems="center"
 							justifyContent="center"
 							gap={0.3}
@@ -242,10 +242,6 @@ export default function Switcher() {
 							<LayersOutlinedIcon
 								sx={{
 									fontSize: "1.5em",
-									// position: "relative",
-									// top: "0.3em",
-									// lineHeight: "50px",
-									// display: "inline-block",
 								}}
 							/>
 							<Typography variant="caption">Layers</Typography>
