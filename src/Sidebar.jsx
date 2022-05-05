@@ -1,8 +1,8 @@
+import { Box, Typography } from "@mui/material";
 import { Drawer, IconButton, Stack, Tooltip, useMediaQuery } from "@mui/material";
 
 import CloseIcon from "@mui/icons-material/Close";
 import MenuIcon from "@mui/icons-material/Menu";
-import { Box, Typography } from "@mui/material";
 import Routes from "./Routes/index.jsx";
 import Search from "./Search.jsx";
 import { useState } from "react";

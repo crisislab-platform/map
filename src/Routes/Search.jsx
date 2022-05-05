@@ -1,19 +1,20 @@
+import { useLocation, useNavigate } from "react-router-dom";
+
 import Box from "@mui/material/Box";
-import Paper from "@mui/material/Paper";
-import Typography from "@mui/material/Typography";
-import SensorsContext from "../SensorsContext";
-import React from "react";
+import { Fade } from "@mui/material";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import { useSearchParams } from "react-router-dom";
-import { getDistance } from "geolib";
-import RPiIcon from "./RPiIcon";
-import { Fade } from "@mui/material";
-import { useNavigate, useLocation } from "react-router-dom";
 import MapContext from "../MapContext";
+import Paper from "@mui/material/Paper";
+import RPiIcon from "./RPiIcon";
+import React from "react";
+import SensorsContext from "../SensorsContext";
+import Typography from "@mui/material/Typography";
+import { getDistance } from "geolib";
+import { useSearchParams } from "react-router-dom";
 
 export default function Search() {
 	const [sensors] = React.useContext(SensorsContext);

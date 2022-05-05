@@ -1,25 +1,26 @@
-import SearchIcon from "@mui/icons-material/Search";
-import OutlinedInput from "@mui/material/OutlinedInput";
+import * as React from "react";
+
+import { useLocation, useNavigate } from "react-router-dom";
+
+import { ArrowBack } from "@mui/icons-material";
+import Box from "@mui/material/Box";
+import Divider from "@mui/material/Divider";
 import FormControl from "@mui/material/FormControl";
 import IconButton from "@mui/material/IconButton";
 import InputAdornment from "@mui/material/InputAdornment";
 import InputLabel from "@mui/material/InputLabel";
-import Paper from "@mui/material/Paper";
-import TextField from "@mui/material/TextField";
-import * as React from "react";
-import Divider from "@mui/material/Divider";
-import LocationOnIcon from "@mui/icons-material/LocationOn";
-import LocationCityIcon from "@mui/icons-material/LocationCity";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import Box from "@mui/material/Box";
-import styles from "./Search.module.css";
-import { useNavigate, useLocation } from "react-router-dom";
-import { ArrowBack } from "@mui/icons-material";
+import LocationCityIcon from "@mui/icons-material/LocationCity";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
 import MapContext from "./MapContext";
+import OutlinedInput from "@mui/material/OutlinedInput";
+import Paper from "@mui/material/Paper";
+import SearchIcon from "@mui/icons-material/Search";
+import TextField from "@mui/material/TextField";
 
 const MAPBOX_TOKEN = "pk.eyJ1IjoiemFkZXZpZ2dlcnMiLCJhIjoiY2t5dGF6cGpvMWMydTJ3cGhrb2ZhOTdlZCJ9.myQ3YnPgbI-QkuBlClYfCw";
 
@@ -138,10 +139,7 @@ export default function SearchBar() {
 					position: "absolute",
 					zIndex: 999,
 					pointerEvents: "all",
-				}}
-				// onMouseEnter={() => setMouseOver(true)}
-				// onMouseLeave={() => setMouseOver(false)}
-				className={styles.box}>
+				}}>
 				{/* Show back button if location is not / */}
 				<Box sx={{ display: "flex", alignItems: "center", marginInline: "2%" }}>
 					<IconButton
@@ -197,8 +195,7 @@ export default function SearchBar() {
 				// onMouseEnter={() => setMouseOver(true)}
 				// onMouseLeave={() => setMouseOver(false)}
 				onFocus={() => setHasFocus(true)}
-				onBlur={() => setTimeout(() => setHasFocus(false), 100)}
-				className={styles.box}>
+				onBlur={() => setTimeout(() => setHasFocus(false), 100)}>
 				{/* Show back button if location is not / */}
 				<TextField
 					size="small"
@@ -219,11 +216,8 @@ export default function SearchBar() {
 					opacity: results.length > 0 && value && hasFocus ? 1 : 0,
 					transition: "opacity 0.2s",
 				}}
-				// onMouseEnter={() => setMouseOver(true)}
-				// onMouseLeave={() => setMouseOver(false)}
 				onFocus={() => setHasFocus(true)}
-				onBlur={() => setTimeout(() => setHasFocus(false), 100)}
-				className={styles.box}>
+				onBlur={() => setTimeout(() => setHasFocus(false), 100)}>
 				{/* Show back button if location is not / */}
 				<TextField
 					size="small"
@@ -234,7 +228,7 @@ export default function SearchBar() {
 				{results.length > 0 && (
 					<>
 						<Divider />
-						<List disablePadding dense className={styles.list}>
+						<List disablePadding dense>
 							{results.map((result, i) => (
 								<ListItem disableGutters>
 									<ListItemButton

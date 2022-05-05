@@ -1,6 +1,7 @@
-import { Routes as Router, Route } from "react-router-dom";
-import Search from "./Search";
+import { Route, Routes as Router } from "react-router-dom";
+
 import Home from "./Home";
+import Search from "./Search";
 import Sensor from "./Sensor";
 
 export default function Routes() {

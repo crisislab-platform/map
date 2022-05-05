@@ -1,10 +1,11 @@
 import { Box, CssBaseline, Typography } from "@mui/material";
 import React, { Suspense, useEffect, useState } from "react";
-import { createPortal } from "react-dom";
+
 import MapContext from "./MapContext";
 import MapSwitcher from "./components/MapSwitcher";
 import SensorsContext from "./SensorsContext";
 import Sidebar from "./Sidebar.jsx";
+import { createPortal } from "react-dom";
 import setupMap from "./setupMap";
 import { useNavigate } from "react-router-dom";
 

@@ -1,18 +1,19 @@
+import { Button, Fade, IconButton } from "@mui/material";
+
 import Box from "@mui/material/Box";
-import Paper from "@mui/material/Paper";
-import Typography from "@mui/material/Typography";
-import SensorsContext from "../SensorsContext";
-import React from "react";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import { useParams } from "react-router-dom";
-import { getDistance } from "geolib";
-import RPiIcon from "./RPiIcon";
-import { Button, Fade, IconButton } from "@mui/material";
 import { OpenInNew } from "@mui/icons-material";
+import Paper from "@mui/material/Paper";
+import RPiIcon from "./RPiIcon";
+import React from "react";
+import SensorsContext from "../SensorsContext";
+import Typography from "@mui/material/Typography";
+import { getDistance } from "geolib";
+import { useParams } from "react-router-dom";
 
 export default function Sensor() {
 	const [sensors] = React.useContext(SensorsContext);
