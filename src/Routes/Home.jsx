@@ -1,4 +1,8 @@
-import { Box, Fade, Link, Stack, Typography } from "@mui/material";
+import { Box, Fade, IconButton, Stack, Tooltip, Typography } from "@mui/material";
+
+import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
+import LockIcon from "@mui/icons-material/Lock";
+import SecurityIcon from "@mui/icons-material/Security";
 
 export default function Home() {
 	return (
@@ -48,9 +52,13 @@ export default function Home() {
 						<img style={{ height: 50 }} src="/massey_logo.svg" />
 					</Box>
 				</Box>
-				<Link href="https://admin.crisislab.org.nz" rel="noopener norefferer">
-					Admin panel
-				</Link>
+				<span>
+					<Tooltip title="Admin panel" placement="right">
+						<IconButton href="https://admin.crisislab.org.nz" rel="noopener norefferer">
+							<AdminPanelSettingsIcon />
+						</IconButton>
+					</Tooltip>
+				</span>
 			</Stack>
 		</Fade>
 	);
