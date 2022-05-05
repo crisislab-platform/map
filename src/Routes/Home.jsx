@@ -1,8 +1,6 @@
 import { Box, Fade, IconButton, Stack, Tooltip, Typography } from "@mui/material";
 
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
-import LockIcon from "@mui/icons-material/Lock";
-import SecurityIcon from "@mui/icons-material/Security";
 
 export default function Home() {
 	return (
