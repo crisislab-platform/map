@@ -18,9 +18,9 @@ import SatelliteAltIcon from "@mui/icons-material/SatelliteAlt";
 import StraightIcon from "@mui/icons-material/Straight";
 
 const styles = [
-	{ text: "Streets", colour: "primary", id: "streets-v11", Icon: StraightIcon },
-	{ text: "Satellite", colour: "secondary", id: "satellite-v9", Icon: SatelliteAltIcon },
-	{ text: "Outdoors", colour: "success", id: "outdoors-v11", Icon: MapIcon },
+	{ text: "Streets", colour: "primary", id: "streets", Icon: StraightIcon },
+	{ text: "Satellite", colour: "secondary", id: "satellite", Icon: SatelliteAltIcon },
+	{ text: "Outdoors", colour: "success", id: "outdoors", Icon: MapIcon },
 ];
 
 const squareSize = 50;
