@@ -5,7 +5,7 @@ import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 export default function Home() {
 	return (
 		<Fade in>
-			<Stack sx={{ p: 3, height: "100%" }}>
+			<Stack sx={{ paddingInline: 3, paddingBlock: 2, height: "100%" }}>
 				<Box
 					sx={{
 						paddingInline: 1,
