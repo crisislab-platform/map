@@ -77,7 +77,7 @@ export default function Sensor() {
 						position: "relative",
 					}}>
 					<iframe
-						src={"https://ingest-worker.benhong.workers.dev/consume/" + id}
+						src={"https://ingest.benhong.me/consume/" + id}
 						style={{
 							position: "absolute",
 							top: 0,
