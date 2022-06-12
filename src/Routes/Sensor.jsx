@@ -28,9 +28,9 @@ export default function Sensor() {
 	let location = null;
 
 	if (geoFeatures) {
-		const streetName = geoFeatures[0].text;
-		const locality = geoFeatures[2].text;
-		const region = geoFeatures[3].text;
+		const streetName = geoFeatures.text;
+		const locality = geoFeatures.context[1].text;
+		const region = geoFeatures.context[3].text;
 		location = `${streetName}, ${locality}, ${region}`;
 	}
 
