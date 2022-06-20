@@ -34,6 +34,7 @@ export default function MapApp(props) {
 			const popup = new Popup({
 				closeButton: false,
 				closeOnClick: false,
+				maxWidth: "400px",
 			});
 
 			popup.setHTML('<div id="popup"></div>');

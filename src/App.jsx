@@ -16,7 +16,7 @@ function PopupComponent({ activeSensor, sensors }) {
 		return null;
 	}
 
-	const { geoFeatures, id, online, type } = sensors[activeSensor];
+	const { geoFeatures, id, online, type, secondary_id } = sensors[activeSensor];
 
 	let location = null;
 
@@ -34,10 +34,10 @@ function PopupComponent({ activeSensor, sensors }) {
 				sx={{
 					fontWeight: "bold",
 				}}>
-				{location || type}
+				{secondary_id || location}
 			</Typography>
-			<Typography variant="h6">{location ? type : null}</Typography>
-			<Typography variant="body1">{"ID: " + id + " • " + (online ? "Online" : "Offline")}</Typography>
+			<Typography variant="h6">{secondary_id ? location : null}</Typography>
+			<Typography variant="body1">{"ID: " + id + " • " + (online ? "Online" : "Offline") + (type ? " • " + type : "")}</Typography>
 		</Box>,
 		document.getElementById("popup"),
 	);
