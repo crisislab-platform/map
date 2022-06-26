@@ -75,13 +75,6 @@ export default function Switcher() {
 
 	useEffect(() => {
 		if (map && map.loaded) {
-			console.log(
-				"Fault lines enabled",
-				faultLinesEnabled,
-				map && map?.getLayer("fault-lines-render-layer"),
-				map && map?.getLayer("fault-lines-hitbox-layer"),
-			);
-
 			function showFaultLines(show) {
 				map.getLayer("fault-lines-render-layer") &&
 					map.setLayoutProperty("fault-lines-render-layer", "visibility", show ? "visible" : "none");
@@ -94,7 +87,6 @@ export default function Switcher() {
 			}
 
 			function onFaultLinesExpand() {
-				console.log("Expanding");
 				showFaultLineLabels(true);
 
 				map.setPaintProperty("fault-lines-render-layer", "line-width", [
@@ -108,7 +100,6 @@ export default function Switcher() {
 				]);
 			}
 			function onFaultLinesShrink() {
-				console.log("Shrinking");
 				showFaultLineLabels(false);
 
 				map.setPaintProperty("fault-lines-render-layer", "line-width", [
@@ -133,13 +124,11 @@ export default function Switcher() {
 				showFaultLineLabels(false);
 			}
 
-			console.log("setting up handlers");
 			map.on("mouseenter", "fault-lines-hitbox-layer", onFaultLinesExpand)
 				.on("mouseleave", "fault-lines-hitbox-layer", onFaultLinesShrink)
 				.on("click", "fault-lines-hitbox-layer", onFaultLinesClick);
 
 			return () => {
-				console.log("Cleaning up handlers");
 				map.off("mouseenter", "fault-lines-hitbox-layer", onFaultLinesExpand)
 					.off("mouseleave", "fault-lines-hitbox-layer", onFaultLinesShrink)
 					.off("click", "fault-lines-hitbox-layer", onFaultLinesClick);

@@ -130,7 +130,6 @@ export default function MapApp(props) {
 						"line-color": "transparent",
 					},
 				});
-				console.log(map.getLayer("fault-lines-hitbox-layer"));
 				map.addLayer({
 					id: "fault-lines-labels-layer",
 					type: "symbol",
