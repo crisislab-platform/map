@@ -1,7 +1,6 @@
 import { theme } from "beryllium";
 
 function makeCircleColourGetter(text = false) {
-	console.log(text);
 	return [
 		"step",
 		["get", "point_count"],

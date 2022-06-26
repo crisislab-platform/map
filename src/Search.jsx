@@ -118,7 +118,6 @@ export default function SearchBar() {
 		return () => window.removeEventListener("keydown", handleKey);
 	}, [selectedIndex, results]);
 
-	console.log(location);
 
 	return (
 		<Box

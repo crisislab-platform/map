@@ -73,83 +73,78 @@ export default function Switcher() {
 		setSelectedStyle(style);
 	}
 
-	function showFaultLines(show) {
-		if (map && map.loaded && map.getLayer("fault-lines-layer")) {
-			map.setLayoutProperty("fault-lines-layer", "visibility", show ? "visible" : "none");
-		}
-	}
-	function showFaultLineLabels(show) {
-		if (map && map.loaded && map.getLayer("fault-lines-labels-layer")) {
-			map.setLayoutProperty("fault-lines-labels-layer", "visibility", show ? "visible" : "none");
-		}
-	}
-
-	if (faultLinesEnabled) {
-		showFaultLines(true);
-	} else {
-		showFaultLines(false);
-		showFaultLineLabels(false);
-	}
-	function onFaultLinesShow() {
-		showFaultLineLabels(true);
+	useEffect(() => {
 		if (map && map.loaded) {
-			map.setPaintProperty("fault-lines-layer", "line-width", [
-				"interpolate",
-				["linear"],
-				["zoom"],
-				5,
-				4,
-				18,
-				16,
-			]);
-		}
-	}
-	function onFaultLinesHide() {
-		showFaultLineLabels(false);
-		if (map && map.loaded) {
-			map.setPaintProperty("fault-lines-layer", "line-width", [
-				"interpolate",
-				["linear"],
-				["zoom"],
-				5,
-				2,
-				18,
-				12,
-			]);
-		}
-	}
+			console.log(
+				"Fault lines enabled",
+				faultLinesEnabled,
+				map && map?.getLayer("fault-lines-render-layer"),
+				map && map?.getLayer("fault-lines-hitbox-layer"),
+			);
 
-	function onFaultLinesClick() {
-		if (map && map.loaded && map.getLayer("fault-lines-labels-layer")) {
-			if (map.getLayoutProperty("fault-lines-labels-layer", "visibility") === "visible") {
-				onFaultLinesShow();
-			} else {
-				onFaultLinesHide();
+			function showFaultLines(show) {
+				map.getLayer("fault-lines-render-layer") &&
+					map.setLayoutProperty("fault-lines-render-layer", "visibility", show ? "visible" : "none");
+				map.getLayer("fault-lines-hitbox-layer") &&
+					map.setLayoutProperty("fault-lines-hitbox-layer", "visibility", show ? "visible" : "none");
 			}
-		}
-	}
+			function showFaultLineLabels(show) {
+				map.getLayer("fault-lines-render-layer") &&
+					map.setLayoutProperty("fault-lines-labels-layer", "visibility", show ? "visible" : "none");
+			}
 
-	function setupFaultLines() {
-		if (map && map.loaded) {
-			map.on("mouseenter", "fault-lines-layer", onFaultLinesShow);
-			map.on("mouseleave", "fault-lines-layer", onFaultLinesHide);
-			map.on("click", "fault-lines-layer", onFaultLinesClick);
+			function onFaultLinesExpand() {
+				console.log("Expanding");
+				showFaultLineLabels(true);
+
+				map.setPaintProperty("fault-lines-render-layer", "line-width", [
+					"interpolate",
+					["linear"],
+					["zoom"],
+					5,
+					4,
+					18,
+					16,
+				]);
+			}
+			function onFaultLinesShrink() {
+				console.log("Shrinking");
+				showFaultLineLabels(false);
+
+				map.setPaintProperty("fault-lines-render-layer", "line-width", [
+					"interpolate",
+					["linear"],
+					["zoom"],
+					5,
+					1,
+					18,
+					6,
+				]);
+			}
+
+			function onFaultLinesClick() {
+				onFaultLinesExpand();
+			}
+
+			if (faultLinesEnabled) {
+				showFaultLines(true);
+			} else {
+				showFaultLines(false);
+				showFaultLineLabels(false);
+			}
+
+			console.log("setting up handlers");
+			map.on("mouseenter", "fault-lines-hitbox-layer", onFaultLinesExpand)
+				.on("mouseleave", "fault-lines-hitbox-layer", onFaultLinesShrink)
+				.on("click", "fault-lines-hitbox-layer", onFaultLinesClick);
+
 			return () => {
-				map.off("mouseenter", "fault-lines-layer", onFaultLinesShow);
-				map.off("mouseleave", "fault-lines-layer", onFaultLinesHide);
-				map.off("click", "fault-lines-layer", onFaultLinesClick);
+				console.log("Cleaning up handlers");
+				map.off("mouseenter", "fault-lines-hitbox-layer", onFaultLinesExpand)
+					.off("mouseleave", "fault-lines-hitbox-layer", onFaultLinesShrink)
+					.off("click", "fault-lines-hitbox-layer", onFaultLinesClick);
 			};
 		}
-	}
-
-	useEffect(() => {
-		const faultLinesCleanup = setupFaultLines();
-		map;
-		return () => {
-			if (faultLinesCleanup) {
-				faultLinesCleanup();
-			}
-		};
 	}, [map, faultLinesEnabled, selectedStyle]);
 
 	const selectedStyleDetails = styles.find((style) => style.id === selectedStyle);

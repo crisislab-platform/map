@@ -66,7 +66,7 @@ export default function MapApp(props) {
 			);
 
 			function onError(e) {
-				console.log("Failed to load map. Error: ", e);
+				console.error("Failed to load map. Error: ", e);
 			}
 
 			function onMapStylesLoad() {
@@ -97,8 +97,9 @@ export default function MapApp(props) {
 					type: "vector",
 					url: "mapbox://zadeviggers.8hjwpez9",
 				});
+
 				map.addLayer({
-					id: "fault-lines-layer",
+					id: "fault-lines-render-layer",
 					type: "line",
 					source: "fault-lines-source",
 					"source-layer": "New_Zealand_Active_Faults_Database_1250k",
@@ -110,9 +111,26 @@ export default function MapApp(props) {
 					},
 					paint: {
 						"line-color": theme.palette.error.main,
-						"line-width": ["interpolate", ["linear"], ["zoom"], 5, 2, 18, 12],
+						"line-width": ["interpolate", ["linear"], ["zoom"], 5, 1, 18, 6],
 					},
 				});
+				map.addLayer({
+					id: "fault-lines-hitbox-layer",
+					type: "line",
+					source: "fault-lines-source",
+					"source-layer": "New_Zealand_Active_Faults_Database_1250k",
+					layout: {
+						// Make the layer hidden by default.
+						visibility: "none",
+						"line-join": "round",
+						"line-cap": "round",
+					},
+					paint: {
+						"line-width": ["interpolate", ["linear"], ["zoom"], 5, 8, 18, 32],
+						"line-color": "transparent",
+					},
+				});
+				console.log(map.getLayer("fault-lines-hitbox-layer"));
 				map.addLayer({
 					id: "fault-lines-labels-layer",
 					type: "symbol",
@@ -135,10 +153,14 @@ export default function MapApp(props) {
 					},
 				});
 
+				// @ts-ignore
+				window.map = map;
+
 				return () => {
 					map.removeLayer("sky");
 					map.removeSource("fault-lines-source");
-					map.removeLayer("fault-lines-layer");
+					map.removeLayer("fault-lines-hitbox-layer");
+					map.removeLayer("fault-lines-render-layer");
 					map.removeLayer("falt-lines-labels-layer");
 					map.remove();
 				};

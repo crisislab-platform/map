@@ -37,12 +37,12 @@ function PopupComponent({ activeSensor, sensors }) {
 				{secondary_id || location}
 			</Typography>
 			<Typography variant="h6">{secondary_id ? location : null}</Typography>
-			<Typography variant="body1">{"ID: " + id + " • " + (online ? "Online" : "Offline") + (type ? " • " + type : "")}</Typography>
+			<Typography variant="body1">
+				{"ID: " + id + " • " + (online ? "Online" : "Offline") + (type ? " • " + type : "")}
+			</Typography>
 		</Box>,
 		document.getElementById("popup"),
 	);
-
-	console.log("popup", portal);
 
 	return portal;
 }

@@ -52,8 +52,6 @@ export default function Search() {
 			.slice(0, 5);
 	}
 
-	console.log("Sensors:", sensors);
-
 	return (
 		<Fade in>
 			<Box
