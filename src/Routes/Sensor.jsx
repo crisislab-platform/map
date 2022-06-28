@@ -62,7 +62,7 @@ export default function Sensor() {
 							color="primary"
 							sx={{ marginTop: 1 }}
 							onClick={() =>
-								window.open("https://ingest-worker.benhong.workers.dev/consume/" + id, "_blank")
+								window.open("https://ingest.benhong.me/consume/" + id, "_blank")
 							}>
 							Open in new tab
 						</Button> */}
