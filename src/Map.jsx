@@ -28,7 +28,7 @@ export default function MapApp(props) {
 				style: "mapbox://styles/mapbox/streets-v11",
 				center: [174.8, -41.325],
 				zoom: 4.8,
-proj				projection: "globe",
+				projection: "globe",
 			});
 			setMap(map);
 
