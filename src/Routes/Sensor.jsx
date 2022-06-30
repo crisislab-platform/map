@@ -89,12 +89,9 @@ export default function Sensor() {
 					<IconButton
 						component={"a"}
 						style={{ position: "absolute", top: -10, right: 5, color: "black" }}
-						href={"https://ingest-worker.benhong.workers.dev/consume/" + id}
+						href={"https://ingest.benhong.me/consume/" + id}
 						target="_blank"
 						rel="noopener noreferrer"
-						// onClick={() =>
-						// 	window.open("https://ingest-worker.benhong.workers.dev/consume/" + id, "_blank")
-						// }
 					>
 						<OpenInNew />
 					</IconButton>
