@@ -77,7 +77,7 @@ export default function Search() {
 								sx={{ paddingInline: 4 }}
 								onClick={() => {
 									map?.flyTo({
-										center: sensor.location.coordinates,
+										center: sensor.location?.coordinates,
 										zoom: 16,
 										speed: 1.2,
 										curve: 1,
