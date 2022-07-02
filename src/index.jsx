@@ -6,7 +6,6 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { StyledEngineProvider } from "@mui/material/styles";
 import { ThemeProvider } from "@mui/material";
-import reportWebVitals from "./reportWebVitals";
 import { theme } from "beryllium";
 
 window.theme = theme;
@@ -22,6 +21,3 @@ ReactDOM.render(
 	</React.StrictMode>,
 	document.getElementById("root"),
 );
-
-
-reportWebVitals(console.info);

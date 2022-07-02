@@ -1,41 +1,37 @@
-import * as React from "react";
+import { useEffect, useState, useContext } from "react";
 
 import { useLocation, useNavigate } from "react-router-dom";
-
-import { ArrowBack } from "@mui/icons-material";
-import Box from "@mui/material/Box";
-import Divider from "@mui/material/Divider";
-import FormControl from "@mui/material/FormControl";
-import IconButton from "@mui/material/IconButton";
-import InputAdornment from "@mui/material/InputAdornment";
-import InputLabel from "@mui/material/InputLabel";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
-import LocationCityIcon from "@mui/icons-material/LocationCity";
+import { Tooltip } from "@mui/material";
+import {
+	Box,
+	IconButton,
+	InputAdornment,
+	ListItem,
+	ListItemButton,
+	ListItemIcon,
+	ListItemText,
+	Paper,
+	TextField,
+} from "@mui/material";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import MapContext from "./MapContext";
-import OutlinedInput from "@mui/material/OutlinedInput";
-import Paper from "@mui/material/Paper";
 import SearchIcon from "@mui/icons-material/Search";
-import TextField from "@mui/material/TextField";
 
 const MAPBOX_TOKEN = "pk.eyJ1IjoiemFkZXZpZ2dlcnMiLCJhIjoiY2t5dGF6cGpvMWMydTJ3cGhrb2ZhOTdlZCJ9.myQ3YnPgbI-QkuBlClYfCw";
 
 // MapBox Search
 export default function SearchBar() {
-	const [value, setValue] = React.useState("");
-	const [results, setResults] = React.useState([]);
-	const [selectedIndex, setSelectedIndex] = React.useState(0);
-	const [hasFocus, setHasFocus] = React.useState(false);
-	const [map, setMap] = React.useContext(MapContext);
-	const [mouseOver, setMouseOver] = React.useState(false);
+	const [value, setValue] = useState("");
+	const [results, setResults] = useState([]);
+	const [selectedIndex, setSelectedIndex] = useState(0);
+	const [hasFocus, setHasFocus] = useState(false);
+	const [map, setMap] = useContext(MapContext);
+	const [mouseOver, setMouseOver] = useState(false);
 	const navigate = useNavigate();
 	const location = useLocation();
 
-	React.useEffect(() => {
+	useEffect(() => {
 		(async () => {
 			if (value) {
 				const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(
@@ -102,7 +98,7 @@ export default function SearchBar() {
 		navigate("/search?" + searchParams.toString());
 	}
 
-	React.useEffect(() => {
+	useEffect(() => {
 		function handleKey(e) {
 			if (e.key === "ArrowDown") {
 				setSelectedIndex(Math.min(selectedIndex + 1, results.length - 1));
@@ -117,7 +113,6 @@ export default function SearchBar() {
 		window.addEventListener("keydown", handleKey);
 		return () => window.removeEventListener("keydown", handleKey);
 	}, [selectedIndex, results]);
-
 
 	return (
 		<Box
@@ -141,19 +136,21 @@ export default function SearchBar() {
 				}}>
 				{/* Show back button if location is not / */}
 				<Box sx={{ display: "flex", alignItems: "center", marginInline: "2%" }}>
-					<IconButton
-						onClick={() => {
-							reset();
-							if (!(results.length > 0 && value && hasFocus)) navigate("/");
-						}}
-						style={{
-							flexGrow: 0,
-							marginRight: location.pathname !== "/" || value ? -5 : -40,
-							transition: "opacity 0.2s, margin-right 0.2s ease-out",
-							opacity: location.pathname !== "/" || value ? 1 : 0,
-						}}>
-						<ArrowBack fontSize="medium" />
-					</IconButton>
+					<Tooltip title="Back to main page">
+						<IconButton
+							onClick={() => {
+								reset();
+								if (!(results.length > 0 && value && hasFocus)) navigate("/");
+							}}
+							style={{
+								flexGrow: 0,
+								marginRight: location.pathname !== "/" || value ? -5 : -40,
+								transition: "opacity 0.2s, margin-right 0.2s ease-out",
+								opacity: location.pathname !== "/" || value ? 1 : 0,
+							}}>
+							<ArrowBackIcon fontSize="medium" />
+						</IconButton>
+					</Tooltip>
 
 					<TextField
 						style={{ flexGrow: 1, marginTop: 7, marginBottom: 7 }}

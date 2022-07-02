@@ -1,18 +1,12 @@
-import { Button, Fade, IconButton } from "@mui/material";
+import { Fade, IconButton } from "@mui/material";
 
 import Box from "@mui/material/Box";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
+
 import { OpenInNew } from "@mui/icons-material";
-import Paper from "@mui/material/Paper";
 import RPiIcon from "./RPiIcon";
 import React from "react";
 import SensorsContext from "../SensorsContext";
 import Typography from "@mui/material/Typography";
-import { getDistance } from "geolib";
 import { useParams } from "react-router-dom";
 
 export default function Sensor() {
@@ -91,8 +85,7 @@ export default function Sensor() {
 						style={{ position: "absolute", top: -10, right: 5, color: "black" }}
 						href={"https://ingest.benhong.me/consume/" + id}
 						target="_blank"
-						rel="noopener noreferrer"
-					>
+						rel="noopener noreferrer">
 						<OpenInNew />
 					</IconButton>
 				</div>
