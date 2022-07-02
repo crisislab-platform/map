@@ -68,79 +68,80 @@ export default function Switcher() {
 	const [selectedStyle, setSelectedStyle] = useState("streets-v11");
 	const [faultLinesEnabled, setFaultLinesEnabled] = useState(false);
 
-	function setStyle(style) {
-		map?.setStyle("mapbox://styles/mapbox/" + style);
-		setSelectedStyle(style);
+	function showFaultLines(show) {
+		map.getLayer("fault-lines-render-layer") &&
+			map.setLayoutProperty("fault-lines-render-layer", "visibility", show ? "visible" : "none");
+		map.getLayer("fault-lines-hitbox-layer") &&
+			map.setLayoutProperty("fault-lines-hitbox-layer", "visibility", show ? "visible" : "none");
+	}
+	function showFaultLineLabels(show) {
+		map.getLayer("fault-lines-render-layer") &&
+			map.setLayoutProperty("fault-lines-labels-layer", "visibility", show ? "visible" : "none");
 	}
 
-	useEffect(() => {
+	function onFaultLinesExpand() {
+		showFaultLineLabels(true);
+
+		map.setPaintProperty("fault-lines-render-layer", "line-width", [
+			"interpolate",
+			["linear"],
+			["zoom"],
+			5,
+			4,
+			18,
+			16,
+		]);
+	}
+	function onFaultLinesShrink() {
+		showFaultLineLabels(false);
+
+		map.setPaintProperty("fault-lines-render-layer", "line-width", [
+			"interpolate",
+			["linear"],
+			["zoom"],
+			5,
+			1,
+			18,
+			6,
+		]);
+	}
+
+	function updateFaultLineStyles() {
 		if (map && map.loaded) {
-			function showFaultLines(show) {
-				map.getLayer("fault-lines-render-layer") &&
-					map.setLayoutProperty("fault-lines-render-layer", "visibility", show ? "visible" : "none");
-				map.getLayer("fault-lines-hitbox-layer") &&
-					map.setLayoutProperty("fault-lines-hitbox-layer", "visibility", show ? "visible" : "none");
-			}
-			function showFaultLineLabels(show) {
-				map.getLayer("fault-lines-render-layer") &&
-					map.setLayoutProperty("fault-lines-labels-layer", "visibility", show ? "visible" : "none");
-			}
-
-			function onFaultLinesExpand() {
-				showFaultLineLabels(true);
-
-				map.setPaintProperty("fault-lines-render-layer", "line-width", [
-					"interpolate",
-					["linear"],
-					["zoom"],
-					5,
-					4,
-					18,
-					16,
-				]);
-			}
-			function onFaultLinesShrink() {
-				showFaultLineLabels(false);
-
-				map.setPaintProperty("fault-lines-render-layer", "line-width", [
-					"interpolate",
-					["linear"],
-					["zoom"],
-					5,
-					1,
-					18,
-					6,
-				]);
-			}
-
-			function onFaultLinesClick() {
-				onFaultLinesExpand();
-			}
-
 			if (faultLinesEnabled) {
 				showFaultLines(true);
 			} else {
 				showFaultLines(false);
 				showFaultLineLabels(false);
 			}
+		}
+	}
+
+	useEffect(() => {
+		if (map && map.loaded) {
+			updateFaultLineStyles();
 
 			map.on("mouseenter", "fault-lines-hitbox-layer", onFaultLinesExpand)
 				.on("mouseleave", "fault-lines-hitbox-layer", onFaultLinesShrink)
-				.on("click", "fault-lines-hitbox-layer", onFaultLinesClick);
+				.on("click", "fault-lines-hitbox-layer", onFaultLinesExpand)
+				.on("style.load", updateFaultLineStyles);
 
 			return () => {
 				map.off("mouseenter", "fault-lines-hitbox-layer", onFaultLinesExpand)
 					.off("mouseleave", "fault-lines-hitbox-layer", onFaultLinesShrink)
-					.off("click", "fault-lines-hitbox-layer", onFaultLinesClick);
+					.off("click", "fault-lines-hitbox-layer", onFaultLinesExpand)
+					.off("style.load", updateFaultLineStyles);
 			};
 		}
-	}, [map, faultLinesEnabled, selectedStyle]);
+	}, [map, faultLinesEnabled]);
 
 	const selectedStyleDetails = styles.find((style) => style.id === selectedStyle);
 
 	function setStyle(style) {
-		map?.setStyle("mapbox://styles/mapbox/" + style);
-		setSelectedStyle(style);
+		if (selectedStyle !== style && map && map.loaded) {
+			map?.setStyle("mapbox://styles/mapbox/" + style);
+			setSelectedStyle(style);
+		}
 	}
 
 	function onPopupOpen() {
