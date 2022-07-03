@@ -38,7 +38,7 @@ function PopupComponent({ activeSensor, sensors }) {
 			</Typography>
 			<Typography variant="h6">{secondary_id ? location : null}</Typography>
 			<Typography variant="body1">
-				{"ID: " + id + " • " + (online ? "Online" : "Offline") + (type ? " • " + type : "")}
+				{"#" + id + " • " + (online ? "Online" : "Offline") + (type ? " • " + type : "")}
 			</Typography>
 		</Box>,
 		document.getElementById("popup"),

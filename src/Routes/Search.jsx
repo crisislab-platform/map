@@ -95,7 +95,7 @@ export default function Search() {
 											: (sensor.distance > 1000
 													? Math.round(sensor.distance / 100) / 10 + " kilometers away"
 													: sensor.distance + " meters away") + " • ") +
-										"ID: " +
+										"#" +
 										sensor.id +
 										" • " +
 										(sensor.online ? "Online" : "Offline")
