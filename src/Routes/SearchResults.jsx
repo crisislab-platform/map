@@ -4,11 +4,9 @@ import Box from "@mui/material/Box";
 import { Fade } from "@mui/material";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
-import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import MapContext from "../MapContext";
-import Paper from "@mui/material/Paper";
 import RPiIcon from "./RPiIcon";
 import React from "react";
 import SensorsContext from "../SensorsContext";
@@ -56,15 +54,13 @@ export default function Search() {
 		<Fade in>
 			<Box
 				sx={{
-					paddingInline: 0,
-					paddingBlock: 6,
-					// marginTop: 6,
+					p: 6,
 				}}>
 				<Typography
 					variant="h6"
 					sx={{
 						fontWeight: "bold",
-						marginInline: 4,
+						m: 4,
 					}}>
 					{bbox ? "Sensors in" : "Sensors near"} {name}:
 				</Typography>
