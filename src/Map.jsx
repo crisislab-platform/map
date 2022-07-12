@@ -40,8 +40,6 @@ export default function MapApp(props) {
 
 			props.setPopup(popup);
 
-			const attributionControl = new AttributionControl();
-			map.addControl(attributionControl, "top-right");
 			const navigationControl = new NavigationControl({
 				visualizePitch: true,
 				showZoom: true,
