@@ -75,7 +75,7 @@ export default function Sensor() {
 						position: "relative",
 					}}>
 					<iframe
-						src={"https://ingest.benhong.me/consume/" + id}
+						src={"https://live-data.pages.dev/consume/" + id}
 						style={{
 							position: "absolute",
 							top: 0,
@@ -87,7 +87,7 @@ export default function Sensor() {
 					<IconButton
 						component={"a"}
 						style={{ position: "absolute", top: -10, right: 5, color: "black" }}
-						href={"https://ingest.benhong.me/consume/" + id}
+						href={"https://live-data.pages.dev/consume/" + id}
 						target="_blank"
 						rel="noopener noreferrer">
 						<OpenInNew />
