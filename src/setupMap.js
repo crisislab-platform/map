@@ -132,6 +132,22 @@ export default function setupMap(map, geoJSON, onClick, popup, setActiveSensor, 
 		map.on("mouseenter", "unclustered-point", unclusteredMouseEnter);
 		map.on("mouseleave", "unclustered-point", unclusteredMouseLeave);
 
+		map.addSource("geonet-sensors-source", {
+			type: "vector",
+			url: "mapbox://zadeviggers.ckyti0ozu2wkk20rvo89kd6ur-6jsd8",
+		});
+		map.addLayer({
+			id: "geonet-sensors-layer",
+			source: "geonet-sensors-source",
+			"source-layer": "stations",
+			type: "circle",
+			layout: { visibility: "none" },
+			paint: {
+				"circle-color": theme.palette.geonet.main,
+				"circle-radius": 2,
+			},
+		});
+
 		// Fault lines
 		map.addSource("fault-lines-source", {
 			type: "vector",
@@ -200,15 +216,18 @@ export default function setupMap(map, geoJSON, onClick, popup, setActiveSensor, 
 		map.off("mouseleave", "clusters", onClustersMouseLeave);
 		map.off("mouseenter", "clusters", onClustersMouseEnter);
 
-		if (map.getSource("earthquakes")) map.removeSource("earthquakes");
+		if (map.getLayer("cluster-count")) map.removeLayer("cluster-count");
 		if (map.getLayer("clusters")) map.removeLayer("clusters");
 		if (map.getLayer("unclustered-point")) map.removeLayer("unclustered-point");
-		if (map.getLayer("cluster-count")) map.removeLayer("cluster-count");
+		if (map.getSource("earthquakes")) map.removeSource("earthquakes");
 
-		if (map.getSource("fault-lines-source")) map.removeSource("fault-lines-source");
+		if (map.getLayer("geonet-sensors-layer")) map.removeLayer("geonet-sensors-layer");
+		if (map.getSource("geonet-sensors-source")) map.removeSource("geonet-sensors-source");
+
 		if (map.getLayer("fault-lines-hitbox-layer")) map.removeLayer("fault-lines-hitbox-layer");
 		if (map.getLayer("fault-lines-render-layer")) map.removeLayer("fault-lines-render-layer");
 		if (map.getLayer("falt-lines-labels-layer")) map.removeLayer("falt-lines-labels-layer");
+		if (map.getSource("fault-lines-source")) map.removeSource("fault-lines-source");
 	};
 	const onStyleLoad = () => {
 		cleanup();

@@ -1,7 +1,6 @@
 import { useEffect, useState, useContext } from "react";
 
 import { useLocation, useNavigate } from "react-router-dom";
-import { Tooltip } from "@mui/material";
 import {
 	Box,
 	IconButton,
@@ -12,12 +11,15 @@ import {
 	ListItemText,
 	Paper,
 	TextField,
+	Tooltip,
+	Divider,
+	List,
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import MapContext from "./MapContext";
 import SearchIcon from "@mui/icons-material/Search";
-
+import LocationCityIcon from "@mui/icons-material/LocationCity";
 const MAPBOX_TOKEN = "pk.eyJ1IjoiemFkZXZpZ2dlcnMiLCJhIjoiY2t5dGF6cGpvMWMydTJ3cGhrb2ZhOTdlZCJ9.myQ3YnPgbI-QkuBlClYfCw";
 
 // MapBox Search
@@ -226,10 +228,9 @@ export default function SearchBar() {
 						<Divider />
 						<List disablePadding dense>
 							{results.map((result, i) => (
-								<ListItem disableGutters>
+								<ListItem disableGutters key={result.id}>
 									<ListItemButton
 										selected={selectedIndex === i}
-										disablePadding
 										onClick={() => {
 											select(result);
 										}}

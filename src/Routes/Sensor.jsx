@@ -1,12 +1,9 @@
-import { Fade, IconButton } from "@mui/material";
-
-import Box from "@mui/material/Box";
+import { Fade, IconButton, Tooltip, Box, Typography } from "@mui/material";
 
 import { OpenInNew } from "@mui/icons-material";
 import RPiIcon from "./RPiIcon";
 import React from "react";
 import SensorsContext from "../SensorsContext";
-import Typography from "@mui/material/Typography";
 import { useParams } from "react-router-dom";
 
 export default function Sensor() {
@@ -17,7 +14,7 @@ export default function Sensor() {
 		return null;
 	}
 
-	const { geoFeatures, online, type } = sensors[id];
+	const { geoFeatures, online, type, secondary_id: secondaryID } = sensors[id];
 
 	let location = null;
 
@@ -50,16 +47,23 @@ export default function Sensor() {
 						<Typography variant="h6" style={{ fontSize: "1.15em" }}>
 							{location ? type : null}
 						</Typography>
-						<Typography variant="body1">{"ID: " + id + " • " + (online ? "Online" : "Offline")}</Typography>
-						{/* <Button
-							variant="contained"
-							color="primary"
-							sx={{ marginTop: 1 }}
-							onClick={() =>
-								window.open("https://ingest.benhong.me/consume/" + id, "_blank")
-							}>
-							Open in new tab
-						</Button> */}
+						<Typography variant="body1">
+							<Tooltip title="Sensor ID">
+								<span>#{id}</span>
+							</Tooltip>{" "}
+							{secondaryID && (
+								<>
+									•{" "}
+									<Tooltip title="Station ID">
+										<span>@{secondaryID}</span>
+									</Tooltip>{" "}
+								</>
+							)}
+							•{" "}
+							<Tooltip title="Connection status">
+								<span>{online === undefined ? "Unknown" : online ? "Online" : "Offline"}</span>
+							</Tooltip>
+						</Typography>
 					</Box>
 				</Box>
 				<div
@@ -71,7 +75,7 @@ export default function Sensor() {
 						position: "relative",
 					}}>
 					<iframe
-						src={"https://ingest.benhong.me/consume/" + id}
+						src={"https://live-data.pages.dev/consume/" + id}
 						style={{
 							position: "absolute",
 							top: 0,
@@ -83,7 +87,7 @@ export default function Sensor() {
 					<IconButton
 						component={"a"}
 						style={{ position: "absolute", top: -10, right: 5, color: "black" }}
-						href={"https://ingest.benhong.me/consume/" + id}
+						href={"https://live-data.pages.dev/consume/" + id}
 						target="_blank"
 						rel="noopener noreferrer">
 						<OpenInNew />

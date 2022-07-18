@@ -4,7 +4,7 @@ import { Drawer, IconButton, Stack, Tooltip, useMediaQuery } from "@mui/material
 import CloseIcon from "@mui/icons-material/Close";
 import MenuIcon from "@mui/icons-material/Menu";
 import Routes from "./Routes/index.jsx";
-import Search from "./Search.jsx";
+import Search from "./SearchBar.jsx";
 import { useState } from "react";
 
 const desktopDrawerWidth = 500;
@@ -55,22 +55,10 @@ export default function Sidebar() {
 						</Tooltip>
 					</Stack>
 				)}
-				{/* <img
-					src="/crisis_lab_i_small.png"
-					style={{ height: 100, width: 150, marginTop: 20, marginLeft: 20 }}></img> */}
-				{/* <Box sx={{ display: "flex", gap: 3, marginTop: 3, marginInline: 4 }}>
-					<img src="/crisis_lab_i_small.png" style={{ height: 80, width: 120 }}></img>
-					<Typography
-						variant="h4"
-						sx={{
-							fontWeight: "bold",
-							fontWeight: 400,
-						}}>
-						EEW Experimental Sensor Network
-					</Typography>
-				</Box> */}
 				<Search />
-				<Routes />
+				<Box sx={{ mt: onBigScreen ? 6 : 10 }}>
+					<Routes />
+				</Box>
 			</Drawer>
 		</>
 	);

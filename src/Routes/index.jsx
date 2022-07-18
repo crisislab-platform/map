@@ -1,7 +1,7 @@
 import { Route, Routes as Router } from "react-router-dom";
 
 import Home from "./Home";
-import Search from "./Search";
+import Search from "./SearchResults";
 import Sensor from "./Sensor";
 
 export default function Routes() {

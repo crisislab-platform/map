@@ -16,6 +16,8 @@ import MapContext from "../../MapContext";
 import MapIcon from "@mui/icons-material/Map";
 import SatelliteAltIcon from "@mui/icons-material/SatelliteAlt";
 import StraightIcon from "@mui/icons-material/Straight";
+import CrisisAlertIcon from "@mui/icons-material/CrisisAlert";
+import EmergencyShareIcon from "@mui/icons-material/EmergencyShare";
 
 const styles = [
 	{ text: "Streets", colour: "primary", id: "streets-v11", Icon: StraightIcon },
@@ -25,40 +27,42 @@ const styles = [
 
 const squareSize = 50;
 
-function FlexSquare(props) {
+function FlexSquare({ colour, text, row, onClick, style, selected, Icon }) {
 	const theme = useTheme();
 
-	const colour = theme.palette[props.colour].main;
+	const backgroundColor = theme.palette[colour].main;
 
 	return (
-		<Tooltip title={props.text} placement="top">
+		<Tooltip title={text} placement={row === "top" ? "top" : "bottom"}>
 			<ButtonBase
-				onClick={props.onClick}
+				onClick={onClick}
 				elevation={0}
 				sx={{
 					width: squareSize,
 					height: squareSize,
 					borderRadius: theme.spacing(1),
 					backgroundColor: "none",
-					...props.style,
+					...style,
 				}}>
 				<Paper
 					sx={{
-						backgroundColor: colour,
+						backgroundColor,
 						width: squareSize,
 						height: squareSize,
-						border: `4px solid ${props.selected ? theme.palette[props.colour].dark : "transparent"}`,
+						border: `4px solid ${selected ? theme.palette[colour].dark : "transparent"}`,
 						transition: "border 0.5s",
 						display: "grid",
 						placeItems: "center",
 					}}
 					elevation={0}>
-					<props.Icon sx={{ display: "block", color: "white" }} />
+					<Icon sx={{ display: "block", color: "white" }} />
 				</Paper>
 			</ButtonBase>
 		</Tooltip>
 	);
 }
+
+const crisislabSensorsLayers = ["clusters", "unclustered-point", "cluster-count"];
 
 export default function Switcher() {
 	const [map] = useContext(MapContext);
@@ -67,6 +71,8 @@ export default function Switcher() {
 	const [popupOpen, setPopupOpen] = useState(false);
 	const [selectedStyle, setSelectedStyle] = useState("streets-v11");
 	const [faultLinesEnabled, setFaultLinesEnabled] = useState(false);
+	const [geonetEnabled, setGeonetEnabled] = useState(false);
+	const [crisislabEnabled, setCrisislabEnabled] = useState(true);
 
 	function showFaultLines(show) {
 		map.getLayer("fault-lines-render-layer") &&
@@ -135,6 +141,21 @@ export default function Switcher() {
 		}
 	}, [map, faultLinesEnabled]);
 
+	useEffect(() => {
+		if (map && map.loaded && map.getLayer("geonet-sensors-layer")) {
+			map.setLayoutProperty("geonet-sensors-layer", "visibility", geonetEnabled ? "visible" : "none");
+		}
+	}, [map, geonetEnabled]);
+
+	useEffect(() => {
+		if (map && map.loaded) {
+			for (const layer of crisislabSensorsLayers) {
+				if (map.getLayer(layer))
+					map.setLayoutProperty(layer, "visibility", crisislabEnabled ? "visible" : "none");
+			}
+		}
+	}, [map, crisislabEnabled]);
+
 	const selectedStyleDetails = styles.find((style) => style.id === selectedStyle);
 
 	function setStyle(style) {
@@ -159,10 +180,10 @@ export default function Switcher() {
 					bottom: 35,
 					right: 20,
 					pointerEvents: popupOpen ? "auto" : "none",
+					flex: 0,
 				}}
-				direction={onBigScreen ? "row" : "column"}
 				justifyContent="flex-end"
-				alignItems="center"
+				alignItems="flexEnd"
 				spacing={2}
 				onMouseEnter={onPopupOpen}
 				onMouseLeave={onPopupClose}
@@ -171,78 +192,104 @@ export default function Switcher() {
 				<Paper
 					sx={{
 						display: "flex",
-						flexDirection: onBigScreen ? "row" : "column",
+						flexDirection: "column",
 						gap: 1,
 						backgroundColor: theme.palette.background.paper,
 						borderRadius: theme.spacing(1),
 						padding: 1,
 						opacity: popupOpen ? 1 : 0,
 						transition: "opacity 0.2s",
+						alignItems: "flex-end",
 					}}
 					elevation={4}>
-					{styles.map((style) => (
+					<Stack gap={1} direction="row">
 						<FlexSquare
-							key={style.id}
-							selected={selectedStyle === style.id}
-							onClick={() => setStyle(style.id)}
-							colour={style.colour}
-							text={style.text}
-							lines={style.lines}
-							Icon={style.Icon}
+							row="top"
+							selected={crisislabEnabled}
+							onClick={() => setCrisislabEnabled((oldState) => !oldState)}
+							colour="primary"
+							text="CRISiSLab sensors"
+							Icon={CrisisAlertIcon}
 						/>
-					))}
-					<FlexSquare
-						selected={faultLinesEnabled}
-						onClick={() => setFaultLinesEnabled((oldState) => !oldState)}
-						colour="error"
-						text="Fault lines"
-						Icon={BoltIcon}
-					/>
+						<FlexSquare
+							row="top"
+							selected={geonetEnabled}
+							onClick={() => setGeonetEnabled((oldState) => !oldState)}
+							colour="geonet"
+							text="Geonet sensors"
+							Icon={EmergencyShareIcon}
+						/>
+						<FlexSquare
+							row="top"
+							selected={faultLinesEnabled}
+							onClick={() => setFaultLinesEnabled((oldState) => !oldState)}
+							colour="error"
+							text="Fault lines"
+							Icon={BoltIcon}
+						/>
+					</Stack>
+					<Stack gap={1} direction="row">
+						{styles.map((style) => (
+							<FlexSquare
+								key={style.id}
+								selected={selectedStyle === style.id}
+								onClick={() => setStyle(style.id)}
+								colour={style.colour}
+								text={style.text}
+								lines={style.lines}
+								Icon={style.Icon}
+							/>
+						))}
+					</Stack>
 				</Paper>
-
-				<Paper
-					onClick={() => {
-						setPopupOpen((wasOpen) => !wasOpen);
-					}}
-					elevation={4}
-					sx={{
-						borderRadius: theme.spacing(1),
-						boxSizing: "border-box",
-						outline: "2px solid #FFFFFF",
-					}}>
+				<div>
 					<Paper
+						onClick={() => {
+							setPopupOpen((wasOpen) => !wasOpen);
+						}}
+						elevation={4}
 						sx={{
-							backgroundColor: theme.palette[selectedStyleDetails.colour].main,
-							transition: "background-color 0.5s",
+							borderRadius: theme.spacing(1),
+							boxSizing: "border-box",
+							outline: "2px solid #FFFFFF",
 							width: "76px",
 							height: "76px",
-							borderRadius: theme.spacing(1),
-							position: "relative",
-							boxShadow: "rgb(0 0 0 / 73%) 0px -40px 30px -30px inset",
-							pointerEvents: "auto",
+							marginLeft: "auto",
 						}}>
-						<Stack
-							direction={onBigScreen ? "row" : "column"}
-							alignItems="center"
-							justifyContent="center"
-							gap={0.3}
+						<Paper
 							sx={{
-								position: "absolute",
-								bottom: 4,
-								left: -1,
-								textAlign: "center",
-								width: "100%",
-								color: "white",
+								backgroundColor: theme.palette[selectedStyleDetails.colour].main,
+								transition: "background-color 0.5s",
+								width: "76px",
+								height: "76px",
+								borderRadius: theme.spacing(1),
+								position: "relative",
+								boxShadow: "rgb(0 0 0 / 73%) 0px -40px 30px -30px inset",
+								pointerEvents: "auto",
 							}}>
-							<LayersOutlinedIcon
+							<Stack
+								direction={onBigScreen ? "row" : "column"}
+								alignItems="center"
+								justifyContent="center"
+								gap={0.3}
 								sx={{
-									fontSize: "1.5em",
-								}}
-							/>
-							<Typography variant="caption">Layers</Typography>
-						</Stack>
+									position: "absolute",
+									bottom: 4,
+									left: -1,
+									textAlign: "center",
+									width: "100%",
+									color: "white",
+								}}>
+								<LayersOutlinedIcon
+									sx={{
+										fontSize: "1.5em",
+									}}
+								/>
+								<Typography variant="caption">Layers</Typography>
+							</Stack>
+						</Paper>
 					</Paper>
-				</Paper>
+				</div>
 			</Stack>
 		</ClickAwayListener>
 	);
