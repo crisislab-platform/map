@@ -23,3 +23,8 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-lock.yaml
 pnpm-lock.yaml
+.pnpm-debug.log
+pnpm-lock.yaml
+pnpm-lock.yaml
+pnpm-lock.yaml
+pnpm-lock.yaml

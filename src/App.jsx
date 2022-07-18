@@ -65,7 +65,7 @@ export default function App() {
 			const data = await res.json();
 			const newSensors = {};
 			Object.values(data.sensors).forEach((sensor) => {
-				if (sensor.location?.coordinates) {
+				if (sensor.publicLocation || sensor.location?.coordinates) {
 					newSensors[sensor.id] = sensor;
 				}
 			});
@@ -82,7 +82,7 @@ export default function App() {
 					type: "Feature",
 					geometry: {
 						type: "Point",
-						coordinates: sensor.location?.coordinates,
+						coordinates: sensor.publicLocation || sensor.location?.coordinates,
 					},
 					properties: {
 						id: sensor.id,
