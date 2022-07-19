@@ -1,14 +1,14 @@
 import { theme } from "beryllium";
 
-function makeCircleColourGetter(text = false) {
+function makeCircleColourGetter(text = false, dark = false) {
 	return [
 		"step",
 		["get", "point_count"],
-		text ? "#ffffff" : theme.palette.primary.light,
+		text ? "#ffffff" : theme.palette.primary[dark ? "dark" : "light"],
 		100,
-		text ? "#ffffff" : theme.palette.warning.light,
+		text ? "#ffffff" : theme.palette.warning[dark ? "dark" : "light"],
 		750,
-		text ? "#ffffff" : theme.palette.error.light,
+		text ? "#ffffff" : theme.palette.error[dark ? "dark" : "light"]
 	];
 }
 
@@ -131,23 +131,145 @@ export default function setupMap(map, geoJSON, onClick, popup, setActiveSensor, 
 		map.on("mouseleave", "clusters", onClustersMouseLeave);
 		map.on("mouseenter", "unclustered-point", unclusteredMouseEnter);
 		map.on("mouseleave", "unclustered-point", unclusteredMouseLeave);
+		(async () => {
+			const typeToColor = {
+				"Strong Motion Sensor": "#fc9312",
+				"Short Period Seismometer": "#127ffc",
+				"Broadband Seismometer": "#9712fc",
+				"Accelerometer": "#ed2f78",
+			}
 
-		map.addSource("geonet-sensors-source", {
-			type: "vector",
-			url: "mapbox://zadeviggers.ckyti0ozu2wkk20rvo89kd6ur-6jsd8",
-		});
-		map.addLayer({
-			id: "geonet-sensors-layer",
-			source: "geonet-sensors-source",
-			"source-layer": "stations",
-			type: "circle",
-			layout: { visibility: "none" },
-			paint: {
-				"circle-color": theme.palette.geonet.main,
-				"circle-radius": 2,
-			},
-		});
+			map.addSource("geonet", {
+				type: "geojson",
+				// Point to GeoJSON data. This example visualizes all M1.0+ earthquakes
+				// from 12/22/15 to 1/21/16 as logged by USGS' Earthquake hazards program.
+				data: {
+					features: (await Promise.all(
+						(await Promise.all([
+							fetch("https://api.geonet.org.nz/network/sensor?sensorType=3&endDate=9999-01-01"),
+							fetch("https://api.geonet.org.nz/network/sensor?sensorType=8,9&endDate=9999-01-01"),
+							fetch("https://api.geonet.org.nz/network/sensor?sensorType=1,10&endDate=9999-01-01")
+						])).map(a => a.json())
+					)).map(a => a.features).flat().map(a => {
+						if (a?.geometry?.coordinates) {
+							a.geometry.coordinates[0] += (Math.random() - 0.5) * 0.0005;
+							a.geometry.coordinates[1] += (Math.random() - 0.5) * 0.0005;
+							a.properties.color = typeToColor[a.properties.SensorType];
+							return a;
+						}
+					}
+					),
+					type: "FeatureCollection"
+				},
+				cluster: true,
+				clusterMaxZoom: 14, // Max zoom to cluster points on
+				clusterRadius: 50, // Radius of each cluster when clustering points (defaults to 50)
+			});
 
+			map.addLayer({
+				id: "unclustered-point-geonet",
+				type: "circle",
+				source: "geonet",
+				filter: ["!", ["has", "point_count"]],
+				layout: { visibility: "none" },
+				paint: {
+					"circle-color": ["get", "color"],
+					"circle-radius": ["interpolate", ["linear"], ["zoom"], 10, 5, 25, 10],
+					// "circle-stroke-width": ["interpolate", ["linear"], ["zoom"], 10, 2, 25, 6],
+					// "circle-stroke-color": theme.palette.geonet.main,
+				},
+			});
+
+			map.addLayer(
+				{
+					id: "cluster-count-geonet",
+					type: "symbol",
+					source: "geonet",
+					filter: ["has", "point_count"],
+					layout: {
+						"text-field": "{point_count_abbreviated}",
+						"text-font": ["Roboto Slab Regular"],
+						"text-size": 12,
+						visibility: "none"
+					},
+					paint: {
+						"text-color": makeCircleColourGetter(true),
+					},
+				},
+				"unclustered-point-geonet",
+			);
+
+			map.addLayer({
+				id: "clusters-geonet",
+				type: "circle",
+				source: "geonet",
+				filter: ["has", "point_count"],
+				layout: { visibility: "none" },
+				paint: {
+					// Use step expressions (https://docs.mapbox.com/mapbox-gl-js/style-spec/#expressions-step)
+					// with three steps to implement three types of circles:
+					//   * Blue, 20px circles when point count is less than 100
+					//   * Yellow, 30px circles when point count is between 100 and 750
+					//   * Pink, 40px circles when point count is greater than or equal to 750
+					"circle-color": makeCircleColourGetter(false, true),
+					"circle-radius": ["step", ["get", "point_count"], 20, 100, 30, 750, 40],
+				},
+			}, "cluster-count-geonet");
+
+			const onClusterClickGeonet = (e) => {
+				const features = map.queryRenderedFeatures(e.point, {
+					layers: ["clusters-geonet"],
+				});
+				const clusterId = features[0].properties.cluster_id;
+				map.getSource("geonet").getClusterExpansionZoom(clusterId, (err, zoom) => {
+					if (err) return;
+
+					map.flyTo({
+						center: features[0].geometry.coordinates,
+						zoom: zoom + 2,
+						duration: 1000,
+					});
+				});
+			};
+
+			const unclusteredMouseEnterGeonet = (e) => {
+				map.getCanvas().style.cursor = "pointer";
+				// Copy coordinates array.
+				const coordinates = e.features[0].geometry.coordinates.slice();
+				const sensorId = e.features[0].properties.id;
+
+				// Ensure that if the map is zoomed out such that multiple
+				// copies of the feature are visible, the popup appears
+				// over the copy being pointed to.
+				while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+					coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+				}
+
+				// Populate the popup and set its coordinates
+				// based on the feature found.
+				popup.setLngLat(coordinates).addTo(map);
+				setActiveSensor(e.features[0].properties);
+				triggerRerender();
+			};
+
+			const unclusteredMouseLeaveGeonet = () => {
+				map.getCanvas().style.cursor = "";
+				popup.remove();
+			};
+
+			map.on("click", "clusters-geonet", onClusterClickGeonet);
+
+			// When a click event occurs on a feature in
+			// the unclustered-point layer, open a popup at
+			// the location of the feature, with
+			// description HTML from its properties.
+			// map.on("click", "unclustered-point-geonet", onClick);
+
+			map.on("mouseenter", "clusters-geonet", onClustersMouseEnter);
+			map.on("mouseleave", "clusters-geonet", onClustersMouseLeave);
+			map.on("mouseenter", "unclustered-point-geonet", unclusteredMouseEnterGeonet);
+			map.on("mouseleave", "unclustered-point-geonet", unclusteredMouseLeaveGeonet);
+		})()
 		// Fault lines
 		map.addSource("fault-lines-source", {
 			type: "vector",

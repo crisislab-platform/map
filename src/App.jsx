@@ -16,6 +16,29 @@ function PopupComponent({ activeSensor, sensors }) {
 		return null;
 	}
 
+	// Is geonet sensor
+	if (activeSensor.SensorType) {
+		const {SensorType, Station, Location} = activeSensor;
+			const portal = createPortal(
+		<Box>
+			<Typography
+				variant="h5"
+				sx={{
+					fontWeight: "bold",
+				}}>
+			GeoNet Sensor	
+			</Typography>
+			<Typography variant="h6">Type: {SensorType}</Typography>
+			<Typography variant="h6">
+				Station: {Station} • Location: {Location}
+			</Typography>
+		</Box>,
+		document.getElementById("popup"),
+	);
+
+	return portal;
+	}
+
 	const { geoFeatures, id, online, type, secondary_id } = sensors[activeSensor];
 
 	let location = null;

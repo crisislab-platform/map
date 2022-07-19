@@ -142,8 +142,10 @@ export default function Switcher() {
 	}, [map, faultLinesEnabled]);
 
 	useEffect(() => {
-		if (map && map.loaded && map.getLayer("geonet-sensors-layer")) {
-			map.setLayoutProperty("geonet-sensors-layer", "visibility", geonetEnabled ? "visible" : "none");
+		if (map && map.loaded && map.getLayer("unclustered-point-geonet")) {
+			map.setLayoutProperty("unclustered-point-geonet", "visibility", geonetEnabled ? "visible" : "none");
+			map.setLayoutProperty("cluster-count-geonet", "visibility", geonetEnabled ? "visible" : "none");
+			map.setLayoutProperty("clusters-geonet", "visibility", geonetEnabled ? "visible" : "none");
 		}
 	}, [map, geonetEnabled]);
 
