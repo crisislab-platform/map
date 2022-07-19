@@ -139,6 +139,8 @@ export default function setupMap(map, geoJSON, onClick, popup, setActiveSensor, 
 				"Accelerometer": "#ed2f78",
 			}
 
+			const now = new Date();
+
 			map.addSource("geonet", {
 				type: "geojson",
 				// Point to GeoJSON data. This example visualizes all M1.0+ earthquakes
@@ -150,7 +152,7 @@ export default function setupMap(map, geoJSON, onClick, popup, setActiveSensor, 
 							fetch("https://api.geonet.org.nz/network/sensor?sensorType=8,9&endDate=9999-01-01"),
 							fetch("https://api.geonet.org.nz/network/sensor?sensorType=1,10&endDate=9999-01-01")
 						])).map(a => a.json())
-					)).map(a => a.features).flat().map(a => {
+					)).map(a => a.features).flat().filter(a => new Date(a.properties.End) > now).map(a => {
 						if (a?.geometry?.coordinates) {
 							a.geometry.coordinates[0] += (Math.random() - 0.5) * 0.0005;
 							a.geometry.coordinates[1] += (Math.random() - 0.5) * 0.0005;

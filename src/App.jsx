@@ -26,11 +26,11 @@ function PopupComponent({ activeSensor, sensors }) {
 				sx={{
 					fontWeight: "bold",
 				}}>
-			GeoNet Sensor	
+			GeoNet Sensor
 			</Typography>
 			<Typography variant="h6">Type: {SensorType}</Typography>
-			<Typography variant="h6">
-				Station: {Station} • Location: {Location}
+			<Typography variant="body1">
+				Station: {Station} • Start: {new Date(activeSensor.Start).toDateString()}
 			</Typography>
 		</Box>,
 		document.getElementById("popup"),
