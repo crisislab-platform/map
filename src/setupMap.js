@@ -4,7 +4,7 @@ function makeCircleColourGetter(text = false, dark = false) {
 	return [
 		"step",
 		["get", "point_count"],
-		text ? "#ffffff" : theme.palette.primary[dark ? "dark" : "light"],
+		text ? "#ffffff" : dark ? "#ed864e" : theme.palette.primary.light,
 		100,
 		text ? "#ffffff" : theme.palette.warning[dark ? "dark" : "light"],
 		750,
@@ -139,6 +139,13 @@ export default function setupMap(map, geoJSON, onClick, popup, setActiveSensor, 
 				"Accelerometer": "#ed2f78",
 			}
 
+			const typeToBorder = {
+				"Strong Motion Sensor": "#fc7905",
+				"Short Period Seismometer": "#0022ff",
+				"Broadband Seismometer": "#5c02d9",
+				"Accelerometer": "#d10258",
+			}
+
 			const now = new Date();
 
 			map.addSource("geonet", {
@@ -157,6 +164,7 @@ export default function setupMap(map, geoJSON, onClick, popup, setActiveSensor, 
 							a.geometry.coordinates[0] += (Math.random() - 0.5) * 0.0005;
 							a.geometry.coordinates[1] += (Math.random() - 0.5) * 0.0005;
 							a.properties.color = typeToColor[a.properties.SensorType];
+							a.properties.border = typeToBorder[a.properties.SensorType];
 							return a;
 						}
 					}
@@ -176,9 +184,9 @@ export default function setupMap(map, geoJSON, onClick, popup, setActiveSensor, 
 				layout: { visibility: "none" },
 				paint: {
 					"circle-color": ["get", "color"],
-					"circle-radius": ["interpolate", ["linear"], ["zoom"], 10, 5, 25, 10],
-					// "circle-stroke-width": ["interpolate", ["linear"], ["zoom"], 10, 2, 25, 6],
-					// "circle-stroke-color": theme.palette.geonet.main,
+					"circle-radius": ["interpolate", ["linear"], ["zoom"], 10, 4, 25, 12],
+					"circle-stroke-width": ["interpolate", ["linear"], ["zoom"], 10, 2, 25, 4],
+					"circle-stroke-color": ["get", "border"],
 				},
 			});
 
@@ -345,8 +353,9 @@ export default function setupMap(map, geoJSON, onClick, popup, setActiveSensor, 
 		if (map.getLayer("unclustered-point")) map.removeLayer("unclustered-point");
 		if (map.getSource("earthquakes")) map.removeSource("earthquakes");
 
-		if (map.getLayer("geonet-sensors-layer")) map.removeLayer("geonet-sensors-layer");
-		if (map.getSource("geonet-sensors-source")) map.removeSource("geonet-sensors-source");
+		if (map.getLayer("cluster-count-geonet")) map.removeLayer("cluster-count-geonet");
+		if (map.getLayer("clusters-geonet")) map.removeLayer("clusters-geonet");
+		if (map.getLayer("unclustered-point-geonet")) map.removeLayer("unclustered-point-geonet");
 
 		if (map.getLayer("fault-lines-hitbox-layer")) map.removeLayer("fault-lines-hitbox-layer");
 		if (map.getLayer("fault-lines-render-layer")) map.removeLayer("fault-lines-render-layer");
