@@ -47,7 +47,7 @@ export default function Sidebar() {
 				variant={onBigScreen ? "permanent" : "temporary"}
 				anchor="left">
 				{!onBigScreen && (
-					<Stack p={1}>
+					<Stack pt={1} pr={1}>
 						<Tooltip title="Close sidebar" placement="left">
 							<IconButton onClick={onDrawerClose} sx={{ ml: "auto" }}>
 								<CloseIcon />
@@ -56,7 +56,7 @@ export default function Sidebar() {
 					</Stack>
 				)}
 				<Search />
-				<Box sx={{ mt: onBigScreen ? 6 : 10 }}>
+				<Box sx={{ mt: onBigScreen ? 1 : 2, height:"100%" }}>
 					<Routes />
 				</Box>
 			</Drawer>
