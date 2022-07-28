@@ -99,7 +99,7 @@ function PopupComponent({ activeSensor, sensors }) {
 		return portal;
 	}
 
-	const { geoFeatures, id, online, type, secondary_id } = sensors[activeSensor];
+	const { geoFeatures, id, online, type, secondary_id, timestamp } = sensors[activeSensor];
 
 	let location = null;
 
@@ -123,6 +123,9 @@ function PopupComponent({ activeSensor, sensors }) {
 			<Typography variant="body1">
 				{"#" + id + " • " + (online ? "Online" : "Offline") + (type ? " • " + type : "")}
 			</Typography>
+			{!online && timestamp && <Typography variant="body1">
+							Last online: {new Date(timestamp).toDateString() + " " + new Date(timestamp).toLocaleTimeString()}
+						</Typography>}
 		</Box>,
 		document.getElementById("popup"),
 	);

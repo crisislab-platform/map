@@ -14,7 +14,7 @@ export default function Sensor() {
 		return null;
 	}
 
-	const { geoFeatures, online, type, secondary_id: secondaryID } = sensors[id];
+	const { geoFeatures, online, type, secondary_id: secondaryID, timestamp } = sensors[id];
 
 	let location = null;
 
@@ -63,13 +63,17 @@ export default function Sensor() {
 							<Tooltip title="Connection status">
 								<span>{online === undefined ? "Unknown" : online ? "Online" : "Offline"}</span>
 							</Tooltip>
+
 						</Typography>
+						{!online && timestamp && <Typography variant="body1">
+							Last online: {new Date(timestamp).toDateString() + " " + new Date(timestamp).toLocaleTimeString()}
+						</Typography>}
 					</Box>
 				</Box>
 				<div
 					style={{
 						width: "100%",
-						height: "calc(100vh - 220px)",
+						height: "calc(100vh - 230px)",
 						marginTop: 10,
 						paddingInline: 10,
 						position: "relative",
