@@ -18,19 +18,20 @@ import SatelliteAltIcon from "@mui/icons-material/SatelliteAlt";
 import StraightIcon from "@mui/icons-material/Straight";
 import CrisisAlertIcon from "@mui/icons-material/CrisisAlert";
 import EmergencyShareIcon from "@mui/icons-material/EmergencyShare";
+import AirIcon from "@mui/icons-material/Air";
 
 const styles = [
-	{ text: "Streets", colour: "primary", id: "streets-v11", Icon: StraightIcon },
-	{ text: "Satellite", colour: "secondary", id: "satellite-v9", Icon: SatelliteAltIcon },
-	{ text: "Outdoors", colour: "success", id: "outdoors-v11", Icon: MapIcon },
+	{ text: "Streets", color: "primary", id: "streets-v11", Icon: StraightIcon },
+	{ text: "Satellite", color: "secondary", id: "satellite-v9", Icon: SatelliteAltIcon },
+	{ text: "Outdoors", color: "success", id: "outdoors-v11", Icon: MapIcon },
 ];
 
 const squareSize = 50;
 
-function FlexSquare({ colour, text, row, onClick, style, selected, Icon }) {
+function FlexSquare({ color, text, row, onClick, style, selected, Icon, selectedColor }) {
 	const theme = useTheme();
 
-	const backgroundColor = theme.palette[colour].main;
+	const backgroundColor = theme.palette[color]?.main || color;
 
 	return (
 		<Tooltip title={text} placement={row === "top" ? "top" : "bottom"}>
@@ -49,7 +50,7 @@ function FlexSquare({ colour, text, row, onClick, style, selected, Icon }) {
 						backgroundColor,
 						width: squareSize,
 						height: squareSize,
-						border: `4px solid ${selected ? theme.palette[colour].dark : "transparent"}`,
+						border: `4px solid ${selected ? theme.palette[color]?.dark || selectedColor : "transparent"}`,
 						transition: "border 0.5s",
 						display: "grid",
 						placeItems: "center",
@@ -72,6 +73,7 @@ export default function Switcher() {
 	const [selectedStyle, setSelectedStyle] = useState("streets-v11");
 	const [faultLinesEnabled, setFaultLinesEnabled] = useState(false);
 	const [geonetEnabled, setGeonetEnabled] = useState(false);
+	const [airEnabled, setAirEnabled] = useState(false);
 	const [crisislabEnabled, setCrisislabEnabled] = useState(true);
 
 	function showFaultLines(show) {
@@ -150,6 +152,12 @@ export default function Switcher() {
 	}, [map, geonetEnabled]);
 
 	useEffect(() => {
+		if (map && map.loaded && map.getLayer("air-sensors")) {
+			map.setLayoutProperty("air-sensors", "visibility", airEnabled ? "visible" : "none");
+		}
+	}, [map, airEnabled]);
+
+	useEffect(() => {
 		if (map && map.loaded) {
 			for (const layer of crisislabSensorsLayers) {
 				if (map.getLayer(layer))
@@ -209,7 +217,7 @@ export default function Switcher() {
 							row="top"
 							selected={crisislabEnabled}
 							onClick={() => setCrisislabEnabled((oldState) => !oldState)}
-							colour="primary"
+							color="primary"
 							text="CRISiSLab sensors"
 							Icon={CrisisAlertIcon}
 						/>
@@ -217,7 +225,7 @@ export default function Switcher() {
 							row="top"
 							selected={geonetEnabled}
 							onClick={() => setGeonetEnabled((oldState) => !oldState)}
-							colour="geonet"
+							color="geonet"
 							text="Geonet sensors"
 							Icon={EmergencyShareIcon}
 						/>
@@ -225,9 +233,18 @@ export default function Switcher() {
 							row="top"
 							selected={faultLinesEnabled}
 							onClick={() => setFaultLinesEnabled((oldState) => !oldState)}
-							colour="error"
+							color="error"
 							text="Fault lines"
 							Icon={BoltIcon}
+						/>
+						<FlexSquare
+							row="top"
+							selected={airEnabled}
+							onClick={() => setAirEnabled((oldState) => !oldState)}
+							color="#AA44AA"
+							selectedColor="#882288"
+							text="Air Quality"
+							Icon={AirIcon}
 						/>
 					</Stack>
 					<Stack gap={1} direction="row">
@@ -236,7 +253,7 @@ export default function Switcher() {
 								key={style.id}
 								selected={selectedStyle === style.id}
 								onClick={() => setStyle(style.id)}
-								colour={style.colour}
+								color={style.color}
 								text={style.text}
 								lines={style.lines}
 								Icon={style.Icon}
@@ -260,7 +277,7 @@ export default function Switcher() {
 						}}>
 						<Paper
 							sx={{
-								backgroundColor: theme.palette[selectedStyleDetails.colour].main,
+								backgroundColor: theme.palette[selectedStyleDetails.color].main,
 								transition: "background-color 0.5s",
 								width: "76px",
 								height: "76px",
