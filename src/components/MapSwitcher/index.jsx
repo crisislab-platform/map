@@ -27,6 +27,7 @@ const styles = [
 ];
 
 const squareSize = 50;
+const labelHeight = 15;
 
 function FlexSquare({ color, text, row, onClick, style, selected, Icon, selectedColor }) {
 	const theme = useTheme();
@@ -34,17 +35,18 @@ function FlexSquare({ color, text, row, onClick, style, selected, Icon, selected
 	const backgroundColor = theme.palette[color]?.main || color;
 
 	return (
-		<Tooltip title={text} placement={row === "top" ? "top" : "bottom"}>
-			<ButtonBase
-				onClick={onClick}
-				elevation={0}
-				sx={{
-					width: squareSize,
-					height: squareSize,
-					borderRadius: theme.spacing(1),
-					backgroundColor: "none",
-					...style,
-				}}>
+		<ButtonBase
+			onClick={onClick}
+			elevation={0}
+			sx={{
+				width: squareSize + 4,
+				height: "min-content",
+				backgroundColor: "none",
+				padding: "2px",
+				borderRadius: theme.spacing(1),
+				...style,
+			}}>
+			<Stack>
 				<Paper
 					sx={{
 						backgroundColor,
@@ -54,12 +56,14 @@ function FlexSquare({ color, text, row, onClick, style, selected, Icon, selected
 						transition: "border 0.5s",
 						display: "grid",
 						placeItems: "center",
+						borderRadius: theme.spacing(1),
 					}}
 					elevation={0}>
 					<Icon sx={{ display: "block", color: "white" }} />
 				</Paper>
-			</ButtonBase>
-		</Tooltip>
+				<Typography sx={{ fontSize: "8pt" }}>{text}</Typography>
+			</Stack>
+		</ButtonBase>
 	);
 }
 
@@ -194,7 +198,7 @@ export default function Switcher() {
 				}}
 				justifyContent="flex-end"
 				alignItems="flexEnd"
-				spacing={2}
+				spacing={1}
 				onMouseEnter={onPopupOpen}
 				onMouseLeave={onPopupClose}
 				onFocus={onPopupOpen}
