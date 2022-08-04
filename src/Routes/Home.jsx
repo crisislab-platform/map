@@ -1,8 +1,12 @@
 import { Box, Fade, IconButton, Stack, Tooltip, Typography } from "@mui/material";
 
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
+import SensorsContext from "../SensorsContext";
+import { useContext } from "react";
 
 export default function Home() {
+	const [sensors] = useContext(SensorsContext);
+
 	return (
 		<Fade in>
 			<Stack sx={{ paddingInline: 3, paddingBlock: 2, height: "100%" }}>
@@ -38,6 +42,19 @@ export default function Home() {
 						}}>
 						Public facing web interface which provides access to real-time ground motion data and sensor
 						metadata.
+					</Typography>
+					<Typography
+						variant="body1"
+						sx={{
+							marginTop: 2,
+							fontWeight: 600,
+							lineHeight: "1.4em",
+						}}>
+						Statistics:
+					</Typography>
+					<Typography
+						variant="body1">
+						{sensors && Object.values(sensors).filter(s => s.online).length} out of {sensors && Object.values(sensors).length} sensors are online.
 					</Typography>
 				</Box>
 				<Box sx={{ m: 1, mb: 0, mt: "auto" }}>
