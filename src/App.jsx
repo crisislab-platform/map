@@ -193,7 +193,7 @@ export default function App() {
 
 					map?.flyTo({
 						center: [coordinates[0], coordinates[1]],
-						zoom: map?.getZoom() || 17,
+						zoom: Math.max(map?.getZoom(), 17),
 						speed: 0.2,
 						curve: 1,
 					});
