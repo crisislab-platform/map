@@ -25,6 +25,8 @@ export default function Sensor() {
 		location = `${streetName}, ${locality}, ${region}`;
 	}
 
+	const lastOnline = timestamp && new Date(timestamp);
+
 	return (
 		<Fade in>
 			<Box
@@ -60,14 +62,22 @@ export default function Sensor() {
 								</>
 							)}
 							•{" "}
-							<Tooltip title="Connection status">
+							<Tooltip
+								title={
+									lastOnline
+										? `Last ${
+												online ? "offline" : "detected online"
+										  } ${lastOnline.toLocaleString()}`
+										: "Connection status"
+								}>
 								<span>{online === undefined ? "Unknown" : online ? "Online" : "Offline"}</span>
 							</Tooltip>
-
 						</Typography>
-						{!online && timestamp && <Typography variant="body1">
-							Last online: {new Date(timestamp).toDateString() + " " + new Date(timestamp).toLocaleTimeString()}
-						</Typography>}
+						{!online && lastOnline && (
+							<Typography variant="body1">
+								Last online: {lastOnline.toDateString() + " " + lastOnline.toLocaleTimeString()}
+							</Typography>
+						)}
 					</Box>
 				</Box>
 				<div
