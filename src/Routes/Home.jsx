@@ -44,17 +44,43 @@ export default function Home() {
 						metadata.
 					</Typography>
 					<Typography
-						variant="body1"
+						variant="h6"
 						sx={{
 							marginTop: 2,
 							fontWeight: 600,
 							lineHeight: "1.4em",
 						}}>
-						Statistics:
+						Network status:
 					</Typography>
 					<Typography
-						variant="body1">
-						{sensors && Object.values(sensors).filter(s => s.online).length} out of {sensors && Object.values(sensors).length} sensors are online.
+						variant="body1"
+						sx={{ display: "flex", alignItems: "center" }}>
+
+						<span style={{
+							backgroundColor: 'green',
+							borderRadius: '50%',
+							height: '1rem',
+							width: '1rem',
+							display: 'inline-block',
+							marginBottom: '-0.1rem',
+							marginRight: '5px'
+						}} />
+						Online: {sensors && Object.values(sensors).filter(s => s.online).length}
+					</Typography>
+					<Typography
+						variant="body1"
+						sx={{ display: "flex", alignItems: "center" }}>
+
+						<span style={{
+							backgroundColor: 'red',
+							borderRadius: '50%',
+							height: '1rem',
+							width: '1rem',
+							display: 'inline-block',
+							marginBottom: '-0.1rem',
+							marginRight: '5px'
+						}} />
+						Offline: {sensors && Object.values(sensors).filter(s => !s.online).length}
 					</Typography>
 				</Box>
 				<Box sx={{ m: 1, mb: 0, mt: "auto" }}>

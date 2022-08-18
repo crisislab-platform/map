@@ -65,17 +65,16 @@ export default function Sensor() {
 							<Tooltip
 								title={
 									lastOnline
-										? `Last ${
-												online ? "offline" : "detected online"
-										  } ${lastOnline.toLocaleString()}`
+										? `Last ${online ? "offline" : "detected online"
+										} ${lastOnline.toLocaleString()}`
 										: "Connection status"
 								}>
 								<span>{online === undefined ? "Unknown" : online ? "Online" : "Offline"}</span>
 							</Tooltip>
 						</Typography>
-						{!online && lastOnline && (
+						{lastOnline && (
 							<Typography variant="body1">
-								Last online: {lastOnline.toDateString() + " " + lastOnline.toLocaleTimeString()}
+								{online ? "Online since:" : "Last online:"} {lastOnline.toDateString() + " " + lastOnline.toLocaleTimeString()}
 							</Typography>
 						)}
 					</Box>
