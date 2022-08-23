@@ -18,30 +18,30 @@ export default function Home() {
 					}}>
 					<Box sx={{ display: "flex", gap: 3, marginTop: 4 }}>
 						<img src="/crisis_lab_i_small.png" style={{ height: 80, width: 120 }}></img>
-						<Typography
+						{/* <Typography
 							variant="h4"
 							sx={{
 								fontWeight: 400,
 							}}>
 							EEW Experimental Sensor Network
+						</Typography> */}
+						<Typography
+							variant="h5"
+							sx={{
+								fontWeight: 500,
+								lineHeight: "1.2em",
+							}}>
+							Experimental ground motion detection sensor network
 						</Typography>
 					</Box>
-					<Typography
-						variant="h5"
-						sx={{
-							marginTop: 2,
-							fontWeight: 600,
-							lineHeight: "1.4em",
-						}}>
-						Sensor Map
-					</Typography>
 					<Typography
 						variant="body1"
 						sx={{
 							marginTop: 2,
 						}}>
-						Public facing web interface which provides access to real-time ground motion data and sensor
-						metadata.
+						This map is the public-facing web interface of the CRISiSLab’s experimental ground motion detection sensor network consisting of Micro Electro Mechanical Senor (MEMS) based low-cost sensors. The map is capable of providing access to real-time ground motion data captured at the sensor nodes and sensor metadata.
+
+						These sensors are deployed in people’s homes and contribute to creating a peer-to-peer sensor network capable of node-level processing of ground motion data to generate warnings for earthquakes. In addition to the  MEMS-based low-cost ground motion detection sensor layer, this map also consists of a layer of various faultlines within New Zealand as well as a layer showing the location of ground motion sensors deployed for the GeoNet.
 					</Typography>
 					<Typography
 						variant="h6"
