@@ -87,8 +87,8 @@ export default function Home() {
 					</Typography>
 
 					<Box sx={{ display: "flex", gap: 3 }}>
-						<img src="/eqc_logo.svg" />
-						<img style={{ height: 50 }} src="/massey_logo.svg" />
+						<img style={{ height: 40 }} src="/new_eqc.svg" />
+						<img style={{ height: 40 }} src="/massey_logo.svg" />
 					</Box>
 				</Box>
 				<span>
