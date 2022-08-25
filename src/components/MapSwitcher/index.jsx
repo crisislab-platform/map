@@ -241,7 +241,7 @@ export default function Switcher() {
 							text="Fault lines"
 							Icon={BoltIcon}
 						/>
-						<FlexSquare
+						{/* <FlexSquare
 							row="top"
 							selected={airEnabled}
 							onClick={() => setAirEnabled((oldState) => !oldState)}
@@ -249,7 +249,7 @@ export default function Switcher() {
 							selectedColor="#882288"
 							text="Air Quality"
 							Icon={AirIcon}
-						/>
+						/> */}
 					</Stack>
 					<Stack gap={1} direction="row">
 						{styles.map((style) => (
