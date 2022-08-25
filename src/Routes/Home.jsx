@@ -39,9 +39,7 @@ export default function Home() {
 						sx={{
 							marginTop: 2,
 						}}>
-						This map is the public-facing web interface of the CRISiSLab’s experimental ground motion detection sensor network consisting of Micro Electro Mechanical Senor (MEMS) based low-cost sensors. The map is capable of providing access to real-time ground motion data captured at the sensor nodes and sensor metadata.
-
-						These sensors are deployed in people’s homes and contribute to creating a peer-to-peer sensor network capable of node-level processing of ground motion data to generate warnings for earthquakes. In addition to the  MEMS-based low-cost ground motion detection sensor layer, this map also consists of a layer of various faultlines within New Zealand as well as a layer showing the location of ground motion sensors deployed for the GeoNet.
+						This map shows CRISiSLab’s experimental ground motion detection network of Micro Electro Mechanical Sensor (MEMS) based low-cost sensors. It provides access to real-time ground motion data captured at each sensor. These sensors are deployed in people’s homes and make up our peer-to-peer sensor network capable of processing ground motion data at the sensor to generate earthquake warnings. This map also has layers showing faultlines in New Zealand and GeoNet ground motion sensors.
 					</Typography>
 					<Typography
 						variant="h6"
