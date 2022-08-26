@@ -213,9 +213,12 @@ export default function Switcher() {
 						padding: 1,
 						opacity: popupOpen ? 1 : 0,
 						transition: "opacity 0.2s",
-						alignItems: "flex-end",
+						// alignItems: "flex-end",
 					}}
 					elevation={4}>
+					<Typography variant="body1" sx={{ fontWeight: 600 }}>
+						Map layers
+					</Typography>
 					<Stack gap={1} direction="row">
 						<FlexSquare
 							row="top"
@@ -251,6 +254,9 @@ export default function Switcher() {
 							Icon={AirIcon}
 						/> */}
 					</Stack>
+					<Typography variant="body1" sx={{ fontWeight: 600 }}>
+						Map type
+					</Typography>
 					<Stack gap={1} direction="row">
 						{styles.map((style) => (
 							<FlexSquare
@@ -275,30 +281,30 @@ export default function Switcher() {
 							borderRadius: theme.spacing(1),
 							boxSizing: "border-box",
 							outline: "2px solid #FFFFFF",
-							width: "76px",
-							height: "76px",
+							width: "84px",
+							height: "84px",
 							marginLeft: "auto",
 						}}>
 						<Paper
 							sx={{
 								backgroundColor: theme.palette[selectedStyleDetails.color].main,
 								transition: "background-color 0.5s",
-								width: "76px",
-								height: "76px",
+								width: "84px",
+								height: "84px",
 								borderRadius: theme.spacing(1),
 								position: "relative",
 								boxShadow: "rgb(0 0 0 / 73%) 0px -40px 30px -30px inset",
 								pointerEvents: "auto",
 							}}>
 							<Stack
-								direction={onBigScreen ? "row" : "column"}
+								direction={"column"}
 								alignItems="center"
 								justifyContent="center"
 								gap={0.3}
 								sx={{
 									position: "absolute",
 									bottom: 4,
-									left: -1,
+									// left: -1,
 									textAlign: "center",
 									width: "100%",
 									color: "white",
@@ -308,7 +314,7 @@ export default function Switcher() {
 										fontSize: "1.5em",
 									}}
 								/>
-								<Typography variant="caption">Layers</Typography>
+								<Typography variant="caption">Map Settings</Typography>
 							</Stack>
 						</Paper>
 					</Paper>
