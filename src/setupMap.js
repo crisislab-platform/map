@@ -12,7 +12,55 @@ function makeCircleColourGetter(text = false, dark = false) {
 	];
 }
 
-export default function setupMap(map, geoJSON, onClick, popup, setActiveSensor, triggerRerender) {
+const typeToColor = {
+	"Strong Motion Sensor": "#fc9312",
+	"Short Period Seismometer": "#127ffc",
+	"Broadband Seismometer": "#9712fc",
+	Accelerometer: "#ed2f78",
+};
+
+const typeToBorder = {
+	"Strong Motion Sensor": "#fc7905",
+	"Short Period Seismometer": "#0022ff",
+	"Broadband Seismometer": "#5c02d9",
+	Accelerometer: "#d10258",
+};
+
+let storedGeonetData;
+
+async function getGeonetData() {
+	if (!storedGeonetData) {
+		const now = new Date();
+
+		const data = await Promise.all(
+			(
+				await Promise.all([
+					fetch("https://api.geonet.org.nz/network/sensor?sensorType=3&endDate=9999-01-01"),
+					fetch("https://api.geonet.org.nz/network/sensor?sensorType=8,9&endDate=9999-01-01"),
+					fetch("https://api.geonet.org.nz/network/sensor?sensorType=1,10&endDate=9999-01-01"),
+				])
+			).map((a) => a.json()),
+		);
+
+		storedGeonetData = data
+			.map((a) => a.features)
+			.flat()
+			.filter((a) => new Date(a.properties.End) > now)
+			.map((a) => {
+				if (a?.geometry?.coordinates) {
+					a.geometry.coordinates[0] += (Math.random() - 0.5) * 0.0005;
+					a.geometry.coordinates[1] += (Math.random() - 0.5) * 0.0005;
+					a.properties.color = typeToColor[a.properties.SensorType];
+					a.properties.border = typeToBorder[a.properties.SensorType];
+					return a;
+				}
+			});
+	}
+
+	return storedGeonetData;
+}
+
+export default async function setupMap(map, geoJSON, onClick, popup, setActiveSensor, triggerRerender) {
 	// inspect a cluster on click
 	const onClusterClick = (e) => {
 		const features = map.queryRenderedFeatures(e.point, {
@@ -103,7 +151,7 @@ export default function setupMap(map, geoJSON, onClick, popup, setActiveSensor, 
 		popup.remove();
 	};
 
-	function setupLayers() {
+	async function setupLayers() {
 		map.addSource("earthquakes", {
 			type: "geojson",
 			// Point to GeoJSON data. This example visualizes all M1.0+ earthquakes
@@ -172,126 +220,85 @@ export default function setupMap(map, geoJSON, onClick, popup, setActiveSensor, 
 		map.on("mouseleave", "clusters", onClustersMouseLeave);
 		map.on("mouseenter", "unclustered-point", unclusteredMouseEnter);
 		map.on("mouseleave", "unclustered-point", unclusteredMouseLeave);
-		(async () => {
-			const typeToColor = {
-				"Strong Motion Sensor": "#fc9312",
-				"Short Period Seismometer": "#127ffc",
-				"Broadband Seismometer": "#9712fc",
-				Accelerometer: "#ed2f78",
-			};
 
-			const typeToBorder = {
-				"Strong Motion Sensor": "#fc7905",
-				"Short Period Seismometer": "#0022ff",
-				"Broadband Seismometer": "#5c02d9",
-				Accelerometer: "#d10258",
-			};
+		map.addSource("geonet", {
+			type: "geojson",
+			// Point to GeoJSON data. This example visualizes all M1.0+ earthquakes
+			// from 12/22/15 to 1/21/16 as logged by USGS' Earthquake hazards program.
+			data: {
+				features: await getGeonetData(),
+				type: "FeatureCollection",
+			},
+			cluster: true,
+			clusterMaxZoom: 14, // Max zoom to cluster points on
+			clusterRadius: 50, // Radius of each cluster when clustering points (defaults to 50)
+		});
 
-			const now = new Date();
+		map.addLayer({
+			id: "unclustered-point-geonet",
+			type: "circle",
+			source: "geonet",
+			filter: ["!", ["has", "point_count"]],
+			layout: { visibility: "none" },
+			paint: {
+				"circle-color": ["get", "color"],
+				"circle-radius": ["interpolate", ["linear"], ["zoom"], 10, 4, 25, 12],
+				"circle-stroke-width": ["interpolate", ["linear"], ["zoom"], 10, 2, 25, 4],
+				"circle-stroke-color": ["get", "border"],
+			},
+		});
 
-			map.addSource("geonet", {
-				type: "geojson",
-				// Point to GeoJSON data. This example visualizes all M1.0+ earthquakes
-				// from 12/22/15 to 1/21/16 as logged by USGS' Earthquake hazards program.
-				data: {
-					features: (
-						await Promise.all(
-							(
-								await Promise.all([
-									fetch("https://api.geonet.org.nz/network/sensor?sensorType=3&endDate=9999-01-01"),
-									fetch("https://api.geonet.org.nz/network/sensor?sensorType=8,9&endDate=9999-01-01"),
-									fetch(
-										"https://api.geonet.org.nz/network/sensor?sensorType=1,10&endDate=9999-01-01",
-									),
-								])
-							).map((a) => a.json()),
-						)
-					)
-						.map((a) => a.features)
-						.flat()
-						.filter((a) => new Date(a.properties.End) > now)
-						.map((a) => {
-							if (a?.geometry?.coordinates) {
-								a.geometry.coordinates[0] += (Math.random() - 0.5) * 0.0005;
-								a.geometry.coordinates[1] += (Math.random() - 0.5) * 0.0005;
-								a.properties.color = typeToColor[a.properties.SensorType];
-								a.properties.border = typeToBorder[a.properties.SensorType];
-								return a;
-							}
-						}),
-					type: "FeatureCollection",
+		map.addLayer(
+			{
+				id: "cluster-count-geonet",
+				type: "symbol",
+				source: "geonet",
+				filter: ["has", "point_count"],
+				layout: {
+					"text-field": "{point_count_abbreviated}",
+					"text-font": ["Roboto Slab Regular"],
+					"text-size": 12,
+					visibility: "none",
 				},
-				cluster: true,
-				clusterMaxZoom: 14, // Max zoom to cluster points on
-				clusterRadius: 50, // Radius of each cluster when clustering points (defaults to 50)
-			});
+				paint: {
+					"text-color": makeCircleColourGetter(true),
+				},
+			},
+			"unclustered-point-geonet",
+		);
 
-			map.addLayer({
-				id: "unclustered-point-geonet",
+		map.addLayer(
+			{
+				id: "clusters-geonet",
 				type: "circle",
 				source: "geonet",
-				filter: ["!", ["has", "point_count"]],
+				filter: ["has", "point_count"],
 				layout: { visibility: "none" },
 				paint: {
-					"circle-color": ["get", "color"],
-					"circle-radius": ["interpolate", ["linear"], ["zoom"], 10, 4, 25, 12],
-					"circle-stroke-width": ["interpolate", ["linear"], ["zoom"], 10, 2, 25, 4],
-					"circle-stroke-color": ["get", "border"],
+					// Use step expressions (https://docs.mapbox.com/mapbox-gl-js/style-spec/#expressions-step)
+					// with three steps to implement three types of circles:
+					//   * Blue, 20px circles when point count is less than 100
+					//   * Yellow, 30px circles when point count is between 100 and 750
+					//   * Pink, 40px circles when point count is greater than or equal to 750
+					"circle-color": makeCircleColourGetter(false, true),
+					"circle-radius": ["step", ["get", "point_count"], 20, 100, 30, 750, 40],
 				},
-			});
+			},
+			"cluster-count-geonet",
+		);
 
-			map.addLayer(
-				{
-					id: "cluster-count-geonet",
-					type: "symbol",
-					source: "geonet",
-					filter: ["has", "point_count"],
-					layout: {
-						"text-field": "{point_count_abbreviated}",
-						"text-font": ["Roboto Slab Regular"],
-						"text-size": 12,
-						visibility: "none",
-					},
-					paint: {
-						"text-color": makeCircleColourGetter(true),
-					},
-				},
-				"unclustered-point-geonet",
-			);
+		map.on("click", "clusters-geonet", onClusterClickGeonet);
 
-			map.addLayer(
-				{
-					id: "clusters-geonet",
-					type: "circle",
-					source: "geonet",
-					filter: ["has", "point_count"],
-					layout: { visibility: "none" },
-					paint: {
-						// Use step expressions (https://docs.mapbox.com/mapbox-gl-js/style-spec/#expressions-step)
-						// with three steps to implement three types of circles:
-						//   * Blue, 20px circles when point count is less than 100
-						//   * Yellow, 30px circles when point count is between 100 and 750
-						//   * Pink, 40px circles when point count is greater than or equal to 750
-						"circle-color": makeCircleColourGetter(false, true),
-						"circle-radius": ["step", ["get", "point_count"], 20, 100, 30, 750, 40],
-					},
-				},
-				"cluster-count-geonet",
-			);
+		// When a click event occurs on a feature in
+		// the unclustered-point layer, open a popup at
+		// the location of the feature, with
+		// description HTML from its properties.
+		// map.on("click", "unclustered-point-geonet", onClick);
 
-			map.on("click", "clusters-geonet", onClusterClickGeonet);
-
-			// When a click event occurs on a feature in
-			// the unclustered-point layer, open a popup at
-			// the location of the feature, with
-			// description HTML from its properties.
-			// map.on("click", "unclustered-point-geonet", onClick);
-
-			map.on("mouseenter", "clusters-geonet", onClustersMouseEnter);
-			map.on("mouseleave", "clusters-geonet", onClustersMouseLeave);
-			map.on("mouseenter", "unclustered-point-geonet", unclusteredMouseEnterGeonet);
-			map.on("mouseleave", "unclustered-point-geonet", unclusteredMouseLeaveGeonet);
-		})();
+		map.on("mouseenter", "clusters-geonet", onClustersMouseEnter);
+		map.on("mouseleave", "clusters-geonet", onClustersMouseLeave);
+		map.on("mouseenter", "unclustered-point-geonet", unclusteredMouseEnterGeonet);
+		map.on("mouseleave", "unclustered-point-geonet", unclusteredMouseLeaveGeonet);
 
 		// Fault lines
 		map.addSource("fault-lines-source", {
@@ -377,22 +384,25 @@ export default function setupMap(map, geoJSON, onClick, popup, setActiveSensor, 
 		if (map.getLayer("cluster-count-geonet")) map.removeLayer("cluster-count-geonet");
 		if (map.getLayer("clusters-geonet")) map.removeLayer("clusters-geonet");
 		if (map.getLayer("unclustered-point-geonet")) map.removeLayer("unclustered-point-geonet");
+		if (map.getSource("geonet")) map.removeSource("geonet");
 
 		if (map.getLayer("fault-lines-hitbox-layer")) map.removeLayer("fault-lines-hitbox-layer");
 		if (map.getLayer("fault-lines-render-layer")) map.removeLayer("fault-lines-render-layer");
 		if (map.getLayer("fault-lines-labels-layer")) map.removeLayer("fault-lines-labels-layer");
 		if (map.getSource("fault-lines-source")) map.removeSource("fault-lines-source");
 	};
-	const onStyleLoad = () => {
-		cleanup();
-		setupLayers();
-	};
-	map.on("style.load", onStyleLoad);
 
-	setupLayers();
+	const cleanupAndSetup = async () => {
+		cleanup();
+		await setupLayers();
+	};
+
+	await cleanupAndSetup();
+
+	map.on("style.load", cleanupAndSetup);
 
 	return () => {
-		map.off("style.load", onStyleLoad);
+		map.off("style.load", cleanupAndSetup);
 		cleanup();
 	};
 }

@@ -1,15 +1,4 @@
-import {
-	Box,
-	CssBaseline,
-	Typography,
-	Table,
-	TableBody,
-	TableCell,
-	TableContainer,
-	TableHead,
-	TableRow,
-	Paper,
-} from "@mui/material";
+import { Box, CssBaseline, Typography } from "@mui/material";
 import React, { Suspense, useEffect, useState } from "react";
 
 import MapContext from "./MapContext";

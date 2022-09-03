@@ -19,11 +19,29 @@ import StraightIcon from "@mui/icons-material/Straight";
 import CrisisAlertIcon from "@mui/icons-material/CrisisAlert";
 import EmergencyShareIcon from "@mui/icons-material/EmergencyShare";
 
-const styles = [
-	{ text: "Streets", color: "primary", id: "streets-v11", Icon: StraightIcon },
-	{ text: "Satellite", color: "secondary", id: "satellite-v9", Icon: SatelliteAltIcon },
-	{ text: "Outdoors", color: "success", id: "outdoors-v11", Icon: MapIcon },
-];
+const styles = {
+	"streets-v11": {
+		text: "Streets",
+		color: "primary",
+		id: "streets-v11",
+		mapboxName: "Mapbox Streets",
+		Icon: StraightIcon,
+	},
+	"satellite-v9": {
+		text: "Satellite",
+		color: "secondary",
+		id: "satellite-v9",
+		mapboxName: "Mapbox Satellite",
+		Icon: SatelliteAltIcon,
+	},
+	"outdoors-v11": {
+		text: "Outdoors",
+		color: "success",
+		id: "outdoors-v11",
+		mapboxName: "Mapbox Outdoors",
+		Icon: MapIcon,
+	},
+};
 
 const squareSize = 50;
 const labelHeight = 15;
@@ -69,6 +87,8 @@ function FlexSquare({ color, text, row, onClick, style, selected, Icon, selected
 const crisislabSensorsLayers = ["clusters", "unclustered-point", "cluster-count"];
 const geonetSensorsLayers = ["unclustered-point-geonet", "cluster-count-geonet", "clusters-geonet"];
 
+const defaultStyle = styles["streets-v11"];
+
 function showFaultLines(show, map) {
 	map.getLayer("fault-lines-render-layer") &&
 		map.setLayoutProperty("fault-lines-render-layer", "visibility", show ? "visible" : "none");
@@ -85,7 +105,8 @@ export default function Switcher() {
 	const theme = useTheme();
 	const onBigScreen = useMediaQuery((theme) => theme.breakpoints.up("lg"));
 	const [popupOpen, setPopupOpen] = useState(false);
-	const [selectedStyle, setSelectedStyle] = useState("streets-v11");
+	const [selectedStyle, setSelectedStyle] = useState(defaultStyle);
+	const [activeStyle, setActiveStyle] = useState(defaultStyle);
 	const [faultLinesEnabled, setFaultLinesEnabled] = useState(false);
 	const [geonetEnabled, setGeonetEnabled] = useState(false);
 	const [crisislabEnabled, setCrisislabEnabled] = useState(true);
@@ -93,9 +114,15 @@ export default function Switcher() {
 	// Extra data layers (sensor locations, fault lines, etc)
 
 	useEffect(() => {
-		console.log("Mounted");
-		return () => console.log("Unmounted");
-	}, []);
+		function onStyleLoad() {
+			if (!map) return;
+			setActiveStyle(map.getStyle());
+		}
+
+		map?.on("style.load", onStyleLoad);
+
+		return () => map?.off("style.load", onStyleLoad);
+	}, [map]);
 
 	useEffect(() => {
 		function onFaultLinesExpand(map) {
@@ -150,7 +177,7 @@ export default function Switcher() {
 					.off("style.load", () => updateFaultLineStyles(map));
 			};
 		}
-	}, [map, faultLinesEnabled, selectedStyle]);
+	}, [map, faultLinesEnabled, activeStyle]);
 
 	useEffect(() => {
 		if (map && map.loaded) {
@@ -158,7 +185,7 @@ export default function Switcher() {
 				if (map.getLayer(layer)) map.setLayoutProperty(layer, "visibility", geonetEnabled ? "visible" : "none");
 			}
 		}
-	}, [map, geonetEnabled, selectedStyle]);
+	}, [map, geonetEnabled, activeStyle]);
 
 	useEffect(() => {
 		if (map && map.loaded) {
@@ -167,15 +194,13 @@ export default function Switcher() {
 					map.setLayoutProperty(layer, "visibility", crisislabEnabled ? "visible" : "none");
 			}
 		}
-	}, [map, crisislabEnabled, selectedStyle]);
+	}, [map, crisislabEnabled, activeStyle]);
 
 	// Map styles
 
-	const selectedStyleDetails = styles.find((style) => style.id === selectedStyle);
-
 	function setStyle(style) {
-		if (selectedStyle !== style && map && map.loaded) {
-			map?.setStyle("mapbox://styles/mapbox/" + style);
+		if (selectedStyle.id !== style.id && map && map.loaded) {
+			map?.setStyle("mapbox://styles/mapbox/" + style.id);
 			setSelectedStyle(style);
 		}
 	}
@@ -250,11 +275,11 @@ export default function Switcher() {
 						Map type
 					</Typography>
 					<Stack gap={1} direction="row">
-						{styles.map((style) => (
+						{Object.values(styles).map((style) => (
 							<FlexSquare
 								key={style.id}
-								selected={selectedStyle === style.id}
-								onClick={() => setStyle(style.id)}
+								selected={selectedStyle.id === style.id}
+								onClick={() => setStyle(style)}
 								color={style.color}
 								text={style.text}
 								lines={style.lines}
@@ -279,7 +304,7 @@ export default function Switcher() {
 						}}>
 						<Paper
 							sx={{
-								backgroundColor: theme.palette[selectedStyleDetails.color].main,
+								backgroundColor: theme.palette[selectedStyle.color].main,
 								transition: "background-color 0.5s",
 								width: "84px",
 								height: "84px",
