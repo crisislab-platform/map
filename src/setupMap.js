@@ -62,31 +62,6 @@ export default function setupMap(map, geoJSON, onClick, popup, setActiveSensor, 
 		popup.remove();
 	};
 
-	const mouseEnterAir = (e) => {
-		// map.getCanvas().style.cursor = "pointer";
-		// Copy coordinates array.
-		const coordinates = e.features[0].geometry.coordinates.slice();
-		// const sensorId = e.features[0].properties.id;
-
-		// Ensure that if the map is zoomed out such that multiple
-		// copies of the feature are visible, the popup appears
-		// over the copy being pointed to.
-		while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-			coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
-		}
-
-		// Populate the popup and set its coordinates
-		// based on the feature found.
-		popup.setLngLat(coordinates).addTo(map);
-		setActiveSensor(e.features[0].properties);
-		triggerRerender();
-	};
-
-	const mouseLeaveAir = () => {
-		// map.getCanvas().style.cursor = "";
-		popup.remove();
-	};
-
 	const onClusterClickGeonet = (e) => {
 		const features = map.queryRenderedFeatures(e.point, {
 			layers: ["clusters-geonet"],
@@ -318,57 +293,6 @@ export default function setupMap(map, geoJSON, onClick, popup, setActiveSensor, 
 			map.on("mouseleave", "unclustered-point-geonet", unclusteredMouseLeaveGeonet);
 		})();
 
-		(async () => {
-			const rawData = await (
-				await fetch("https://internship-worker.benhong.workers.dev/api/v0/air/sensors/")
-			).json();
-
-			const data = rawData.data.map((data) => {
-				const res = {};
-
-				for (const key in data) {
-					res[rawData.fields[key]] = data[key];
-				}
-
-				return res;
-			});
-
-			const geoJSON = {
-				type: "FeatureCollection",
-				features: data.map((data) => {
-					return {
-						type: "Feature",
-						geometry: {
-							type: "Point",
-							coordinates: [data.longitude, data.latitude],
-						},
-						properties: data,
-					};
-				}),
-			};
-
-			map.addSource("purple-air", {
-				type: "geojson",
-				data: geoJSON,
-			});
-
-			map.addLayer({
-				id: "air-sensors",
-				type: "circle",
-				source: "purple-air",
-				filter: ["!", ["has", "point_count"]],
-				layout: { visibility: "none" },
-				paint: {
-					"circle-color": "#AA44AA",
-					"circle-radius": ["interpolate", ["linear"], ["zoom"], 10, 6, 25, 18],
-					"circle-stroke-width": ["interpolate", ["linear"], ["zoom"], 10, 2, 25, 4],
-					"circle-stroke-color": "#fff",
-				},
-			});
-
-			map.on("mouseenter", "air-sensors", mouseEnterAir);
-			map.on("mouseleave", "air-sensors", mouseLeaveAir);
-		})();
 		// Fault lines
 		map.addSource("fault-lines-source", {
 			type: "vector",
@@ -453,9 +377,6 @@ export default function setupMap(map, geoJSON, onClick, popup, setActiveSensor, 
 		if (map.getLayer("cluster-count-geonet")) map.removeLayer("cluster-count-geonet");
 		if (map.getLayer("clusters-geonet")) map.removeLayer("clusters-geonet");
 		if (map.getLayer("unclustered-point-geonet")) map.removeLayer("unclustered-point-geonet");
-
-		if (map.getLayer("air-sensors")) map.removeLayer("air-sensors");
-		if (map.getSource("purple-air")) map.removeSource("purple-air");
 
 		if (map.getLayer("fault-lines-hitbox-layer")) map.removeLayer("fault-lines-hitbox-layer");
 		if (map.getLayer("fault-lines-render-layer")) map.removeLayer("fault-lines-render-layer");

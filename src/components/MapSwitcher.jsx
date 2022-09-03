@@ -18,7 +18,6 @@ import SatelliteAltIcon from "@mui/icons-material/SatelliteAlt";
 import StraightIcon from "@mui/icons-material/Straight";
 import CrisisAlertIcon from "@mui/icons-material/CrisisAlert";
 import EmergencyShareIcon from "@mui/icons-material/EmergencyShare";
-import AirIcon from "@mui/icons-material/Air";
 
 const styles = [
 	{ text: "Streets", color: "primary", id: "streets-v11", Icon: StraightIcon },
@@ -89,7 +88,6 @@ export default function Switcher() {
 	const [selectedStyle, setSelectedStyle] = useState("streets-v11");
 	const [faultLinesEnabled, setFaultLinesEnabled] = useState(false);
 	const [geonetEnabled, setGeonetEnabled] = useState(false);
-	const [airEnabled, setAirEnabled] = useState(false);
 	const [crisislabEnabled, setCrisislabEnabled] = useState(true);
 
 	// Extra data layers (sensor locations, fault lines, etc)
@@ -161,12 +159,6 @@ export default function Switcher() {
 			}
 		}
 	}, [map, geonetEnabled, selectedStyle]);
-
-	useEffect(() => {
-		if (map && map.loaded && map.getLayer("air-sensors")) {
-			map.setLayoutProperty("air-sensors", "visibility", airEnabled ? "visible" : "none");
-		}
-	}, [map, airEnabled, selectedStyle]);
 
 	useEffect(() => {
 		if (map && map.loaded) {
@@ -253,15 +245,6 @@ export default function Switcher() {
 							text="Fault lines"
 							Icon={BoltIcon}
 						/>
-						{/* <FlexSquare
-							row="top"
-							selected={airEnabled}
-							onClick={() => setAirEnabled((oldState) => !oldState)}
-							color="#AA44AA"
-							selectedColor="#882288"
-							text="Air Quality"
-							Icon={AirIcon}
-						/> */}
 					</Stack>
 					<Typography variant="body1" sx={{ fontWeight: 600 }}>
 						Map type
