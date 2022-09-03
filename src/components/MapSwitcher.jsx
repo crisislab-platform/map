@@ -161,8 +161,6 @@ export default function Switcher() {
 			}
 		}
 		if (!!map && map.loaded) {
-			console.log("Fault lines updating...");
-
 			updateFaultLineStyles(map);
 
 			map.on("mouseenter", "fault-lines-hitbox-layer", () => onFaultLinesExpand(map))
