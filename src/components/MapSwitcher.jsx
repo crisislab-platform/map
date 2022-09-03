@@ -12,7 +12,7 @@ import { useContext, useEffect, useState } from "react";
 
 import BoltIcon from "@mui/icons-material/Bolt";
 import LayersOutlinedIcon from "@mui/icons-material/LayersOutlined";
-import MapContext from "../../MapContext";
+import MapContext from "../MapContext";
 import MapIcon from "@mui/icons-material/Map";
 import SatelliteAltIcon from "@mui/icons-material/SatelliteAlt";
 import StraightIcon from "@mui/icons-material/Straight";
@@ -68,6 +68,18 @@ function FlexSquare({ color, text, row, onClick, style, selected, Icon, selected
 }
 
 const crisislabSensorsLayers = ["clusters", "unclustered-point", "cluster-count"];
+const geonetSensorsLayers = ["unclustered-point-geonet", "cluster-count-geonet", "clusters-geonet"];
+
+function showFaultLines(show, map) {
+	map.getLayer("fault-lines-render-layer") &&
+		map.setLayoutProperty("fault-lines-render-layer", "visibility", show ? "visible" : "none");
+	map.getLayer("fault-lines-hitbox-layer") &&
+		map.setLayoutProperty("fault-lines-hitbox-layer", "visibility", show ? "visible" : "none");
+}
+function showFaultLineLabels(show, map) {
+	map.getLayer("fault-lines-render-layer") &&
+		map.setLayoutProperty("fault-lines-labels-layer", "visibility", show ? "visible" : "none");
+}
 
 export default function Switcher() {
 	const [map] = useContext(MapContext);
@@ -80,86 +92,81 @@ export default function Switcher() {
 	const [airEnabled, setAirEnabled] = useState(false);
 	const [crisislabEnabled, setCrisislabEnabled] = useState(true);
 
-	function showFaultLines(show) {
-		map.getLayer("fault-lines-render-layer") &&
-			map.setLayoutProperty("fault-lines-render-layer", "visibility", show ? "visible" : "none");
-		map.getLayer("fault-lines-hitbox-layer") &&
-			map.setLayoutProperty("fault-lines-hitbox-layer", "visibility", show ? "visible" : "none");
-	}
-	function showFaultLineLabels(show) {
-		map.getLayer("fault-lines-render-layer") &&
-			map.setLayoutProperty("fault-lines-labels-layer", "visibility", show ? "visible" : "none");
-	}
+	// Extra data layers (sensor locations, fault lines, etc)
 
-	function onFaultLinesExpand() {
-		showFaultLineLabels(true);
+	useEffect(() => {
+		console.log("Mounted");
+		return () => console.log("Unmounted");
+	}, []);
 
-		map.setPaintProperty("fault-lines-render-layer", "line-width", [
-			"interpolate",
-			["linear"],
-			["zoom"],
-			5,
-			4,
-			18,
-			16,
-		]);
-	}
-	function onFaultLinesShrink() {
-		showFaultLineLabels(false);
+	useEffect(() => {
+		function onFaultLinesExpand(map) {
+			showFaultLineLabels(true, map);
 
-		map.setPaintProperty("fault-lines-render-layer", "line-width", [
-			"interpolate",
-			["linear"],
-			["zoom"],
-			5,
-			1,
-			18,
-			6,
-		]);
-	}
+			map.setPaintProperty("fault-lines-render-layer", "line-width", [
+				"interpolate",
+				["linear"],
+				["zoom"],
+				5,
+				4,
+				18,
+				16,
+			]);
+		}
 
-	function updateFaultLineStyles() {
-		if (map && map.loaded) {
+		function onFaultLinesShrink(map) {
+			showFaultLineLabels(false, map);
+
+			map.setPaintProperty("fault-lines-render-layer", "line-width", [
+				"interpolate",
+				["linear"],
+				["zoom"],
+				5,
+				1,
+				18,
+				6,
+			]);
+		}
+		function updateFaultLineStyles(map) {
 			if (faultLinesEnabled) {
-				showFaultLines(true);
+				showFaultLines(true, map);
 			} else {
-				showFaultLines(false);
-				showFaultLineLabels(false);
+				showFaultLines(false, map);
+				showFaultLineLabels(false, map);
 			}
 		}
-	}
+		if (!!map && map.loaded) {
+			console.log("Fault lines updating...");
+
+			updateFaultLineStyles(map);
+
+			map.on("mouseenter", "fault-lines-hitbox-layer", () => onFaultLinesExpand(map))
+				.on("mouseleave", "fault-lines-hitbox-layer", () => onFaultLinesShrink(map))
+				.on("click", "fault-lines-hitbox-layer", () => onFaultLinesExpand(map))
+				.on("style.load", () => updateFaultLineStyles(map));
+
+			return () => {
+				map.off("mouseenter", "fault-lines-hitbox-layer", () => onFaultLinesExpand(map))
+					.off("mouseleave", "fault-lines-hitbox-layer", () => onFaultLinesShrink(map))
+					.off("click", "fault-lines-hitbox-layer", () => onFaultLinesExpand(map))
+					.off("style.load", () => updateFaultLineStyles(map));
+			};
+		}
+	}, [map, faultLinesEnabled, selectedStyle]);
 
 	useEffect(() => {
 		if (map && map.loaded) {
-			updateFaultLineStyles();
-
-			map.on("mouseenter", "fault-lines-hitbox-layer", onFaultLinesExpand)
-				.on("mouseleave", "fault-lines-hitbox-layer", onFaultLinesShrink)
-				.on("click", "fault-lines-hitbox-layer", onFaultLinesExpand)
-				.on("style.load", updateFaultLineStyles);
-
-			return () => {
-				map.off("mouseenter", "fault-lines-hitbox-layer", onFaultLinesExpand)
-					.off("mouseleave", "fault-lines-hitbox-layer", onFaultLinesShrink)
-					.off("click", "fault-lines-hitbox-layer", onFaultLinesExpand)
-					.off("style.load", updateFaultLineStyles);
-			};
+			for (const layer of geonetSensorsLayers) {
+				if (map.getLayer(layer)) map.setLayoutProperty(layer, "visibility", geonetEnabled ? "visible" : "none");
+			}
 		}
-	}, [map, faultLinesEnabled]);
-
-	useEffect(() => {
-		if (map && map.loaded && map.getLayer("unclustered-point-geonet")) {
-			map.setLayoutProperty("unclustered-point-geonet", "visibility", geonetEnabled ? "visible" : "none");
-			map.setLayoutProperty("cluster-count-geonet", "visibility", geonetEnabled ? "visible" : "none");
-			map.setLayoutProperty("clusters-geonet", "visibility", geonetEnabled ? "visible" : "none");
-		}
-	}, [map, geonetEnabled]);
+	}, [map, geonetEnabled, selectedStyle]);
 
 	useEffect(() => {
 		if (map && map.loaded && map.getLayer("air-sensors")) {
 			map.setLayoutProperty("air-sensors", "visibility", airEnabled ? "visible" : "none");
 		}
-	}, [map, airEnabled]);
+	}, [map, airEnabled, selectedStyle]);
 
 	useEffect(() => {
 		if (map && map.loaded) {
@@ -168,7 +175,9 @@ export default function Switcher() {
 					map.setLayoutProperty(layer, "visibility", crisislabEnabled ? "visible" : "none");
 			}
 		}
-	}, [map, crisislabEnabled]);
+	}, [map, crisislabEnabled, selectedStyle]);
+
+	// Map styles
 
 	const selectedStyleDetails = styles.find((style) => style.id === selectedStyle);
 

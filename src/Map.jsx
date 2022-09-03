@@ -1,13 +1,6 @@
 import "mapbox-gl/dist/mapbox-gl.css";
 
-import mapboxgl, {
-	AttributionControl,
-	GeolocateControl,
-	Map as MapboxMap,
-	NavigationControl,
-	Popup,
-	ScaleControl,
-} from "mapbox-gl";
+import mapboxgl, { GeolocateControl, Map as MapboxMap, NavigationControl, Popup, ScaleControl } from "mapbox-gl";
 import { useContext, useEffect, useRef } from "react";
 
 import MapContext from "./MapContext";
@@ -102,7 +95,6 @@ export default function MapApp(props) {
 				map.off("style.load", onMapStylesLoad);
 				map.removeControl(navigationControl);
 				map.removeControl(geoLocateControl);
-				map.removeControl(attributionControl);
 				map.remove();
 			};
 		}

@@ -1,4 +1,15 @@
-import { Box, CssBaseline, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from "@mui/material";
+import {
+	Box,
+	CssBaseline,
+	Typography,
+	Table,
+	TableBody,
+	TableCell,
+	TableContainer,
+	TableHead,
+	TableRow,
+	Paper,
+} from "@mui/material";
 import React, { Suspense, useEffect, useState } from "react";
 
 import MapContext from "./MapContext";
@@ -41,26 +52,42 @@ function PopupComponent({ activeSensor, sensors }) {
 
 	// Is air quality sensor
 	if (activeSensor.sensor_index) {
-		const fields = ["sensor_index", "last_seen", "is_owner", "name", "location_type", "latitude", "longitude", "altitude", "channel_state", "channel_flags", "confidence", "pm2.5", "pm2.5_10minute", "pm2.5_30minute", "pm2.5_60minute", "pm2.5_6hour", "pm2.5_24hour", "pm2.5_1week", "primary_key_a"]
-		console.log(activeSensor)
+		const fields = [
+			"sensor_index",
+			"last_seen",
+			"is_owner",
+			"name",
+			"location_type",
+			"latitude",
+			"longitude",
+			"altitude",
+			"channel_state",
+			"channel_flags",
+			"confidence",
+			"pm2.5",
+			"pm2.5_10minute",
+			"pm2.5_30minute",
+			"pm2.5_60minute",
+			"pm2.5_6hour",
+			"pm2.5_24hour",
+			"pm2.5_1week",
+			"primary_key_a",
+		];
 		const portal = createPortal(
 			<Box>
 				<Typography
-
 					variant="h5"
 					sx={{
 						fontWeight: "bold",
 					}}>
 					Air Quality Sensor
 				</Typography>
-				<Typography variant="h6">
-					{activeSensor.name}
-				</Typography>
+				<Typography variant="h6">{activeSensor.name}</Typography>
 				<Typography variant="body1">
 					ID: {activeSensor.sensor_index} • Altitude: {activeSensor.altitude}
 				</Typography>
 				{/* <TableContainer component={Paper}> */}
-				<Table size="small" aria-label="a dense table" sx={{ width: '300px' }} padding="none">
+				<Table size="small" aria-label="a dense table" sx={{ width: "300px" }} padding="none">
 					<TableHead>
 						<TableRow>
 							<TableCell>Size</TableCell>
@@ -74,10 +101,7 @@ function PopupComponent({ activeSensor, sensors }) {
 						</TableRow>
 					</TableHead>
 					<TableBody>
-						<TableRow
-							key="2.5"
-							sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-						>
+						<TableRow key="2.5" sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
 							<TableCell component="th" scope="row">
 								PM2.5
 							</TableCell>
@@ -123,9 +147,11 @@ function PopupComponent({ activeSensor, sensors }) {
 			<Typography variant="body1">
 				{"#" + id + " • " + (online ? "Online" : "Offline") + (type ? " • " + type : "")}
 			</Typography>
-			{!online && timestamp && <Typography variant="body1">
-				Last online: {new Date(timestamp).toDateString() + " " + new Date(timestamp).toLocaleTimeString()}
-			</Typography>}
+			{!online && timestamp && (
+				<Typography variant="body1">
+					Last online: {new Date(timestamp).toDateString() + " " + new Date(timestamp).toLocaleTimeString()}
+				</Typography>
+			)}
 		</Box>,
 		document.getElementById("popup"),
 	);

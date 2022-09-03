@@ -8,7 +8,7 @@ function makeCircleColourGetter(text = false, dark = false) {
 		100,
 		text ? "#ffffff" : theme.palette.warning[dark ? "dark" : "light"],
 		750,
-		text ? "#ffffff" : theme.palette.error[dark ? "dark" : "light"]
+		text ? "#ffffff" : theme.palette.error[dark ? "dark" : "light"],
 	];
 }
 
@@ -202,15 +202,15 @@ export default function setupMap(map, geoJSON, onClick, popup, setActiveSensor, 
 				"Strong Motion Sensor": "#fc9312",
 				"Short Period Seismometer": "#127ffc",
 				"Broadband Seismometer": "#9712fc",
-				"Accelerometer": "#ed2f78",
-			}
+				Accelerometer: "#ed2f78",
+			};
 
 			const typeToBorder = {
 				"Strong Motion Sensor": "#fc7905",
 				"Short Period Seismometer": "#0022ff",
 				"Broadband Seismometer": "#5c02d9",
-				"Accelerometer": "#d10258",
-			}
+				Accelerometer: "#d10258",
+			};
 
 			const now = new Date();
 
@@ -219,23 +219,32 @@ export default function setupMap(map, geoJSON, onClick, popup, setActiveSensor, 
 				// Point to GeoJSON data. This example visualizes all M1.0+ earthquakes
 				// from 12/22/15 to 1/21/16 as logged by USGS' Earthquake hazards program.
 				data: {
-					features: (await Promise.all(
-						(await Promise.all([
-							fetch("https://api.geonet.org.nz/network/sensor?sensorType=3&endDate=9999-01-01"),
-							fetch("https://api.geonet.org.nz/network/sensor?sensorType=8,9&endDate=9999-01-01"),
-							fetch("https://api.geonet.org.nz/network/sensor?sensorType=1,10&endDate=9999-01-01")
-						])).map(a => a.json())
-					)).map(a => a.features).flat().filter(a => new Date(a.properties.End) > now).map(a => {
-						if (a?.geometry?.coordinates) {
-							a.geometry.coordinates[0] += (Math.random() - 0.5) * 0.0005;
-							a.geometry.coordinates[1] += (Math.random() - 0.5) * 0.0005;
-							a.properties.color = typeToColor[a.properties.SensorType];
-							a.properties.border = typeToBorder[a.properties.SensorType];
-							return a;
-						}
-					}
-					),
-					type: "FeatureCollection"
+					features: (
+						await Promise.all(
+							(
+								await Promise.all([
+									fetch("https://api.geonet.org.nz/network/sensor?sensorType=3&endDate=9999-01-01"),
+									fetch("https://api.geonet.org.nz/network/sensor?sensorType=8,9&endDate=9999-01-01"),
+									fetch(
+										"https://api.geonet.org.nz/network/sensor?sensorType=1,10&endDate=9999-01-01",
+									),
+								])
+							).map((a) => a.json()),
+						)
+					)
+						.map((a) => a.features)
+						.flat()
+						.filter((a) => new Date(a.properties.End) > now)
+						.map((a) => {
+							if (a?.geometry?.coordinates) {
+								a.geometry.coordinates[0] += (Math.random() - 0.5) * 0.0005;
+								a.geometry.coordinates[1] += (Math.random() - 0.5) * 0.0005;
+								a.properties.color = typeToColor[a.properties.SensorType];
+								a.properties.border = typeToBorder[a.properties.SensorType];
+								return a;
+							}
+						}),
+					type: "FeatureCollection",
 				},
 				cluster: true,
 				clusterMaxZoom: 14, // Max zoom to cluster points on
@@ -266,7 +275,7 @@ export default function setupMap(map, geoJSON, onClick, popup, setActiveSensor, 
 						"text-field": "{point_count_abbreviated}",
 						"text-font": ["Roboto Slab Regular"],
 						"text-size": 12,
-						visibility: "none"
+						visibility: "none",
 					},
 					paint: {
 						"text-color": makeCircleColourGetter(true),
@@ -275,22 +284,25 @@ export default function setupMap(map, geoJSON, onClick, popup, setActiveSensor, 
 				"unclustered-point-geonet",
 			);
 
-			map.addLayer({
-				id: "clusters-geonet",
-				type: "circle",
-				source: "geonet",
-				filter: ["has", "point_count"],
-				layout: { visibility: "none" },
-				paint: {
-					// Use step expressions (https://docs.mapbox.com/mapbox-gl-js/style-spec/#expressions-step)
-					// with three steps to implement three types of circles:
-					//   * Blue, 20px circles when point count is less than 100
-					//   * Yellow, 30px circles when point count is between 100 and 750
-					//   * Pink, 40px circles when point count is greater than or equal to 750
-					"circle-color": makeCircleColourGetter(false, true),
-					"circle-radius": ["step", ["get", "point_count"], 20, 100, 30, 750, 40],
+			map.addLayer(
+				{
+					id: "clusters-geonet",
+					type: "circle",
+					source: "geonet",
+					filter: ["has", "point_count"],
+					layout: { visibility: "none" },
+					paint: {
+						// Use step expressions (https://docs.mapbox.com/mapbox-gl-js/style-spec/#expressions-step)
+						// with three steps to implement three types of circles:
+						//   * Blue, 20px circles when point count is less than 100
+						//   * Yellow, 30px circles when point count is between 100 and 750
+						//   * Pink, 40px circles when point count is greater than or equal to 750
+						"circle-color": makeCircleColourGetter(false, true),
+						"circle-radius": ["step", ["get", "point_count"], 20, 100, 30, 750, 40],
+					},
 				},
-			}, "cluster-count-geonet");
+				"cluster-count-geonet",
+			);
 
 			map.on("click", "clusters-geonet", onClusterClickGeonet);
 
@@ -307,19 +319,19 @@ export default function setupMap(map, geoJSON, onClick, popup, setActiveSensor, 
 		})();
 
 		(async () => {
-			const rawData = await (await fetch("https://internship-worker.benhong.workers.dev/api/v0/air/sensors/")).json()
-
-			console.log("got data", rawData)
+			const rawData = await (
+				await fetch("https://internship-worker.benhong.workers.dev/api/v0/air/sensors/")
+			).json();
 
 			const data = rawData.data.map((data) => {
-				const res = {}
+				const res = {};
 
 				for (const key in data) {
-					res[rawData.fields[key]] = data[key]
+					res[rawData.fields[key]] = data[key];
 				}
 
-				return res
-			})
+				return res;
+			});
 
 			const geoJSON = {
 				type: "FeatureCollection",
@@ -330,13 +342,10 @@ export default function setupMap(map, geoJSON, onClick, popup, setActiveSensor, 
 							type: "Point",
 							coordinates: [data.longitude, data.latitude],
 						},
-						properties: data
-					}
-				}
-				)
-			}
-
-			console.log("geoJSON", geoJSON)
+						properties: data,
+					};
+				}),
+			};
 
 			map.addSource("purple-air", {
 				type: "geojson",
