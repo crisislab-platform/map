@@ -65,8 +65,9 @@ export default function Sensor() {
 							<Tooltip
 								title={
 									lastOnline
-										? `Last ${online ? "offline" : "detected online"
-										} ${lastOnline.toLocaleString()}`
+										? `Last ${
+												online ? "offline" : "detected online"
+										  } ${lastOnline.toLocaleString()}`
 										: "Connection status"
 								}>
 								<span>{online === undefined ? "Unknown" : online ? "Online" : "Offline"}</span>
@@ -74,7 +75,8 @@ export default function Sensor() {
 						</Typography>
 						{lastOnline && (
 							<Typography variant="body1">
-								{online ? "Online since:" : "Last online:"} {lastOnline.toDateString() + " " + lastOnline.toLocaleTimeString()}
+								{online ? "Online since:" : "Last online:"}{" "}
+								{`${lastOnline.toDateString()} ${lastOnline.toLocaleTimeString()}`}
 							</Typography>
 						)}
 					</Box>
@@ -88,7 +90,7 @@ export default function Sensor() {
 						position: "relative",
 					}}>
 					<iframe
-						src={"https://live-data.pages.dev/consume/" + id}
+						src={`https://live-data.pages.dev/consume/${id}`}
 						style={{
 							position: "absolute",
 							top: 0,
@@ -96,11 +98,12 @@ export default function Sensor() {
 							width: "100%",
 							height: "100%",
 						}}
-						frameBorder="0"></iframe>
+						frameBorder="0"
+					/>
 					<IconButton
 						component={"a"}
 						style={{ position: "absolute", top: -10, right: 5, color: "black" }}
-						href={"https://live-data.pages.dev/consume/" + id}
+						href={`https://live-data.pages.dev/consume/${id}`}
 						target="_blank"
 						rel="noopener noreferrer">
 						<OpenInNew />

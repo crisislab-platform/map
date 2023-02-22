@@ -17,7 +17,7 @@ export default function Home() {
 						// marginTop: 6,
 					}}>
 					<Box sx={{ display: "flex", gap: 3, marginTop: 4 }}>
-						<img src="/crisis_lab_i_small.png" style={{ height: 80, width: 120 }}></img>
+						<img src="/crisis_lab_i_small.png" alt="CRISiSLab logo" style={{ height: 80, width: 120 }} />
 						{/* <Typography
 							variant="h4"
 							sx={{
@@ -39,7 +39,12 @@ export default function Home() {
 						sx={{
 							marginTop: 2,
 						}}>
-						This map shows CRISiSLab’s experimental ground motion detection network of Micro Electro Mechanical Sensor (MEMS) based low-cost sensors. It provides access to real-time ground motion data captured at each sensor. These sensors are deployed in people’s homes and make up our peer-to-peer sensor network capable of processing ground motion data at the sensor to generate earthquake warnings. This map also has layers showing faultlines in New Zealand and GeoNet ground motion sensors.
+						This map shows CRISiSLab’s experimental ground motion detection network of Micro Electro
+						Mechanical Sensor (MEMS) based low-cost sensors. It provides access to real-time ground motion
+						data captured at each sensor. These sensors are deployed in people’s homes and make up our
+						peer-to-peer sensor network capable of processing ground motion data at the sensor to generate
+						earthquake warnings. This map also has layers showing faultlines in New Zealand and GeoNet
+						ground motion sensors.
 					</Typography>
 					<Typography
 						variant="h6"
@@ -50,35 +55,33 @@ export default function Home() {
 						}}>
 						Network status:
 					</Typography>
-					<Typography
-						variant="body1"
-						sx={{ display: "flex", alignItems: "center" }}>
-
-						<span style={{
-							backgroundColor: 'green',
-							borderRadius: '50%',
-							height: '1rem',
-							width: '1rem',
-							display: 'inline-block',
-							marginBottom: '-0.1rem',
-							marginRight: '5px'
-						}} />
-						Online: {sensors && Object.values(sensors).filter(s => s.online).length}
+					<Typography variant="body1" sx={{ display: "flex", alignItems: "center" }}>
+						<span
+							style={{
+								backgroundColor: "green",
+								borderRadius: "50%",
+								height: "1rem",
+								width: "1rem",
+								display: "inline-block",
+								marginBottom: "-0.1rem",
+								marginRight: "5px",
+							}}
+						/>
+						Online: {sensors && Object.values(sensors).filter((s) => s.online).length}
 					</Typography>
-					<Typography
-						variant="body1"
-						sx={{ display: "flex", alignItems: "center" }}>
-
-						<span style={{
-							backgroundColor: 'red',
-							borderRadius: '50%',
-							height: '1rem',
-							width: '1rem',
-							display: 'inline-block',
-							marginBottom: '-0.1rem',
-							marginRight: '5px'
-						}} />
-						Offline: {sensors && Object.values(sensors).filter(s => !s.online).length}
+					<Typography variant="body1" sx={{ display: "flex", alignItems: "center" }}>
+						<span
+							style={{
+								backgroundColor: "red",
+								borderRadius: "50%",
+								height: "1rem",
+								width: "1rem",
+								display: "inline-block",
+								marginBottom: "-0.1rem",
+								marginRight: "5px",
+							}}
+						/>
+						Offline: {sensors && Object.values(sensors).filter((s) => !s.online).length}
 					</Typography>
 				</Box>
 				<Box sx={{ m: 1, mb: 0, mt: "auto" }}>
@@ -87,8 +90,8 @@ export default function Home() {
 					</Typography>
 
 					<Box sx={{ display: "flex", gap: 3 }}>
-						<img style={{ height: 40 }} src="/new_eqc.svg" />
-						<img style={{ height: 40 }} src="/massey_logo.svg" />
+						<img style={{ height: 40 }} alt="EQC logo" src="/new_eqc.svg" />
+						<img style={{ height: 40 }} alt="Massey logo" src="/massey_logo.svg" />
 					</Box>
 				</Box>
 				<span>

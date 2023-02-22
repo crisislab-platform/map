@@ -97,7 +97,7 @@ export default function SearchBar() {
 			});
 		}
 
-		navigate("/search?" + searchParams.toString());
+		navigate(`/search?${searchParams.toString()}`);
 	}
 
 	useEffect(() => {

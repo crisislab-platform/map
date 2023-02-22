@@ -43,8 +43,7 @@ async function getGeonetData() {
 		);
 
 		storedGeonetData = data
-			.map((a) => a.features)
-			.flat()
+			.flatMap((a) => a.features)
 			.filter((a) => new Date(a.properties.End) > now)
 			.map((a) => {
 				if (a?.geometry?.coordinates) {

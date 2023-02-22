@@ -53,9 +53,11 @@ export default function Search() {
 	return (
 		<Fade in>
 			<Box
-				sx={{
-					// p: 6,
-				}}>
+				sx={
+					{
+						// p: 6,
+					}
+				}>
 				<Typography
 					variant="h6"
 					sx={{
@@ -79,24 +81,22 @@ export default function Search() {
 										speed: 1.2,
 										curve: 1,
 									});
-									navigate("/sensor/" + sensor.id);
+									navigate(`/sensor/${sensor.id}`);
 								}}>
 								<ListItemIcon>
 									<RPiIcon fontSize="large" />
 								</ListItemIcon>
 								<ListItemText
 									primary={sensor.type}
-									secondary={
-										(bbox
+									secondary={`${
+										bbox
 											? ""
-											: (sensor.distance > 1000
-												? Math.round(sensor.distance / 100) / 10 + " kilometers away"
-												: sensor.distance + " meters away") + " • ") +
-										"#" +
-										sensor.id +
-										" • " +
-										(sensor.online ? "Online" : "Offline")
-									}
+											: `${
+													sensor.distance > 1000
+														? `${Math.round(sensor.distance / 100) / 10} kilometers away`
+														: `${sensor.distance} meters away`
+											  } • `
+									}#${sensor.id} • ${sensor.online ? "Online" : "Offline"}`}
 								/>
 							</ListItem>
 						))}

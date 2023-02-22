@@ -9,7 +9,7 @@ import { createPortal } from "react-dom";
 import setupMap from "./setupMap";
 import { useNavigate } from "react-router-dom";
 
-const Map = React.lazy(() => import("./Map"));
+const MapComponent = React.lazy(() => import("./Map"));
 
 function PopupComponent({ activeSensor, sensors }) {
 	if (!document.getElementById("popup")) {
@@ -61,11 +61,11 @@ function PopupComponent({ activeSensor, sensors }) {
 			</Typography>
 			<Typography variant="h6">{secondary_id ? location : null}</Typography>
 			<Typography variant="body1">
-				{"#" + id + " • " + (online ? "Online" : "Offline") + (type ? " • " + type : "")}
+				{`#${id} • ${online ? "Online" : "Offline"}${type ? ` • ${type}` : ""}`}
 			</Typography>
 			{!online && timestamp && (
 				<Typography variant="body1">
-					Last online: {new Date(timestamp).toDateString() + " " + new Date(timestamp).toLocaleTimeString()}
+					Last online: {`${new Date(timestamp).toDateString()} ${new Date(timestamp).toLocaleTimeString()}`}
 				</Typography>
 			)}
 		</Box>,
@@ -193,7 +193,7 @@ export default function App() {
 									</Typography>
 								</div>
 							}>
-							<Map setPopup={setPopup} />
+							<MapComponent setPopup={setPopup} />
 						</Suspense>
 					</Box>
 					<MapSwitcher />

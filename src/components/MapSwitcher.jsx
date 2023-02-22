@@ -178,7 +178,7 @@ export default function Switcher() {
 	}, [map, faultLinesEnabled, activeStyle]);
 
 	useEffect(() => {
-		if (map && map.loaded) {
+		if (map?.loaded) {
 			for (const layer of geonetSensorsLayers) {
 				if (map.getLayer(layer)) map.setLayoutProperty(layer, "visibility", geonetEnabled ? "visible" : "none");
 			}
@@ -186,7 +186,7 @@ export default function Switcher() {
 	}, [map, geonetEnabled, activeStyle]);
 
 	useEffect(() => {
-		if (map && map.loaded) {
+		if (map?.loaded) {
 			for (const layer of crisislabSensorsLayers) {
 				if (map.getLayer(layer))
 					map.setLayoutProperty(layer, "visibility", crisislabEnabled ? "visible" : "none");
@@ -198,7 +198,7 @@ export default function Switcher() {
 
 	function setStyle(style) {
 		if (selectedStyle.id !== style.id && map && map.loaded) {
-			map?.setStyle("mapbox://styles/mapbox/" + style.id);
+			map?.setStyle(`mapbox://styles/mapbox/${style.id}`);
 			setSelectedStyle(style);
 		}
 	}
