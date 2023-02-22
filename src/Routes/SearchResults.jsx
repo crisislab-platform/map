@@ -54,13 +54,14 @@ export default function Search() {
 		<Fade in>
 			<Box
 				sx={{
-					p: 6,
+					// p: 6,
 				}}>
 				<Typography
 					variant="h6"
 					sx={{
 						fontWeight: "bold",
-						m: 4,
+						marginTop: 6,
+						marginLeft: 4,
 					}}>
 					{bbox ? "Sensors in" : "Sensors near"} {name}:
 				</Typography>
@@ -89,8 +90,8 @@ export default function Search() {
 										(bbox
 											? ""
 											: (sensor.distance > 1000
-													? Math.round(sensor.distance / 100) / 10 + " kilometers away"
-													: sensor.distance + " meters away") + " • ") +
+												? Math.round(sensor.distance / 100) / 10 + " kilometers away"
+												: sensor.distance + " meters away") + " • ") +
 										"#" +
 										sensor.id +
 										" • " +
