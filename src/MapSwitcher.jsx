@@ -1,18 +1,9 @@
-import {
-	ButtonBase,
-	ClickAwayListener,
-	Paper,
-	Stack,
-	Tooltip,
-	Typography,
-	useMediaQuery,
-	useTheme,
-} from "@mui/material";
+import { ButtonBase, ClickAwayListener, Paper, Stack, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
 
 import BoltIcon from "@mui/icons-material/Bolt";
 import LayersOutlinedIcon from "@mui/icons-material/LayersOutlined";
-import MapContext from "../MapContext";
+import MapContext from "./MapContext";
 import MapIcon from "@mui/icons-material/Map";
 import SatelliteAltIcon from "@mui/icons-material/SatelliteAlt";
 import StraightIcon from "@mui/icons-material/Straight";

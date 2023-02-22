@@ -2,7 +2,7 @@ import { Box, CssBaseline, Typography } from "@mui/material";
 import React, { Suspense, useEffect, useState } from "react";
 
 import MapContext from "./MapContext";
-import MapSwitcher from "./components/MapSwitcher";
+import MapSwitcher from "./MapSwitcher";
 import SensorsContext from "./SensorsContext";
 import Sidebar from "./Sidebar.jsx";
 import { createPortal } from "react-dom";
