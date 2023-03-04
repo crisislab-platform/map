@@ -6,6 +6,8 @@ import React from "react";
 import SensorsContext from "../SensorsContext";
 import { useParams } from "react-router-dom";
 
+const liveDataOrigin = "https://crisislab-data.massey.ac.nz";
+
 export default function Sensor() {
 	const [sensors] = React.useContext(SensorsContext);
 	const { id } = useParams();
@@ -90,7 +92,7 @@ export default function Sensor() {
 						position: "relative",
 					}}>
 					<iframe
-						src={`https://live-data.pages.dev/consume/${id}`}
+						src={`${liveDataOrigin}/consume/${id}`}
 						style={{
 							position: "absolute",
 							top: 0,
@@ -103,7 +105,7 @@ export default function Sensor() {
 					<IconButton
 						component={"a"}
 						style={{ position: "absolute", top: -10, right: 5, color: "black" }}
-						href={`https://live-data.pages.dev/consume/${id}`}
+						href={`${liveDataOrigin}/consume/${id}`}
 						target="_blank"
 						rel="noopener noreferrer">
 						<OpenInNew />
