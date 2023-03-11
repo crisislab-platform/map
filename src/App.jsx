@@ -11,6 +11,8 @@ import { useNavigate } from "react-router-dom";
 
 const MapComponent = React.lazy(() => import("./Map"));
 
+const managementAPIOrigin = "http://shakenet-manager.viggers.net";
+
 function PopupComponent({ activeSensor, sensors }) {
 	if (!document.getElementById("popup")) {
 		return null;
@@ -89,7 +91,7 @@ export default function App() {
 
 	useEffect(() => {
 		(async () => {
-			const res = await fetch("https://internship-worker.benhong.workers.dev/api/v0/sensors");
+			const res = await fetch(`${managementAPIOrigin}/api/v0/sensors`);
 			const data = await res.json();
 			const newSensors = {};
 			Object.values(data.sensors).forEach((sensor) => {
