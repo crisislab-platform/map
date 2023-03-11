@@ -11,7 +11,7 @@ import { useNavigate } from "react-router-dom";
 
 const MapComponent = React.lazy(() => import("./Map"));
 
-const managementAPIOrigin = "http://shakenet-manager.viggers.net";
+const managementAPIOrigin = "https://shakenet-manager.viggers.workers.dev";
 
 function PopupComponent({ activeSensor, sensors }) {
 	if (!document.getElementById("popup")) {
