@@ -1,14 +1,24 @@
 import "mapbox-gl/dist/mapbox-gl.css";
 
-import mapboxgl, { GeolocateControl, Map as MapboxMap, NavigationControl, Popup, ScaleControl } from "mapbox-gl";
+import mapboxgl, {
+	GeolocateControl,
+	Map as MapboxMap,
+	NavigationControl,
+	Popup,
+	ScaleControl,
+} from "mapbox-gl";
 import { useContext, useEffect, useRef } from "react";
 
 import MapContext from "./MapContext";
 import { useTheme } from "@mui/material";
 
-mapboxgl.accessToken = "pk.eyJ1IjoiemFkZXZpZ2dlcnMiLCJhIjoiY2t5dGF6cGpvMWMydTJ3cGhrb2ZhOTdlZCJ9.myQ3YnPgbI-QkuBlClYfCw";
+mapboxgl.accessToken =
+	"pk.eyJ1IjoiemFkZXZpZ2dlcnMiLCJhIjoiY2t5dGF6cGpvMWMydTJ3cGhrb2ZhOTdlZCJ9.myQ3YnPgbI-QkuBlClYfCw";
 
-export default function MapApp(props) {
+export default function MapApp(props: {
+	setPopup: (popup: Popup) => void;
+	style: any;
+}) {
 	const theme = useTheme();
 	const mapContainerRef = useRef(null);
 	const [map, setMap, mapLoaded, setMapLoaded] = useContext(MapContext);
@@ -21,7 +31,7 @@ export default function MapApp(props) {
 				center: [174.8, -41.325],
 				zoom: 4.8,
 			});
-			setMap(map);
+			setMap!(map);
 
 			const popup = new Popup({
 				closeButton: false,
@@ -55,8 +65,8 @@ export default function MapApp(props) {
 				"bottom-left",
 			);
 
-			function onError(e) {
-				console.error("Failed to load map. Error: ", e);
+			function onError(err: any) {
+				console.error("Failed to load map. Error: ", err);
 			}
 
 			function onMapStylesLoad() {
@@ -64,7 +74,17 @@ export default function MapApp(props) {
 					id: "sky",
 					type: "sky",
 					paint: {
-						"sky-opacity": ["interpolate", ["linear"], ["zoom"], 0, 0, 5, 0.3, 8, 1],
+						"sky-opacity": [
+							"interpolate",
+							["linear"],
+							["zoom"],
+							0,
+							0,
+							5,
+							0.3,
+							8,
+							1,
+						],
 						// set up the sky layer for atmospheric scattering
 						"sky-type": "atmosphere",
 						// set the intensity of the sun as a light source (0-100 with higher values corresponding to brighter skies)
@@ -75,7 +95,7 @@ export default function MapApp(props) {
 				// @ts-ignore
 				window.map = map;
 
-				setMapLoaded(true);
+				setMapLoaded!(true);
 
 				return () => {
 					map.removeLayer("sky");

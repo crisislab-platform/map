@@ -10,15 +10,32 @@ const liveDataOrigin = "https://crisislab-data.massey.ac.nz";
 
 export default function Sensor() {
 	const [sensors] = React.useContext(SensorsContext);
-	const { id } = useParams();
+	const { id: _id } = useParams<{ id: string }>();
 
-	if (!sensors[id]) {
-		return null;
+	if (!_id) {
+		return (
+			<p>
+				I'm not sure which sensor you're looking for. Make sure to specify a
+				sensor ID in the url.
+			</p>
+		);
 	}
 
-	const { geoFeatures, online, type, secondary_id: secondaryID, timestamp } = sensors[id];
+	const id = Number(_id);
 
-	let location = null;
+	if (!sensors![id]) {
+		return <p>I couldn't find that sensor ID in the list I have.</p>;
+	}
+
+	const {
+		geoFeatures,
+		online,
+		type,
+		secondary_id: secondaryID,
+		timestamp,
+	} = sensors![id];
+
+	let location: string | null = null;
 
 	if (geoFeatures) {
 		const streetName = geoFeatures.text;
@@ -36,7 +53,8 @@ export default function Sensor() {
 					paddingInline: 0,
 					paddingTop: 6,
 					// marginTop: 6,
-				}}>
+				}}
+			>
 				<Box sx={{ display: "flex", paddingInline: 4 }}>
 					<RPiIcon fontSize="large" sx={{ fontSize: 100, flexGrow: 0 }} />
 					<Box sx={{ flexGrow: 1, marginLeft: 1 }}>
@@ -45,7 +63,8 @@ export default function Sensor() {
 							style={{
 								fontWeight: "bold",
 								fontSize: "1.2em",
-							}}>
+							}}
+						>
 							{location || type}
 						</Typography>
 						<Typography variant="h6" style={{ fontSize: "1.15em" }}>
@@ -65,7 +84,13 @@ export default function Sensor() {
 							)}
 							•{" "}
 							<Tooltip title="Connection status">
-								<span>{online === undefined ? "Unknown" : online ? "Online" : "Offline"}</span>
+								<span>
+									{online === undefined
+										? "Unknown"
+										: online
+										? "Online"
+										: "Offline"}
+								</span>
 							</Tooltip>
 						</Typography>
 						{lastOnline && (
@@ -83,7 +108,8 @@ export default function Sensor() {
 						marginTop: 10,
 						paddingInline: 10,
 						position: "relative",
-					}}>
+					}}
+				>
 					<iframe
 						key="live-data-embed"
 						id="live-data-embed"
@@ -102,7 +128,8 @@ export default function Sensor() {
 						style={{ position: "absolute", top: -10, right: 5, color: "black" }}
 						href={`${liveDataOrigin}/consume/${id}`}
 						target="_blank"
-						rel="noopener noreferrer">
+						rel="noopener noreferrer"
+					>
 						<OpenInNew />
 					</IconButton>
 				</div>

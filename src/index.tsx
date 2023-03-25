@@ -8,9 +8,7 @@ import { StyledEngineProvider } from "@mui/material/styles";
 import { ThemeProvider } from "@mui/material";
 import { theme } from "beryllium";
 
-window.theme = theme;
-
-const root = createRoot(document.getElementById("root"));
+const root = createRoot(document.getElementById("root") as HTMLElement);
 
 root.render(
 	<React.StrictMode>

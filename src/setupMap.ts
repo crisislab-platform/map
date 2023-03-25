@@ -1,5 +1,5 @@
 import { theme } from "beryllium";
-
+import { Map as MapboxMap, MapLayerMouseEvent, Popup } from "mapbox-gl";
 function makeCircleColourGetter(text = false, dark = false) {
 	return [
 		"step",
@@ -59,14 +59,21 @@ async function getGeonetData() {
 	return storedGeonetData;
 }
 
-export default async function setupMap(map, geoJSON, onClick, popup, setActiveSensor, triggerRerender) {
+export default async function setupMap(
+	map: MapboxMap,
+	geoJSON: any,
+	onClick: (event: MapLayerMouseEvent) => void,
+	popup: Popup,
+	setActiveSensor: (newActiveID: number) => void,
+	triggerRerender: () => void,
+) {
 	// inspect a cluster on click
-	const onClusterClick = (e) => {
-		const features = map.queryRenderedFeatures(e.point, {
+	const onClusterClick = (ev: MapLayerMouseEvent) => {
+		const features = map.queryRenderedFeatures(ev.point, {
 			layers: ["clusters"],
 		});
-		const clusterId = features[0].properties.cluster_id;
-		map.getSource("earthquakes").getClusterExpansionZoom(clusterId, (err, zoom) => {
+		const clusterId = features[0]?.properties?.cluster_id;
+		map.getSource("earthquakes").getClusterExpansionZoom!(clusterId, (err, zoom) => {
 			if (err) return;
 
 			map.flyTo({
@@ -84,17 +91,17 @@ export default async function setupMap(map, geoJSON, onClick, popup, setActiveSe
 		map.getCanvas().style.cursor = "";
 	};
 
-	const unclusteredMouseEnter = (e) => {
+	const unclusteredMouseEnter = (ev: MapLayerMouseEvent) => {
 		map.getCanvas().style.cursor = "pointer";
 		// Copy coordinates array.
-		const coordinates = e.features[0].geometry.coordinates.slice();
-		const sensorId = e.features[0].properties.id;
+		const coordinates = ev.features?.[0].geometry?.coordinates.slice();
+		const sensorId = ev?.features?.[0]?.properties?.id;
 
 		// Ensure that if the map is zoomed out such that multiple
 		// copies of the feature are visible, the popup appears
 		// over the copy being pointed to.
-		while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-			coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+		while (Math.abs(ev.lngLat.lng - coordinates[0]) > 180) {
+			coordinates[0] += ev.lngLat.lng > coordinates[0] ? 360 : -360;
 		}
 
 		// Populate the popup and set its coordinates

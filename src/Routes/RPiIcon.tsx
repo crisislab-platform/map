@@ -1,6 +1,6 @@
 import SvgIcon from "@mui/material/SvgIcon";
 
-export default function RPiIcon(props) {
+export default function RPiIcon(props: { [x: string]: any }) {
 	return (
 		<SvgIcon {...props}>
 			<path

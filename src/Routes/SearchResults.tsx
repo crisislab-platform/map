@@ -1,4 +1,4 @@
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import Box from "@mui/material/Box";
 import { Fade } from "@mui/material";
@@ -19,25 +19,33 @@ export default function Search() {
 	const [searchParams] = useSearchParams();
 	const navigate = useNavigate();
 	const name = searchParams.get("name");
-	const center = JSON.parse(searchParams.get("center"));
-	const bbox = searchParams.get("bbox") && JSON.parse(searchParams.get("bbox"));
+	const center =
+		searchParams.get("center") && JSON.parse(searchParams.get("center")!);
+	const bbox =
+		searchParams.get("bbox") && JSON.parse(searchParams.get("bbox")!);
 	const [map] = React.useContext(MapContext);
 
 	let results;
 
 	if (bbox) {
 		// Look for sensors inside the bounding box
-		results = Object.values(sensors).filter((sensor) => {
-			const { latitude, longitude } = sensor;
-			return bbox[1] <= latitude && bbox[3] >= latitude && bbox[0] <= longitude && bbox[2] >= longitude;
+		results = Object.values(sensors!).filter((sensor) => {
+			const { latitude, longitude } = sensor.publicLocation;
+			return (
+				bbox[1] <= latitude &&
+				bbox[3] >= latitude &&
+				bbox[0] <= longitude &&
+				bbox[2] >= longitude
+			);
 		});
 	} else {
 		// Find the top 5 closest sensors to the location
 		const [longitude, latitude] = center;
 		// Use geolib to calculate the distance between the center and each sensor
-		results = Object.values(sensors)
+		results = Object.values(sensors!)
 			.map((sensor) => {
-				const { latitude: sensorLatitude, longitude: sensorLongitude } = sensor;
+				const { latitude: sensorLatitude, longitude: sensorLongitude } =
+					sensor.publicLocation;
 				return {
 					...sensor,
 					distance: getDistance(
@@ -57,14 +65,16 @@ export default function Search() {
 					{
 						// p: 6,
 					}
-				}>
+				}
+			>
 				<Typography
 					variant="h6"
 					sx={{
 						fontWeight: "bold",
 						marginTop: 6,
 						marginLeft: 4,
-					}}>
+					}}
+				>
 					{bbox ? "Sensors in" : "Sensors near"} {name}:
 				</Typography>
 
@@ -76,13 +86,15 @@ export default function Search() {
 								sx={{ paddingInline: 4 }}
 								onClick={() => {
 									map?.flyTo({
-										center: sensor.publicLocation || sensor.location?.coordinates,
+										center:
+											sensor.publicLocation || sensor.location?.coordinates,
 										zoom: 16,
 										speed: 1.2,
 										curve: 1,
 									});
 									navigate(`/sensor/${sensor.id}`);
-								}}>
+								}}
+							>
 								<ListItemIcon>
 									<RPiIcon fontSize="large" />
 								</ListItemIcon>
@@ -93,7 +105,9 @@ export default function Search() {
 											? ""
 											: `${
 													sensor.distance > 1000
-														? `${Math.round(sensor.distance / 100) / 10} kilometers away`
+														? `${
+																Math.round(sensor.distance / 100) / 10
+														  } kilometers away`
 														: `${sensor.distance} meters away`
 											  } • `
 									}#${sensor.id} • ${sensor.online ? "Online" : "Offline"}`}
