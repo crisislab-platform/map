@@ -64,14 +64,7 @@ export default function Sensor() {
 								</>
 							)}
 							•{" "}
-							<Tooltip
-								title={
-									lastOnline
-										? `Last ${
-												online ? "offline" : "detected online"
-										  } ${lastOnline.toLocaleString()}`
-										: "Connection status"
-								}>
+							<Tooltip title="Connection status">
 								<span>{online === undefined ? "Unknown" : online ? "Online" : "Offline"}</span>
 							</Tooltip>
 						</Typography>
@@ -92,6 +85,8 @@ export default function Sensor() {
 						position: "relative",
 					}}>
 					<iframe
+						key="live-data-embed"
+						id="live-data-embed"
 						src={`${liveDataOrigin}/consume/${id}`}
 						style={{
 							position: "absolute",
