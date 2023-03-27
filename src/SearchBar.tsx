@@ -20,11 +20,12 @@ import LocationOnIcon from "@mui/icons-material/LocationOn";
 import MapContext from "./MapContext";
 import SearchIcon from "@mui/icons-material/Search";
 import LocationCityIcon from "@mui/icons-material/LocationCity";
-const MAPBOX_TOKEN = "pk.eyJ1IjoiemFkZXZpZ2dlcnMiLCJhIjoiY2t5dGF6cGpvMWMydTJ3cGhrb2ZhOTdlZCJ9.myQ3YnPgbI-QkuBlClYfCw";
+const MAPBOX_TOKEN =
+	"pk.eyJ1IjoiemFkZXZpZ2dlcnMiLCJhIjoiY2t5dGF6cGpvMWMydTJ3cGhrb2ZhOTdlZCJ9.myQ3YnPgbI-QkuBlClYfCw";
 
 // MapBox Search
 export default function SearchBar() {
-	const [value, setValue] = useState("");
+	const [value, setValue] = useState<string | undefined>("");
 	const [results, setResults] = useState([]);
 	const [selectedIndex, setSelectedIndex] = useState(0);
 	const [hasFocus, setHasFocus] = useState(false);
@@ -41,12 +42,12 @@ export default function SearchBar() {
 				)}.json?country=nz&proximity=175%2C-41&types=postcode%2Cpoi%2Caddress%2Cregion%2Cplace&language=en&access_token=${MAPBOX_TOKEN}`;
 				const response = await fetch(url);
 				const json = await response.json();
-				if (json.features.length) {
+				if (Array.isArray(json.features)) {
 					setResults(json.features);
 					setHasFocus(true);
 				} else {
 					setHasFocus(false);
-					setTimeout(() => setResults(json.features), 200);
+					setTimeout(() => setResults(json.features ?? []), 200);
 				}
 			}
 		})();
@@ -60,13 +61,20 @@ export default function SearchBar() {
 		setSelectedIndex(0);
 	}
 
-	function select(value) {
+	function select(result) {
+		if (!result) return console.warn("No result provided to select function!");
+
 		reset();
+
 		const searchParams = new URLSearchParams();
-		searchParams.set("name", value.text);
-		searchParams.set("center", JSON.stringify(value.center));
-		if (value.bbox) {
-			searchParams.set("bbox", JSON.stringify(value.bbox));
+		if (result.text) {
+			searchParams.set("name", result.text);
+		}
+		if (result.center) {
+			searchParams.set("center", JSON.stringify(result.center));
+		}
+		if (result.bbox) {
+			searchParams.set("bbox", JSON.stringify(result.bbox));
 		}
 
 		const zoomValues = {
@@ -77,8 +85,8 @@ export default function SearchBar() {
 			region: 12,
 		};
 
-		if (value.bbox) {
-			map?.fitBounds(value.bbox, {
+		if (result.bbox) {
+			map?.fitBounds(result.bbox, {
 				// padding: {
 				//   top: 100,
 				//   bottom: 100,
@@ -90,8 +98,8 @@ export default function SearchBar() {
 			});
 		} else {
 			map?.flyTo({
-				center: value.center,
-				zoom: zoomValues[value.place_type],
+				center: result.center,
+				zoom: zoomValues[result.place_type],
 				speed: 0.8,
 				curve: 2,
 			});
@@ -125,7 +133,8 @@ export default function SearchBar() {
 				pointerEvents: results.length > 0 && value && hasFocus ? "all" : "none",
 				position: "relative",
 				height: 52,
-			}}>
+			}}
+		>
 			<Paper
 				elevation={0}
 				sx={{
@@ -135,7 +144,8 @@ export default function SearchBar() {
 					position: "absolute",
 					zIndex: 999,
 					pointerEvents: "all",
-				}}>
+				}}
+			>
 				{/* Show back button if location is not / */}
 				<Box sx={{ display: "flex", alignItems: "center", marginInline: "2%" }}>
 					<Tooltip title="Back to main page">
@@ -146,10 +156,11 @@ export default function SearchBar() {
 							}}
 							style={{
 								flexGrow: 0,
-								marginRight: location.pathname !== "/" || value ? -5 : -40,
+								marginRight: location?.pathname !== "/" || value ? -5 : -40,
 								transition: "opacity 0.2s, margin-right 0.2s ease-out",
-								opacity: location.pathname !== "/" || value ? 1 : 0,
-							}}>
+								opacity: location?.pathname !== "/" || value ? 1 : 0,
+							}}
+						>
 							<ArrowBackIcon fontSize="medium" />
 						</IconButton>
 					</Tooltip>
@@ -160,8 +171,8 @@ export default function SearchBar() {
 						label="Find a sensor..."
 						variant="outlined"
 						autoComplete="off"
-						value={value}
-						onChange={(e) => setValue(e.target.value)}
+						value={value ?? ""}
+						onChange={(e) => setValue(e.target.value ?? "")}
 						InputProps={{
 							endAdornment: (
 								<InputAdornment position="end">
@@ -193,7 +204,8 @@ export default function SearchBar() {
 				// onMouseEnter={() => setMouseOver(true)}
 				// onMouseLeave={() => setMouseOver(false)}
 				onFocus={() => setHasFocus(true)}
-				onBlur={() => setTimeout(() => setHasFocus(false), 100)}>
+				onBlur={() => setTimeout(() => setHasFocus(false), 100)}
+			>
 				{/* Show back button if location is not / */}
 				<TextField
 					size="small"
@@ -215,7 +227,8 @@ export default function SearchBar() {
 					transition: "opacity 0.2s",
 				}}
 				onFocus={() => setHasFocus(true)}
-				onBlur={() => setTimeout(() => setHasFocus(false), 100)}>
+				onBlur={() => setTimeout(() => setHasFocus(false), 100)}
+			>
 				{/* Show back button if location is not / */}
 				<TextField
 					size="small"
@@ -236,7 +249,8 @@ export default function SearchBar() {
 										}}
 										style={{
 											paddingLeft: 18,
-										}}>
+										}}
+									>
 										<ListItemIcon>
 											{["postcode", "address", "region", "place"].includes(
 												result.place_type[0],
@@ -246,7 +260,10 @@ export default function SearchBar() {
 												<LocationOnIcon />
 											)}
 										</ListItemIcon>
-										<ListItemText style={{ marginLeft: -16 }} primary={result.place_name} />
+										<ListItemText
+											style={{ marginLeft: -16 }}
+											primary={result.place_name}
+										/>
 									</ListItemButton>
 								</ListItem>
 							))}

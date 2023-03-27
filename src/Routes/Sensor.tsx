@@ -28,7 +28,7 @@ export default function Sensor() {
 	}
 
 	const {
-		geoFeatures,
+		publicGeoFeatures,
 		online,
 		type,
 		secondary_id: secondaryID,
@@ -37,10 +37,10 @@ export default function Sensor() {
 
 	let location: string | null = null;
 
-	if (geoFeatures) {
-		const streetName = geoFeatures.text;
-		const locality = geoFeatures.context[1].text;
-		const region = geoFeatures.context[3].text;
+	if (publicGeoFeatures) {
+		const streetName = publicGeoFeatures.text;
+		const locality = publicGeoFeatures.context[1].text;
+		const region = publicGeoFeatures.context[3].text;
 		location = `${streetName}, ${locality}, ${region}`;
 	}
 

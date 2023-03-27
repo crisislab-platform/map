@@ -10,14 +10,16 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import MenuIcon from "@mui/icons-material/Menu";
 import Routes from "./Routes/index";
-import Search from "./SearchBar";
+import SearchBar from "./SearchBar";
 import { useState } from "react";
 import { theme } from "beryllium";
 
 const desktopDrawerWidth = 500;
 
 export default function Sidebar() {
-	const onBigScreen = useMediaQuery<typeof theme>((theme) => theme.breakpoints.up("md"));
+	const onBigScreen = useMediaQuery<typeof theme>((theme) =>
+		theme.breakpoints.up("md"),
+	);
 	const [drawerOpen, setDrawerOpen] = useState(false);
 
 	function onDrawerClose() {
@@ -64,7 +66,7 @@ export default function Sidebar() {
 						</Tooltip>
 					</Stack>
 				)}
-				<Search />
+				<SearchBar />
 				<Box sx={{ mt: onBigScreen ? 1 : 2, height: "100%" }}>
 					<Routes />
 				</Box>

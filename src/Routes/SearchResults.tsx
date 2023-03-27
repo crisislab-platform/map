@@ -24,13 +24,14 @@ export default function Search() {
 	const bbox =
 		searchParams.get("bbox") && JSON.parse(searchParams.get("bbox")!);
 	const [map] = React.useContext(MapContext);
+	console.log("Got past hooks");
 
 	let results;
 
 	if (bbox) {
 		// Look for sensors inside the bounding box
 		results = Object.values(sensors!).filter((sensor) => {
-			const { latitude, longitude } = sensor.publicLocation;
+			const [latitude, longitude] = sensor.publicLocation;
 			return (
 				bbox[1] <= latitude &&
 				bbox[3] >= latitude &&
@@ -38,85 +39,91 @@ export default function Search() {
 				bbox[2] >= longitude
 			);
 		});
-	} else {
+	} else if (center && center.length > 0) {
 		// Find the top 5 closest sensors to the location
 		const [longitude, latitude] = center;
 		// Use geolib to calculate the distance between the center and each sensor
 		results = Object.values(sensors!)
 			.map((sensor) => {
-				const { latitude: sensorLatitude, longitude: sensorLongitude } =
-					sensor.publicLocation;
 				return {
 					...sensor,
 					distance: getDistance(
 						{ latitude, longitude },
-						{ latitude: sensorLatitude, longitude: sensorLongitude },
+						{
+							latitude: sensor.publicLocation[0],
+							longitude: sensor.publicLocation[1],
+						},
 					),
 				};
 			})
 			.sort((a, b) => a.distance - b.distance)
 			.slice(0, 5);
 	}
+	console.log("Got to return");
 
 	return (
-		<Fade in>
-			<Box
-				sx={
-					{
-						// p: 6,
+		<>
+			<Fade in>
+				<Box
+					sx={
+						{
+							// p: 6,
+						}
 					}
-				}
-			>
-				<Typography
-					variant="h6"
-					sx={{
-						fontWeight: "bold",
-						marginTop: 6,
-						marginLeft: 4,
-					}}
 				>
-					{bbox ? "Sensors in" : "Sensors near"} {name}:
-				</Typography>
+					<Typography
+						variant="h6"
+						sx={{
+							fontWeight: "bold",
+							marginTop: 6,
+							marginLeft: 4,
+						}}
+					>
+						{bbox ? "Sensors in" : "Sensors near"} {name}:
+					</Typography>
 
-				{results.length > 0 && (
-					<List>
-						{results.map((sensor) => (
-							<ListItem
-								button
-								sx={{ paddingInline: 4 }}
-								onClick={() => {
-									map?.flyTo({
-										center:
-											sensor.publicLocation || sensor.location?.coordinates,
-										zoom: 16,
-										speed: 1.2,
-										curve: 1,
-									});
-									navigate(`/sensor/${sensor.id}`);
-								}}
-							>
-								<ListItemIcon>
-									<RPiIcon fontSize="large" />
-								</ListItemIcon>
-								<ListItemText
-									primary={sensor.type}
-									secondary={`${
-										bbox
-											? ""
-											: `${
-													sensor.distance > 1000
-														? `${
-																Math.round(sensor.distance / 100) / 10
-														  } kilometers away`
-														: `${sensor.distance} meters away`
-											  } • `
-									}#${sensor.id} • ${sensor.online ? "Online" : "Offline"}`}
-								/>
-							</ListItem>
-						))}
-					</List>
-				)}
-			</Box>
-		</Fade>
+					{results.length > 0 ? (
+						<List>
+							{results.map((sensor) => (
+								<ListItem
+									button
+									sx={{ paddingInline: 4 }}
+									onClick={() => {
+										map?.flyTo({
+											center: sensor.publicLocation,
+											zoom: 16,
+											speed: 1.2,
+											curve: 1,
+										});
+										navigate(`/sensor/${sensor.id}`);
+									}}
+								>
+									<ListItemIcon>
+										<RPiIcon fontSize="large" />
+									</ListItemIcon>
+									<ListItemText
+										primary={sensor.type}
+										secondary={`${
+											bbox
+												? ""
+												: `${
+														sensor.distance > 1000
+															? `${
+																	Math.round(sensor.distance / 100) / 10
+															  } kilometers away`
+															: `${sensor.distance} meters away`
+												  } • `
+										}#${sensor.id} • ${sensor.online ? "Online" : "Offline"}`}
+									/>
+								</ListItem>
+							))}
+						</List>
+					) : (
+						<Typography>No sensors found</Typography>
+					)}
+				</Box>
+			</Fade>
+			{(console.log("Got to end of render"), 0)}
+		</>
 	);
 }

@@ -6,11 +6,8 @@ export interface Sensor {
 	type?: string;
 	secondary_id?: string;
 	timestamp?: number;
-	geoFeatures?: any;
-	publicLocation: {
-		longitude: number;
-		latitude: number;
-	};
+	publicGeoFeatures?: any;
+	publicLocation: [number, number];
 }
 
 const SensorsContext = createContext<
