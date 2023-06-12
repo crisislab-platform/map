@@ -19,10 +19,8 @@ export default function Search() {
 	const [searchParams] = useSearchParams();
 	const navigate = useNavigate();
 	const name = searchParams.get("name");
-	const center =
-		searchParams.get("center") && JSON.parse(searchParams.get("center")!);
-	const bbox =
-		searchParams.get("bbox") && JSON.parse(searchParams.get("bbox")!);
+	const center = searchParams.get("center") && JSON.parse(searchParams.get("center")!);
+	const bbox = searchParams.get("bbox") && JSON.parse(searchParams.get("bbox")!);
 	const [map] = React.useContext(MapContext);
 	console.log("Got past hooks");
 
@@ -32,12 +30,7 @@ export default function Search() {
 		// Look for sensors inside the bounding box
 		results = Object.values(sensors!).filter((sensor) => {
 			const [latitude, longitude] = sensor.publicLocation;
-			return (
-				bbox[1] <= latitude &&
-				bbox[3] >= latitude &&
-				bbox[0] <= longitude &&
-				bbox[2] >= longitude
-			);
+			return bbox[1] <= latitude && bbox[3] >= latitude && bbox[0] <= longitude && bbox[2] >= longitude;
 		});
 	} else if (center && center.length > 0) {
 		// Find the top 5 closest sensors to the location
@@ -69,16 +62,14 @@ export default function Search() {
 						{
 							// p: 6,
 						}
-					}
-				>
+					}>
 					<Typography
 						variant="h6"
 						sx={{
 							fontWeight: "bold",
 							marginTop: 6,
 							marginLeft: 4,
-						}}
-					>
+						}}>
 						{bbox ? "Sensors in" : "Sensors near"} {name}:
 					</Typography>
 
@@ -96,8 +87,7 @@ export default function Search() {
 											curve: 1,
 										});
 										navigate(`/sensor/${sensor.id}`);
-									}}
-								>
+									}}>
 									<ListItemIcon>
 										<RPiIcon fontSize="large" />
 									</ListItemIcon>
@@ -113,7 +103,9 @@ export default function Search() {
 															  } kilometers away`
 															: `${sensor.distance} meters away`
 												  } • `
-										}#${sensor.id} • ${sensor.online ? "Online" : "Offline"}`}
+										}${sensor.secondary_id || "#" + sensor.id} • ${
+											sensor.online ? "Online" : "Offline"
+										}`}
 									/>
 								</ListItem>
 							))}

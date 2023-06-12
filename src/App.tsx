@@ -27,14 +27,12 @@ function PopupComponent({ activeSensor, sensors }: { [x: string]: any }) {
 					variant="h5"
 					sx={{
 						fontWeight: "bold",
-					}}
-				>
+					}}>
 					GeoNet Sensor
 				</Typography>
 				<Typography variant="h6">Type: {SensorType}</Typography>
 				<Typography variant="body1">
-					Station: {Station} • Start:{" "}
-					{new Date(activeSensor.Start).toDateString()}
+					Station: {Station} • Start: {new Date(activeSensor.Start).toDateString()}
 				</Typography>
 			</Box>,
 			document.getElementById("popup") as HTMLElement,
@@ -43,8 +41,7 @@ function PopupComponent({ activeSensor, sensors }: { [x: string]: any }) {
 		return portal;
 	}
 
-	const { publicGeoFeatures, id, online, type, secondary_id, timestamp } =
-		sensors[activeSensor];
+	const { publicGeoFeatures, id, online, type, secondary_id, timestamp } = sensors[activeSensor];
 
 	let location = null;
 
@@ -61,20 +58,13 @@ function PopupComponent({ activeSensor, sensors }: { [x: string]: any }) {
 				variant="h5"
 				sx={{
 					fontWeight: "bold",
-				}}
-			>
-				{secondary_id || location}
+				}}>
+				{secondary_id || "#" + id}
 			</Typography>
-			<Typography variant="h6">{secondary_id ? location : null}</Typography>
-			<Typography variant="body1">
-				{`#${id} • ${online ? "Online" : "Offline"}${type ? ` • ${type}` : ""}`}
-			</Typography>
+			<Typography variant="body1">{`${online ? "Online" : "Offline"}${type ? ` • ${type}` : ""}`}</Typography>
 			{!online && timestamp && (
 				<Typography variant="body1">
-					Last online:{" "}
-					{`${new Date(timestamp).toDateString()} ${new Date(
-						timestamp,
-					).toLocaleTimeString()}`}
+					Last online: {`${new Date(timestamp).toDateString()} ${new Date(timestamp).toLocaleTimeString()}`}
 				</Typography>
 			)}
 		</Box>,
@@ -123,18 +113,8 @@ export default function App() {
 					},
 					properties: {
 						id: sensor.id,
-						color:
-							"online" in sensor
-								? sensor.online
-									? "#157f1f"
-									: "#d00000"
-								: "#11b4da",
-						border:
-							"online" in sensor
-								? sensor.online
-									? "#55d02e"
-									: "#ff7a7a"
-								: "#ffffff",
+						color: "online" in sensor ? (sensor.online ? "#157f1f" : "#d00000") : "#11b4da",
+						border: "online" in sensor ? (sensor.online ? "#55d02e" : "#ff7a7a") : "#ffffff",
 					},
 				})),
 			};
@@ -183,8 +163,7 @@ export default function App() {
 						bottom: 0,
 						left: 0,
 						right: 0,
-					}}
-				>
+					}}>
 					<CssBaseline />
 					<Sidebar />
 
@@ -196,8 +175,7 @@ export default function App() {
 							p: 3,
 							position: "relative",
 							height: "100%",
-						}}
-					>
+						}}>
 						<Suspense
 							fallback={
 								// div with text in middle
@@ -212,14 +190,12 @@ export default function App() {
 										display: "flex",
 										justifyContent: "center",
 										alignItems: "center",
-									}}
-								>
+									}}>
 									<Typography variant="h5" style={{ color: "white" }}>
 										Loading map...
 									</Typography>
 								</div>
-							}
-						>
+							}>
 							<MapComponent setPopup={setPopup} />
 						</Suspense>
 					</Box>
