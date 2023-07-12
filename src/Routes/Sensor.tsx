@@ -108,7 +108,7 @@ export default function Sensor() {
 					<IconButton
 						component={"a"}
 						style={{ position: "absolute", top: -10, right: 5, color: "black" }}
-						href={`${liveDataOrigin}/consume/${id}`}
+						href={`${liveDataOrigin}/consume/${id}?hide-hover-inspector=yes`}
 						target="_blank"
 						rel="noopener noreferrer">
 						<OpenInNew />
