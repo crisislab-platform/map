@@ -95,7 +95,7 @@ export default function Sensor() {
 					<iframe
 						key="live-data-embed"
 						id="live-data-embed"
-						src={`${liveDataOrigin}/consume/${id}`}
+						src={`${liveDataOrigin}/consume/${id}?hide-hover-inspector=yes`}
 						style={{
 							position: "absolute",
 							top: 0,
@@ -108,7 +108,7 @@ export default function Sensor() {
 					<IconButton
 						component={"a"}
 						style={{ position: "absolute", top: -10, right: 5, color: "black" }}
-						href={`${liveDataOrigin}/consume/${id}?hide-hover-inspector=yes`}
+						href={`${liveDataOrigin}/consume/${id}`}
 						target="_blank"
 						rel="noopener noreferrer">
 						<OpenInNew />
