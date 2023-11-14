@@ -21,8 +21,9 @@ export default function Sensor() {
 	if (!sensors![id]) {
 		return <p>I couldn't find that sensor ID in the list I have.</p>;
 	}
+	const sensor = sensors![id];
 
-	const { publicGeoFeatures, online, type, secondary_id: secondaryID, timestamp } = sensors![id];
+	const { publicGeoFeatures, online, type, secondary_id: secondaryID, timestamp } = sensor;
 
 	let location: string | null = null;
 
@@ -44,7 +45,7 @@ export default function Sensor() {
 					// marginTop: 6,
 				}}>
 				<Box sx={{ display: "flex", paddingInline: 4 }}>
-					<RPiIcon fontSize="large" sx={{ fontSize: 100, flexGrow: 0 }} />
+					<RPiIcon sensor={sensor} fontSize="large" sx={{ fontSize: 100, flexGrow: 0 }} />
 					<Box sx={{ flexGrow: 1, marginLeft: 1 }}>
 						<Typography
 							variant="h5"
@@ -67,7 +68,7 @@ export default function Sensor() {
 								<>
 									•{" "}
 									<Tooltip title="Station ID">
-										<span>@{secondaryID}</span>
+										<span>{secondaryID}</span>
 									</Tooltip>{" "}
 								</>
 							)}

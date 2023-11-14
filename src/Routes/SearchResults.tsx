@@ -89,7 +89,7 @@ export default function Search() {
 										navigate(`/sensor/${sensor.id}`);
 									}}>
 									<ListItemIcon>
-										<RPiIcon fontSize="large" />
+										<RPiIcon sensor={sensor} fontSize="large" />
 									</ListItemIcon>
 									<ListItemText
 										primary={sensor.type}
