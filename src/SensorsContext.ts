@@ -6,7 +6,6 @@ export interface Sensor {
 	type?: string;
 	secondary_id?: string;
 	timestamp?: number;
-	publicGeoFeatures?: any;
 	publicLocation: [number, number];
 }
 

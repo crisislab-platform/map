@@ -41,16 +41,7 @@ function PopupComponent({ activeSensor, sensors }: { [x: string]: any }) {
 		return portal;
 	}
 
-	const { publicGeoFeatures, id, online, type, secondary_id, timestamp } = sensors[activeSensor];
-
-	let location = null;
-
-	if (publicGeoFeatures) {
-		const streetName = publicGeoFeatures.text;
-		const locality = publicGeoFeatures.context[1].text;
-		const region = publicGeoFeatures.context[3].text;
-		location = `${streetName}, ${locality}, ${region}`;
-	}
+	const { id, online, type, secondary_id, timestamp } = sensors[activeSensor];
 
 	const portal = createPortal(
 		<Box>
@@ -92,7 +83,7 @@ export default function App() {
 			const data = await res.json();
 			const newSensors: Record<number, Sensor> = {};
 			Object.values(data.sensors as Partial<Sensor>[]).forEach((sensor) => {
-				if (sensor.publicLocation && sensor.publicGeoFeatures) {
+				if (sensor.publicLocation) {
 					newSensors[sensor.id!] = sensor as Sensor;
 				}
 			});
@@ -196,7 +187,7 @@ export default function App() {
 									</Typography>
 								</div>
 							}>
-							<MapComponent setPopup={setPopup} />
+							<MapComponent style={{}} setPopup={setPopup} />
 						</Suspense>
 					</Box>
 					<MapSwitcher />

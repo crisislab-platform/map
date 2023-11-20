@@ -23,16 +23,7 @@ export default function Sensor() {
 	}
 	const sensor = sensors![id];
 
-	const { publicGeoFeatures, online, type, secondary_id: secondaryID, timestamp } = sensor;
-
-	let location: string | null = null;
-
-	if (publicGeoFeatures) {
-		const streetName = publicGeoFeatures.text;
-		const locality = publicGeoFeatures.context[1].text;
-		const region = publicGeoFeatures.context[3].text;
-		location = `${streetName}, ${locality}, ${region}`;
-	}
+	const { online, type, secondary_id: secondaryID, timestamp } = sensor;
 
 	const lastOnline = timestamp && new Date(timestamp);
 
