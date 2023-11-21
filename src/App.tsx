@@ -11,7 +11,7 @@ import { useNavigate } from "react-router-dom";
 
 const MapComponent = React.lazy(() => import("./Map"));
 
-const managementAPIOrigin = "https://shakenet-manager.viggers.workers.dev";
+const managementAPIOrigin = "https://shakenet-manager.viggers.net";
 
 function PopupComponent({ activeSensor, sensors }: { [x: string]: any }) {
 	if (!document.getElementById("popup")) {
@@ -116,7 +116,7 @@ export default function App() {
 				map,
 				geoJSON,
 				(e) => {
-					const coordinates = e?.features?.[0].geometry.coordinates.slice();
+					const coordinates = e?.features?.[0]?.geometry?.coordinates?.slice();
 
 					// Ensure that if the map is zoomed out such that
 					// multiple copies of the feature are visible, the
