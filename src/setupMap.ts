@@ -1,3 +1,5 @@
+const ENABLE_CLUSTERS = true;
+
 import { theme } from "beryllium";
 import { Map as MapboxMap, MapLayerMouseEvent, Popup } from "mapbox-gl";
 function makeCircleColourGetter(text = false, dark = false) {
@@ -158,153 +160,7 @@ export default async function setupMap(
 	};
 
 	async function setupLayers() {
-		map.addSource("earthquakes", {
-			type: "geojson",
-			// Point to GeoJSON data. This example visualizes all M1.0+ earthquakes
-			// from 12/22/15 to 1/21/16 as logged by USGS' Earthquake hazards program.
-			data: geoJSON,
-			cluster: true,
-			clusterMaxZoom: 14, // Max zoom to cluster points on
-			clusterRadius: 30, // Radius of each cluster when clustering points (defaults to 50)
-		});
-
-		map.addLayer({
-			id: "clusters",
-			type: "circle",
-			source: "earthquakes",
-			filter: ["has", "point_count"],
-			paint: {
-				// Use step expressions (https://docs.mapbox.com/mapbox-gl-js/style-spec/#expressions-step)
-				// with three steps to implement three types of circles:
-				//   * Blue, 20px circles when point count is less than 100
-				//   * Yellow, 30px circles when point count is between 100 and 750
-				//   * Pink, 40px circles when point count is greater than or equal to 750
-				"circle-color": makeCircleColourGetter(),
-				"circle-radius": ["step", ["get", "point_count"], 20, 100, 30, 750, 40],
-			},
-		});
-
-		map.addLayer({
-			id: "unclustered-point",
-			type: "circle",
-			source: "earthquakes",
-			filter: ["!", ["has", "point_count"]],
-			paint: {
-				"circle-color": ["get", "color"],
-				"circle-radius": ["interpolate", ["linear"], ["zoom"], 10, 6, 25, 18],
-				"circle-stroke-width": ["interpolate", ["linear"], ["zoom"], 10, 2, 25, 6],
-				"circle-stroke-color": ["get", "border"],
-			},
-		});
-
-		map.addLayer(
-			{
-				id: "cluster-count",
-				type: "symbol",
-				source: "earthquakes",
-				filter: ["has", "point_count"],
-				layout: {
-					"text-field": "{point_count_abbreviated}",
-					"text-font": ["Roboto Slab Regular"],
-					"text-size": 12,
-				},
-				paint: {
-					"text-color": makeCircleColourGetter(true),
-				},
-			},
-			"unclustered-point",
-		);
-		map.on("click", "clusters", onClusterClick);
-
-		// When a click event occurs on a feature in
-		// the unclustered-point layer, open a popup at
-		// the location of the feature, with
-		// description HTML from its properties.
-		map.on("click", "unclustered-point", onClick);
-
-		map.on("mouseenter", "clusters", onClustersMouseEnter);
-		map.on("mouseleave", "clusters", onClustersMouseLeave);
-		map.on("mouseenter", "unclustered-point", unclusteredMouseEnter);
-		map.on("mouseleave", "unclustered-point", unclusteredMouseLeave);
-
-		map.addSource("geonet", {
-			type: "geojson",
-			// Point to GeoJSON data. This example visualizes all M1.0+ earthquakes
-			// from 12/22/15 to 1/21/16 as logged by USGS' Earthquake hazards program.
-			data: {
-				features: await getGeonetData(),
-				type: "FeatureCollection",
-			},
-			cluster: true,
-			clusterMaxZoom: 14, // Max zoom to cluster points on
-			clusterRadius: 50, // Radius of each cluster when clustering points (defaults to 50)
-		});
-
-		map.addLayer({
-			id: "unclustered-point-geonet",
-			type: "circle",
-			source: "geonet",
-			filter: ["!", ["has", "point_count"]],
-			layout: { visibility: "none" },
-			paint: {
-				"circle-color": ["get", "color"],
-				"circle-radius": ["interpolate", ["linear"], ["zoom"], 10, 4, 25, 12],
-				"circle-stroke-width": ["interpolate", ["linear"], ["zoom"], 10, 2, 25, 4],
-				"circle-stroke-color": ["get", "border"],
-			},
-		});
-
-		map.addLayer(
-			{
-				id: "cluster-count-geonet",
-				type: "symbol",
-				source: "geonet",
-				filter: ["has", "point_count"],
-				layout: {
-					"text-field": "{point_count_abbreviated}",
-					"text-font": ["Roboto Slab Regular"],
-					"text-size": 12,
-					visibility: "none",
-				},
-				paint: {
-					"text-color": makeCircleColourGetter(true),
-				},
-			},
-			"unclustered-point-geonet",
-		);
-
-		map.addLayer(
-			{
-				id: "clusters-geonet",
-				type: "circle",
-				source: "geonet",
-				filter: ["has", "point_count"],
-				layout: { visibility: "none" },
-				paint: {
-					// Use step expressions (https://docs.mapbox.com/mapbox-gl-js/style-spec/#expressions-step)
-					// with three steps to implement three types of circles:
-					//   * Blue, 20px circles when point count is less than 100
-					//   * Yellow, 30px circles when point count is between 100 and 750
-					//   * Pink, 40px circles when point count is greater than or equal to 750
-					"circle-color": makeCircleColourGetter(false, true),
-					"circle-radius": ["step", ["get", "point_count"], 20, 100, 30, 750, 40],
-				},
-			},
-			"cluster-count-geonet",
-		);
-
-		map.on("click", "clusters-geonet", onClusterClickGeonet);
-
-		// When a click event occurs on a feature in
-		// the unclustered-point layer, open a popup at
-		// the location of the feature, with
-		// description HTML from its properties.
-		// map.on("click", "unclustered-point-geonet", onClick);
-
-		map.on("mouseenter", "clusters-geonet", onClustersMouseEnter);
-		map.on("mouseleave", "clusters-geonet", onClustersMouseLeave);
-		map.on("mouseenter", "unclustered-point-geonet", unclusteredMouseEnterGeonet);
-		map.on("mouseleave", "unclustered-point-geonet", unclusteredMouseLeaveGeonet);
+		// Add fault lines first so they're on the bottom
 
 		// Fault lines
 		map.addSource("fault-lines-source", {
@@ -365,6 +221,163 @@ export default async function setupMap(
 				// "text-halo-color": "#000000",
 			},
 		});
+
+		// Add geonet before our sensor so that ours are on top
+		map.addSource("geonet", {
+			type: "geojson",
+			// Point to GeoJSON data. This example visualizes all M1.0+ earthquakes
+			// from 12/22/15 to 1/21/16 as logged by USGS' Earthquake hazards program.
+			data: {
+				features: await getGeonetData(),
+				type: "FeatureCollection",
+			},
+			cluster: ENABLE_CLUSTERS,
+			clusterMaxZoom: 14, // Max zoom to cluster points on
+			clusterRadius: 50, // Radius of each cluster when clustering points (defaults to 50)
+		});
+
+		map.addLayer({
+			id: "unclustered-point-geonet",
+			type: "circle",
+			source: "geonet",
+			filter: ["!", ["has", "point_count"]],
+			layout: { visibility: "none" },
+			paint: {
+				"circle-color": ["get", "color"],
+				"circle-radius": ["interpolate", ["linear"], ["zoom"], 10, 4, 25, 12],
+				"circle-stroke-width": ["interpolate", ["linear"], ["zoom"], 10, 2, 25, 4],
+				"circle-stroke-color": ["get", "border"],
+			},
+		});
+
+		if (ENABLE_CLUSTERS) {
+			map.addLayer(
+				{
+					id: "cluster-count-geonet",
+					type: "symbol",
+					source: "geonet",
+					filter: ["has", "point_count"],
+					layout: {
+						"text-field": "{point_count_abbreviated}",
+						"text-font": ["Roboto Slab Regular"],
+						"text-size": 12,
+						visibility: "none",
+					},
+					paint: {
+						"text-color": makeCircleColourGetter(true),
+					},
+				},
+				"unclustered-point-geonet",
+			);
+
+			map.addLayer(
+				{
+					id: "clusters-geonet",
+					type: "circle",
+					source: "geonet",
+					filter: ["has", "point_count"],
+					layout: { visibility: "none" },
+					paint: {
+						// Use step expressions (https://docs.mapbox.com/mapbox-gl-js/style-spec/#expressions-step)
+						// with three steps to implement three types of circles:
+						//   * Blue, 20px circles when point count is less than 100
+						//   * Yellow, 30px circles when point count is between 100 and 750
+						//   * Pink, 40px circles when point count is greater than or equal to 750
+						"circle-color": makeCircleColourGetter(false, true),
+						"circle-radius": ["step", ["get", "point_count"], 20, 100, 30, 750, 40],
+					},
+				},
+				"cluster-count-geonet",
+			);
+
+			map.on("click", "clusters-geonet", onClusterClickGeonet);
+
+			// When a click event occurs on a feature in
+			// the unclustered-point layer, open a popup at
+			// the location of the feature, with
+			// description HTML from its properties.
+			// map.on("click", "unclustered-point-geonet", onClick);
+
+			map.on("mouseenter", "clusters-geonet", onClustersMouseEnter);
+			map.on("mouseleave", "clusters-geonet", onClustersMouseLeave);
+		}
+
+		map.on("mouseenter", "unclustered-point-geonet", unclusteredMouseEnterGeonet);
+		map.on("mouseleave", "unclustered-point-geonet", unclusteredMouseLeaveGeonet);
+
+		// Add our sensors after geonet so they're on top
+		map.addSource("earthquakes", {
+			type: "geojson",
+			// Point to GeoJSON data. This example visualizes all M1.0+ earthquakes
+			// from 12/22/15 to 1/21/16 as logged by USGS' Earthquake hazards program.
+			data: geoJSON,
+			cluster: ENABLE_CLUSTERS,
+			clusterMaxZoom: 14, // Max zoom to cluster points on
+			clusterRadius: 30, // Radius of each cluster when clustering points (defaults to 50)
+		});
+
+		map.addLayer({
+			id: "unclustered-point",
+			type: "circle",
+			source: "earthquakes",
+			filter: ["!", ["has", "point_count"]],
+			paint: {
+				"circle-color": ["get", "color"],
+				"circle-radius": ["interpolate", ["linear"], ["zoom"], 10, 6, 25, 18],
+				"circle-stroke-width": ["interpolate", ["linear"], ["zoom"], 10, 2, 25, 6],
+				"circle-stroke-color": ["get", "border"],
+			},
+		});
+
+		if (ENABLE_CLUSTERS) {
+			map.addLayer(
+				{
+					id: "clusters",
+					type: "circle",
+					source: "earthquakes",
+					filter: ["has", "point_count"],
+					paint: {
+						// Use step expressions (https://docs.mapbox.com/mapbox-gl-js/style-spec/#expressions-step)
+						// with three steps to implement three types of circles:
+						//   * Blue, 20px circles when point count is less than 100
+						//   * Yellow, 30px circles when point count is between 100 and 750
+						//   * Pink, 40px circles when point count is greater than or equal to 750
+						"circle-color": makeCircleColourGetter(),
+						"circle-radius": ["step", ["get", "point_count"], 20, 100, 30, 750, 40],
+					},
+				},
+				"unclustered-point",
+			);
+
+			map.addLayer({
+				id: "cluster-count",
+				type: "symbol",
+				source: "earthquakes",
+				filter: ["has", "point_count"],
+				layout: {
+					"text-field": "{point_count_abbreviated}",
+					"text-font": ["Roboto Slab Regular"],
+					"text-size": 12,
+				},
+				paint: {
+					"text-color": makeCircleColourGetter(true),
+				},
+			});
+			map.on("click", "clusters", onClusterClick);
+
+			// When a click event occurs on a feature in
+			// the unclustered-point layer, open a popup at
+			// the location of the feature, with
+			// description HTML from its properties.
+
+			map.on("mouseenter", "clusters", onClustersMouseEnter);
+			map.on("mouseleave", "clusters", onClustersMouseLeave);
+		}
+
+		map.on("click", "unclustered-point", onClick);
+
+		map.on("mouseenter", "unclustered-point", unclusteredMouseEnter);
+		map.on("mouseleave", "unclustered-point", unclusteredMouseLeave);
 	}
 
 	const cleanup = () => {
