@@ -9,6 +9,7 @@ import SatelliteAltIcon from "@mui/icons-material/SatelliteAlt";
 import StraightIcon from "@mui/icons-material/Straight";
 import CrisisAlertIcon from "@mui/icons-material/CrisisAlert";
 import EmergencyShareIcon from "@mui/icons-material/EmergencyShare";
+import setupMap from "./setupMap";
 
 const styles = {
 	"streets-v11": {
@@ -78,7 +79,7 @@ function FlexSquare({ color, text, row, onClick, style, selected, Icon, selected
 const crisislabSensorsLayers = ["clusters", "unclustered-point", "cluster-count"];
 const geonetSensorsLayers = ["unclustered-point-geonet", "cluster-count-geonet", "clusters-geonet"];
 
-const defaultStyle = styles["streets-v11"];
+const defaultStyle = styles["outdoors-v11"];
 
 function showFaultLines(show, map) {
 	map.getLayer("fault-lines-render-layer") &&
@@ -92,7 +93,7 @@ function showFaultLineLabels(show, map) {
 }
 
 export default function Switcher() {
-	const [map] = useContext(MapContext);
+	const [map, , mapLoaded, setMapLoaded] = useContext(MapContext);
 	const theme = useTheme();
 	const onBigScreen = useMediaQuery((theme) => theme.breakpoints.up("lg"));
 	const [popupOpen, setPopupOpen] = useState(false);
@@ -151,7 +152,7 @@ export default function Switcher() {
 				showFaultLineLabels(false, map);
 			}
 		}
-		if (!!map && map.loaded) {
+		if (!!map && map.loaded()) {
 			updateFaultLineStyles(map);
 
 			map.on("mouseenter", "fault-lines-hitbox-layer", () => onFaultLinesExpand(map))
@@ -188,9 +189,11 @@ export default function Switcher() {
 	// Map styles
 
 	function setStyle(style) {
-		if (selectedStyle.id !== style.id && map && map.loaded) {
-			map?.setStyle(`mapbox://styles/mapbox/${style.id}`);
+		if (selectedStyle.id !== style.id && map && map.loaded()) {
 			setSelectedStyle(style);
+			// Re-set up map
+			setMapLoaded(false);
+			map?.setStyle(`mapbox://styles/mapbox/${style.id}`);
 		}
 	}
 
