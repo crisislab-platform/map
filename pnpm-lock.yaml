@@ -30,8 +30,8 @@ dependencies:
     specifier: ^3.3.4
     version: 3.3.4
   mapbox-gl:
-    specifier: ^2.15.0
-    version: 2.15.0
+    specifier: ^3.0.0-rc.2
+    version: 3.0.0-rc.2
   react:
     specifier: ^18.2.0
     version: 18.2.0
@@ -1103,6 +1103,10 @@ packages:
       escape-string-regexp: 1.0.5
       supports-color: 5.5.0
 
+  /cheap-ruler@3.0.2:
+    resolution: {integrity: sha512-02T332h1/HTN6cDSufLP8x4JzDs2+VC+8qZ/N0kWIVPyc2xUkWwWh3B2fJxR7raXkL4Mq7k554mfuM9ofv/vGg==}
+    dev: false
+
   /clsx@2.0.0:
     resolution: {integrity: sha512-rQ1+kcj+ttHG0MKVGBUXwayCCF1oh39BF5COIpRzuCEv8Mwjv0XucrI2ExNTOn9IlLifGClWQcU9BrZORvtw6Q==}
     engines: {node: '>=6'}
@@ -1336,8 +1340,8 @@ packages:
     dependencies:
       yallist: 3.1.1
 
-  /mapbox-gl@2.15.0:
-    resolution: {integrity: sha512-fjv+aYrd5TIHiL7wRa+W7KjtUqKWziJMZUkK5hm8TvJ3OLeNPx4NmW/DgfYhd/jHej8wWL+QJBDbdMMAKvNC0A==}
+  /mapbox-gl@3.0.0-rc.2:
+    resolution: {integrity: sha512-ec9P+2AAzFDluTQmZUVPTY6K7e+CyzegX27PszYlu31P/aVcJlCCQi9FHO1OxwUbV7e+Qf5RCno45jaLg+3i9A==}
     dependencies:
       '@mapbox/geojson-rewind': 0.5.2
       '@mapbox/jsonlint-lines-primitives': 2.0.2
@@ -1347,6 +1351,7 @@ packages:
       '@mapbox/unitbezier': 0.0.1
       '@mapbox/vector-tile': 1.3.1
       '@mapbox/whoots-js': 3.1.0
+      cheap-ruler: 3.0.2
       csscolorparser: 1.0.3
       earcut: 2.2.4
       geojson-vt: 3.2.1

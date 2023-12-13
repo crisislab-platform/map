@@ -1,4 +1,4 @@
-const ENABLE_CLUSTERS = true;
+const ENABLE_CLUSTERS = false;
 
 import { theme } from "beryllium";
 import { Map as MapboxMap, MapLayerMouseEvent, Popup } from "mapbox-gl";
@@ -305,11 +305,9 @@ export default async function setupMap(
 		map.on("mouseenter", "unclustered-point-geonet", unclusteredMouseEnterGeonet);
 		map.on("mouseleave", "unclustered-point-geonet", unclusteredMouseLeaveGeonet);
 
-		// Add our sensors after geonet so they're on top
+		// Add our sensors last so they show up first
 		map.addSource("earthquakes", {
 			type: "geojson",
-			// Point to GeoJSON data. This example visualizes all M1.0+ earthquakes
-			// from 12/22/15 to 1/21/16 as logged by USGS' Earthquake hazards program.
 			data: geoJSON,
 			cluster: ENABLE_CLUSTERS,
 			clusterMaxZoom: 14, // Max zoom to cluster points on

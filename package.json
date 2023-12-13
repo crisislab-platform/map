@@ -1,6 +1,6 @@
 {
 	"name": "shakemap",
-	"version": "2.1.0",
+	"version": "2.2.0",
 	"private": true,
 	"type": "module",
 	"scripts": {
@@ -24,7 +24,7 @@
 		"@mui/material": "~5.14.18",
 		"beryllium": "1.2.1",
 		"geolib": "^3.3.4",
-		"mapbox-gl": "^2.15.0",
+		"mapbox-gl": "^3.0.0-rc.2",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
 		"react-router-dom": "^6.19.0",
