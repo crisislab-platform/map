@@ -5,8 +5,8 @@ export interface Sensor {
 	online?: boolean;
 	type?: string;
 	secondary_id?: string;
-	timestamp?: number;
-	publicLocation: [number, number];
+	status_change_timestamp?: number;
+	public_location: [number, number];
 }
 
 const SensorsContext = createContext<
