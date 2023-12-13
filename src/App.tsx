@@ -41,7 +41,7 @@ function PopupComponent({ activeSensor, sensors }: { [x: string]: any }) {
 		return portal;
 	}
 
-	const { id, online, type, secondary_id, timestamp } = sensors[activeSensor];
+	const { id, online, type, secondary_id, status_change_timestamp } = sensors[activeSensor] as Sensor;
 
 	const portal = createPortal(
 		<Box>
@@ -53,9 +53,12 @@ function PopupComponent({ activeSensor, sensors }: { [x: string]: any }) {
 				{secondary_id || "#" + id}
 			</Typography>
 			<Typography variant="body1">{`${online ? "Online" : "Offline"}${type ? ` • ${type}` : ""}`}</Typography>
-			{!online && timestamp && (
+			{!online && status_change_timestamp && (
 				<Typography variant="body1">
-					Last online: {`${new Date(timestamp).toDateString()} ${new Date(timestamp).toLocaleTimeString()}`}
+					Last online:{" "}
+					{`${new Date(status_change_timestamp).toDateString()} ${new Date(
+						status_change_timestamp,
+					).toLocaleTimeString()}`}
 				</Typography>
 			)}
 		</Box>,
