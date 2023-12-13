@@ -11,7 +11,7 @@ import { useNavigate } from "react-router-dom";
 
 const MapComponent = React.lazy(() => import("./Map"));
 
-const managementAPIOrigin = "https://shakenet-manager.viggers.net";
+const managementAPIOrigin = "https://crisislab-data.massey.ac.nz";
 
 function PopupComponent({ activeSensor, sensors }: { [x: string]: any }) {
 	if (!document.getElementById("popup")) {
@@ -79,11 +79,11 @@ export default function App() {
 
 	useEffect(() => {
 		(async () => {
-			const res = await fetch(`${managementAPIOrigin}/api/v0/sensors`);
+			const res = await fetch(`${managementAPIOrigin}/api/v2/sensors`);
 			const data = await res.json();
 			const newSensors: Record<number, Sensor> = {};
 			Object.values(data.sensors as Partial<Sensor>[]).forEach((sensor) => {
-				if (sensor.publicLocation) {
+				if (sensor.public_location) {
 					newSensors[sensor.id!] = sensor as Sensor;
 				}
 			});
@@ -100,7 +100,7 @@ export default function App() {
 					type: "Feature",
 					geometry: {
 						type: "Point",
-						coordinates: sensor.publicLocation,
+						coordinates: sensor.public_location,
 					},
 					properties: {
 						id: sensor.id,

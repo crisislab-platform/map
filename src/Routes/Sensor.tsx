@@ -23,9 +23,9 @@ export default function Sensor() {
 	}
 	const sensor = sensors![id];
 
-	const { online, type, secondary_id: secondaryID, timestamp } = sensor;
+	const { online, type, secondary_id: secondaryID, status_change_timestamp } = sensor;
 
-	const lastOnline = timestamp && new Date(timestamp);
+	const lastOnline = status_change_timestamp && new Date(status_change_timestamp);
 
 	return (
 		<Fade in>
