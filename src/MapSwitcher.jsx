@@ -9,7 +9,6 @@ import SatelliteAltIcon from "@mui/icons-material/SatelliteAlt";
 import StraightIcon from "@mui/icons-material/Straight";
 import CrisisAlertIcon from "@mui/icons-material/CrisisAlert";
 import EmergencyShareIcon from "@mui/icons-material/EmergencyShare";
-import setupMap from "./setupMap";
 
 const styles = {
 	"streets-v11": {
@@ -191,9 +190,10 @@ export default function Switcher() {
 	function setStyle(style) {
 		if (selectedStyle.id !== style.id && map && map.loaded()) {
 			setSelectedStyle(style);
+			map?.setStyle(`mapbox://styles/mapbox/${style.id}`);
+
 			// Re-set up map
 			setMapLoaded(false);
-			map?.setStyle(`mapbox://styles/mapbox/${style.id}`);
 		}
 	}
 
