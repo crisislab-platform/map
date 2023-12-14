@@ -319,7 +319,7 @@ export default async function setupMap(
 			type: "circle",
 			source: "crisislab-sensors",
 			// @ts-expect-error Types aren't updated yet
-			slot: "middle",
+			slot: "top",
 			filter: ["!", ["has", "point_count"]],
 			paint: {
 				"circle-color": ["get", "color"],

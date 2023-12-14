@@ -20,6 +20,7 @@ export default function MapApp(props: { setPopup: (popup: Popup) => void; style:
 				center: [174.8, -41.325],
 				zoom: 4.8,
 			});
+
 			setMap!(map);
 
 			const popup = new Popup({
