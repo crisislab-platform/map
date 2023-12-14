@@ -29,7 +29,7 @@ export default function Search() {
 	if (bbox) {
 		// Look for sensors inside the bounding box
 		results = Object.values(sensors!).filter((sensor) => {
-			const [latitude, longitude] = sensor.publicLocation;
+			const [latitude, longitude] = sensor.public_location;
 			return bbox[1] <= latitude && bbox[3] >= latitude && bbox[0] <= longitude && bbox[2] >= longitude;
 		});
 	} else if (center && center.length > 0) {
@@ -43,8 +43,8 @@ export default function Search() {
 					distance: getDistance(
 						{ latitude, longitude },
 						{
-							latitude: sensor.publicLocation[0],
-							longitude: sensor.publicLocation[1],
+							latitude: sensor.public_location[0],
+							longitude: sensor.public_location[1],
 						},
 					),
 				};
@@ -81,7 +81,7 @@ export default function Search() {
 									sx={{ paddingInline: 4 }}
 									onClick={() => {
 										map?.flyTo({
-											center: sensor.publicLocation,
+											center: sensor.public_location,
 											zoom: 16,
 											speed: 1.2,
 											curve: 1,

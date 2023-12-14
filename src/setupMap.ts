@@ -75,7 +75,7 @@ export default async function setupMap(
 			layers: ["clusters"],
 		});
 		const clusterId = features[0]?.properties?.cluster_id;
-		map.getSource("earthquakes").getClusterExpansionZoom!(clusterId, (err, zoom) => {
+		map.getSource("crisislab-sensors").getClusterExpansionZoom!(clusterId, (err, zoom) => {
 			if (err) return;
 
 			map.flyTo({
@@ -306,7 +306,7 @@ export default async function setupMap(
 		map.on("mouseleave", "unclustered-point-geonet", unclusteredMouseLeaveGeonet);
 
 		// Add our sensors last so they show up first
-		map.addSource("earthquakes", {
+		map.addSource("crisislab-sensors", {
 			type: "geojson",
 			data: geoJSON,
 			cluster: ENABLE_CLUSTERS,
@@ -317,7 +317,7 @@ export default async function setupMap(
 		map.addLayer({
 			id: "unclustered-point",
 			type: "circle",
-			source: "earthquakes",
+			source: "crisislab-sensors",
 			// @ts-expect-error Types aren't updated yet
 			slot: "middle",
 			filter: ["!", ["has", "point_count"]],
@@ -334,7 +334,7 @@ export default async function setupMap(
 				{
 					id: "clusters",
 					type: "circle",
-					source: "earthquakes",
+					source: "crisislab-sensors",
 					filter: ["has", "point_count"],
 					paint: {
 						// Use step expressions (https://docs.mapbox.com/mapbox-gl-js/style-spec/#expressions-step)
@@ -352,7 +352,7 @@ export default async function setupMap(
 			map.addLayer({
 				id: "cluster-count",
 				type: "symbol",
-				source: "earthquakes",
+				source: "crisislab-sensors",
 				filter: ["has", "point_count"],
 				layout: {
 					"text-field": "{point_count_abbreviated}",
@@ -398,7 +398,7 @@ export default async function setupMap(
 		if (map.getLayer("cluster-count")) map.removeLayer("cluster-count");
 		if (map.getLayer("clusters")) map.removeLayer("clusters");
 		if (map.getLayer("unclustered-point")) map.removeLayer("unclustered-point");
-		if (map.getSource("earthquakes")) map.removeSource("earthquakes");
+		if (map.getSource("crisislab-sensors")) map.removeSource("crisislab-sensors");
 
 		if (map.getLayer("cluster-count-geonet")) map.removeLayer("cluster-count-geonet");
 		if (map.getLayer("clusters-geonet")) map.removeLayer("clusters-geonet");

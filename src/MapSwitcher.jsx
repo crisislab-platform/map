@@ -138,6 +138,14 @@ export default function Switcher() {
 		}
 	}, [map, crisislabEnabled]);
 
+	function onPopupOpen() {
+		setPopupOpen(true);
+	}
+	function onPopupClose() {
+		setPopupOpen(false);
+	}
+
+
 	return (
 		<Stack
 			sx={{
