@@ -1,38 +1,10 @@
-import { ButtonBase, ClickAwayListener, Paper, Stack, Typography, useMediaQuery, useTheme } from "@mui/material";
+import { ButtonBase, Paper, Stack, Typography, useTheme } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
 
 import BoltIcon from "@mui/icons-material/Bolt";
-import LayersOutlinedIcon from "@mui/icons-material/LayersOutlined";
 import MapContext from "./MapContext";
-import MapIcon from "@mui/icons-material/Map";
-import SatelliteAltIcon from "@mui/icons-material/SatelliteAlt";
-import StraightIcon from "@mui/icons-material/Straight";
 import CrisisAlertIcon from "@mui/icons-material/CrisisAlert";
 import EmergencyShareIcon from "@mui/icons-material/EmergencyShare";
-
-const styles = {
-	"streets-v11": {
-		text: "Streets",
-		color: "primary",
-		id: "streets-v11",
-		mapboxName: "Mapbox Streets",
-		Icon: StraightIcon,
-	},
-	"satellite-v9": {
-		text: "Satellite",
-		color: "secondary",
-		id: "satellite-v9",
-		mapboxName: "Mapbox Satellite",
-		Icon: SatelliteAltIcon,
-	},
-	"outdoors-v11": {
-		text: "Outdoors",
-		color: "success",
-		id: "outdoors-v11",
-		mapboxName: "Mapbox Outdoors",
-		Icon: MapIcon,
-	},
-};
 
 const squareSize = 50;
 const labelHeight = 15;
@@ -78,8 +50,6 @@ function FlexSquare({ color, text, row, onClick, style, selected, Icon, selected
 const crisislabSensorsLayers = ["clusters", "unclustered-point", "cluster-count"];
 const geonetSensorsLayers = ["unclustered-point-geonet", "cluster-count-geonet", "clusters-geonet"];
 
-const defaultStyle = styles["outdoors-v11"];
-
 function showFaultLines(show, map) {
 	map.getLayer("fault-lines-render-layer") &&
 		map.setLayoutProperty("fault-lines-render-layer", "visibility", show ? "visible" : "none");
@@ -94,26 +64,11 @@ function showFaultLineLabels(show, map) {
 export default function Switcher() {
 	const [map, , mapLoaded, setMapLoaded] = useContext(MapContext);
 	const theme = useTheme();
-	const onBigScreen = useMediaQuery((theme) => theme.breakpoints.up("lg"));
-	const [popupOpen, setPopupOpen] = useState(false);
-	const [selectedStyle, setSelectedStyle] = useState(defaultStyle);
-	const [activeStyle, setActiveStyle] = useState(defaultStyle);
 	const [faultLinesEnabled, setFaultLinesEnabled] = useState(false);
 	const [geonetEnabled, setGeonetEnabled] = useState(false);
 	const [crisislabEnabled, setCrisislabEnabled] = useState(true);
 
 	// Extra data layers (sensor locations, fault lines, etc)
-
-	useEffect(() => {
-		function onStyleLoad() {
-			if (!map) return;
-			setActiveStyle(map.getStyle());
-		}
-
-		map?.on("style.load", onStyleLoad);
-
-		return () => map?.off("style.load", onStyleLoad);
-	}, [map]);
 
 	useEffect(() => {
 		function onFaultLinesExpand(map) {
@@ -156,46 +111,32 @@ export default function Switcher() {
 
 			map.on("mouseenter", "fault-lines-hitbox-layer", () => onFaultLinesExpand(map))
 				.on("mouseleave", "fault-lines-hitbox-layer", () => onFaultLinesShrink(map))
-				.on("click", "fault-lines-hitbox-layer", () => onFaultLinesExpand(map))
-				.on("style.load", () => updateFaultLineStyles(map));
+				.on("click", "fault-lines-hitbox-layer", () => onFaultLinesExpand(map));
 
 			return () => {
 				map.off("mouseenter", "fault-lines-hitbox-layer", () => onFaultLinesExpand(map))
 					.off("mouseleave", "fault-lines-hitbox-layer", () => onFaultLinesShrink(map))
-					.off("click", "fault-lines-hitbox-layer", () => onFaultLinesExpand(map))
-					.off("style.load", () => updateFaultLineStyles(map));
+					.off("click", "fault-lines-hitbox-layer", () => onFaultLinesExpand(map));
 			};
 		}
-	}, [map, faultLinesEnabled, activeStyle]);
+	}, [map, faultLinesEnabled]);
 
 	useEffect(() => {
-		if (map?.loaded) {
+		if (map?.loaded()) {
 			for (const layer of geonetSensorsLayers) {
 				if (map.getLayer(layer)) map.setLayoutProperty(layer, "visibility", geonetEnabled ? "visible" : "none");
 			}
 		}
-	}, [map, geonetEnabled, activeStyle]);
+	}, [map, geonetEnabled]);
 
 	useEffect(() => {
-		if (map?.loaded) {
+		if (map?.loaded()) {
 			for (const layer of crisislabSensorsLayers) {
 				if (map.getLayer(layer))
 					map.setLayoutProperty(layer, "visibility", crisislabEnabled ? "visible" : "none");
 			}
 		}
-	}, [map, crisislabEnabled, activeStyle]);
-
-	// Map styles
-
-	function setStyle(style) {
-		if (selectedStyle.id !== style.id && map && map.loaded()) {
-			setSelectedStyle(style);
-			map?.setStyle(`mapbox://styles/mapbox/${style.id}`);
-
-			// Re-set up map
-			setMapLoaded(false);
-		}
-	}
+	}, [map, crisislabEnabled]);
 
 	function onPopupOpen() {
 		setPopupOpen(true);
@@ -204,131 +145,60 @@ export default function Switcher() {
 		setPopupOpen(false);
 	}
 
+
 	return (
-		<ClickAwayListener onClickAway={onPopupClose}>
-			<Stack
+		<Stack
+			sx={{
+				position: "fixed",
+				bottom: 35,
+				right: 20,
+				flex: 0,
+			}}
+			justifyContent="flex-end"
+			alignItems="flexEnd"
+			spacing={1}>
+			<Paper
 				sx={{
-					position: "fixed",
-					bottom: 35,
-					right: 20,
-					pointerEvents: popupOpen ? "auto" : "none",
-					flex: 0,
+					display: "flex",
+					flexDirection: "column",
+					gap: 1,
+					backgroundColor: theme.palette.background.paper,
+					borderRadius: theme.spacing(1),
+					padding: 1,
+					transition: "opacity 0.2s",
+					// alignItems: "flex-end",
 				}}
-				justifyContent="flex-end"
-				alignItems="flexEnd"
-				spacing={1}
-				onMouseEnter={onPopupOpen}
-				onMouseLeave={onPopupClose}
-				onFocus={onPopupOpen}
-				onBlur={onPopupClose}>
-				<Paper
-					sx={{
-						display: "flex",
-						flexDirection: "column",
-						gap: 1,
-						backgroundColor: theme.palette.background.paper,
-						borderRadius: theme.spacing(1),
-						padding: 1,
-						opacity: popupOpen ? 1 : 0,
-						transition: "opacity 0.2s",
-						// alignItems: "flex-end",
-					}}
-					elevation={4}>
-					<Typography variant="body1" sx={{ fontWeight: 600 }}>
-						Map layers
-					</Typography>
-					<Stack gap={1} direction="row">
-						<FlexSquare
-							row="top"
-							selected={crisislabEnabled}
-							onClick={() => setCrisislabEnabled((oldState) => !oldState)}
-							color="primary"
-							text="CRISiSLab sensors"
-							Icon={CrisisAlertIcon}
-						/>
-						<FlexSquare
-							row="top"
-							selected={geonetEnabled}
-							onClick={() => setGeonetEnabled((oldState) => !oldState)}
-							color="geonet"
-							text="Geonet sensors"
-							Icon={EmergencyShareIcon}
-						/>
-						<FlexSquare
-							row="top"
-							selected={faultLinesEnabled}
-							onClick={() => setFaultLinesEnabled((oldState) => !oldState)}
-							color="error"
-							text="Fault lines"
-							Icon={BoltIcon}
-						/>
-					</Stack>
-					<Typography variant="body1" sx={{ fontWeight: 600 }}>
-						Map type
-					</Typography>
-					<Stack gap={1} direction="row">
-						{Object.values(styles).map((style) => (
-							<FlexSquare
-								key={style.id}
-								selected={selectedStyle.id === style.id}
-								onClick={() => setStyle(style)}
-								color={style.color}
-								text={style.text}
-								lines={style.lines}
-								Icon={style.Icon}
-							/>
-						))}
-					</Stack>
-				</Paper>
-				<div>
-					<Paper
-						onClick={() => {
-							setPopupOpen((wasOpen) => !wasOpen);
-						}}
-						elevation={4}
-						sx={{
-							borderRadius: theme.spacing(1),
-							boxSizing: "border-box",
-							outline: "2px solid #FFFFFF",
-							width: "84px",
-							height: "84px",
-							marginLeft: "auto",
-						}}>
-						<Paper
-							sx={{
-								backgroundColor: theme.palette[selectedStyle.color].main,
-								transition: "background-color 0.5s",
-								width: "84px",
-								height: "84px",
-								borderRadius: theme.spacing(1),
-								position: "relative",
-								boxShadow: "rgb(0 0 0 / 73%) 0px -40px 30px -30px inset",
-								pointerEvents: "auto",
-							}}>
-							<Stack
-								direction={"column"}
-								alignItems="center"
-								justifyContent="center"
-								gap={0.3}
-								sx={{
-									position: "absolute",
-									bottom: 4,
-									// left: -1,
-									textAlign: "center",
-									width: "100%",
-									color: "white",
-								}}>
-								<LayersOutlinedIcon
-									sx={{
-										fontSize: "1.5em",
-									}}
-								/>
-								<Typography variant="caption">Map Settings</Typography>
-							</Stack>
-						</Paper>
-					</Paper>
-				</div>
-			</Stack>
-		</ClickAwayListener>
+				elevation={4}>
+				<Typography variant="body1" sx={{ fontWeight: 600 }}>
+					Map layers
+				</Typography>
+				<Stack gap={1} direction="row">
+					<FlexSquare
+						row="top"
+						selected={crisislabEnabled}
+						onClick={() => setCrisislabEnabled((oldState) => !oldState)}
+						color="primary"
+						text="CRISiSLab sensors"
+						Icon={CrisisAlertIcon}
+					/>
+					<FlexSquare
+						row="top"
+						selected={geonetEnabled}
+						onClick={() => setGeonetEnabled((oldState) => !oldState)}
+						color="geonet"
+						text="Geonet sensors"
+						Icon={EmergencyShareIcon}
+					/>
+					<FlexSquare
+						row="top"
+						selected={faultLinesEnabled}
+						onClick={() => setFaultLinesEnabled((oldState) => !oldState)}
+						color="error"
+						text="Fault lines"
+						Icon={BoltIcon}
+					/>
+				</Stack>
+			</Paper>
+		</Stack>
 	);
 }

@@ -17,10 +17,10 @@ export default function MapApp(props: { setPopup: (popup: Popup) => void; style:
 		if (mapContainerRef.current) {
 			const map = new MapboxMap({
 				container: mapContainerRef.current,
-				style: "mapbox://styles/mapbox/streets-v11",
 				center: [174.8, -41.325],
 				zoom: 4.8,
 			});
+
 			setMap!(map);
 
 			const popup = new Popup({
@@ -60,25 +60,12 @@ export default function MapApp(props: { setPopup: (popup: Popup) => void; style:
 			}
 
 			function onMapStylesLoad() {
-				map.addLayer({
-					id: "sky",
-					type: "sky",
-					paint: {
-						"sky-opacity": ["interpolate", ["linear"], ["zoom"], 0, 0, 5, 0.3, 8, 1],
-						// set up the sky layer for atmospheric scattering
-						"sky-type": "atmosphere",
-						// set the intensity of the sun as a light source (0-100 with higher values corresponding to brighter skies)
-						"sky-atmosphere-sun-intensity": 5,
-					},
-				});
-
 				// @ts-ignore
 				window.map = map;
 
 				setMapLoaded(true);
 
 				return () => {
-					map.removeLayer("sky");
 					map.remove();
 				};
 			}

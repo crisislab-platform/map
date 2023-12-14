@@ -94,10 +94,12 @@ export default async function setupMap(
 	};
 
 	const unclusteredMouseEnter = (ev: MapLayerMouseEvent) => {
-		map.getCanvas().style.cursor = "pointer";
 		// Copy coordinates array.
 		const coordinates = ev.features?.[0].geometry?.coordinates.slice();
 		const sensorId = ev?.features?.[0]?.properties?.id;
+
+		// Can't click geonet sensors
+		map.getCanvas().style.cursor = "pointer";
 
 		// Ensure that if the map is zoomed out such that multiple
 		// copies of the feature are visible, the popup appears
@@ -135,7 +137,9 @@ export default async function setupMap(
 	};
 
 	const unclusteredMouseEnterGeonet = (e) => {
-		map.getCanvas().style.cursor = "pointer";
+		// Can't click on the geonet ones, so just a popup
+		map.getCanvas().style.cursor = "help";
+
 		// Copy coordinates array.
 		const coordinates = e.features[0].geometry.coordinates.slice();
 		const sensorId = e.features[0].properties.id;
@@ -305,11 +309,9 @@ export default async function setupMap(
 		map.on("mouseenter", "unclustered-point-geonet", unclusteredMouseEnterGeonet);
 		map.on("mouseleave", "unclustered-point-geonet", unclusteredMouseLeaveGeonet);
 
-		// Add our sensors after geonet so they're on top
+		// Add our sensors last so they show up first
 		map.addSource("crisislab-sensors", {
 			type: "geojson",
-			// Point to GeoJSON data. This example visualizes all M1.0+ earthquakes
-			// from 12/22/15 to 1/21/16 as logged by USGS' Earthquake hazards program.
 			data: geoJSON,
 			cluster: ENABLE_CLUSTERS,
 			clusterMaxZoom: 14, // Max zoom to cluster points on
@@ -320,6 +322,8 @@ export default async function setupMap(
 			id: "unclustered-point",
 			type: "circle",
 			source: "crisislab-sensors",
+			// @ts-expect-error Types aren't updated yet
+			slot: "top",
 			filter: ["!", ["has", "point_count"]],
 			paint: {
 				"circle-color": ["get", "color"],

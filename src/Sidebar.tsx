@@ -1,25 +1,17 @@
 import { Box, Typography } from "@mui/material";
-import {
-	Drawer,
-	IconButton,
-	Stack,
-	Tooltip,
-	useMediaQuery,
-} from "@mui/material";
+import { Drawer, IconButton, Stack, Tooltip, useMediaQuery } from "@mui/material";
 
 import CloseIcon from "@mui/icons-material/Close";
 import MenuIcon from "@mui/icons-material/Menu";
 import Routes from "./Routes/index";
 import SearchBar from "./SearchBar";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { theme } from "beryllium";
 
 const desktopDrawerWidth = 500;
 
 export default function Sidebar() {
-	const onBigScreen = useMediaQuery<typeof theme>((theme) =>
-		theme.breakpoints.up("md"),
-	);
+	const onBigScreen = useMediaQuery<typeof theme>((theme) => theme.breakpoints.up("md"));
 	const [drawerOpen, setDrawerOpen] = useState(false);
 
 	function onDrawerClose() {
@@ -37,8 +29,7 @@ export default function Sidebar() {
 							position: "fixed",
 							top: (theme) => theme.spacing(1),
 							left: (theme) => theme.spacing(1),
-						}}
-					>
+						}}>
 						<MenuIcon stroke="white" fill="black" />
 					</IconButton>
 				</Tooltip>
@@ -55,8 +46,7 @@ export default function Sidebar() {
 					},
 				}}
 				variant={onBigScreen ? "permanent" : "temporary"}
-				anchor="left"
-			>
+				anchor="left">
 				{!onBigScreen && (
 					<Stack pt={1} pr={1}>
 						<Tooltip title="Close sidebar" placement="left">

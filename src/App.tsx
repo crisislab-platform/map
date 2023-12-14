@@ -14,6 +14,8 @@ const MapComponent = React.lazy(() => import("./Map"));
 const managementAPIOrigin = "https://crisislab-data.massey.ac.nz";
 
 function PopupComponent({ activeSensor, sensors }: { [x: string]: any }) {
+	if (!activeSensor || !sensors) return null;
+
 	if (!document.getElementById("popup")) {
 		return null;
 	}
