@@ -1,4 +1,4 @@
-const ENABLE_CLUSTERS = false;
+const ENABLE_CLUSTERS = true;
 
 import { theme } from "beryllium";
 import { Map as MapboxMap, MapLayerMouseEvent, Popup } from "mapbox-gl";
