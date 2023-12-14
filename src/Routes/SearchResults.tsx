@@ -22,7 +22,6 @@ export default function Search() {
 	const center = searchParams.get("center") && JSON.parse(searchParams.get("center")!);
 	const bbox = searchParams.get("bbox") && JSON.parse(searchParams.get("bbox")!);
 	const [map] = React.useContext(MapContext);
-	console.log("Got past hooks");
 
 	let results;
 
@@ -52,7 +51,6 @@ export default function Search() {
 			.sort((a, b) => a.distance - b.distance)
 			.slice(0, 5);
 	}
-	console.log("Got to return");
 
 	return (
 		<>
@@ -115,7 +113,6 @@ export default function Search() {
 					)}
 				</Box>
 			</Fade>
-			{(console.log("Got to end of render"), 0)}
 		</>
 	);
 }
