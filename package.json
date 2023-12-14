@@ -16,26 +16,26 @@
 	},
 	"browserslist": "defaults, not ie 11",
 	"dependencies": {
-		"@babel/core": "^7.23.3",
+		"@babel/core": "^7.23.6",
 		"@emotion/react": "^11.11.1",
 		"@emotion/styled": "^11.11.0",
-		"@fontsource/nunito": "^5.0.15",
-		"@mui/icons-material": "~5.14.18",
-		"@mui/material": "~5.14.18",
+		"@fontsource/nunito": "^5.0.16",
+		"@mui/icons-material": "~5.15.0",
+		"@mui/material": "~5.15.0",
 		"beryllium": "1.2.1",
 		"geolib": "^3.3.4",
-		"mapbox-gl": "^3.0.0-rc.2",
+		"mapbox-gl": "^3.0.1",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
-		"react-router-dom": "^6.19.0",
+		"react-router-dom": "^6.21.0",
 		"react-transition-group": "^4.4.5"
 	},
 	"devDependencies": {
-		"@types/mapbox-gl": "^2.7.18",
-		"@types/react": "^18.2.37",
-		"@types/react-dom": "^18.2.15",
-		"@vitejs/plugin-react": "^4.2.0",
-		"typescript": "^5.3.2",
-		"vite": "^5.0.0"
+		"@types/mapbox-gl": "^2.7.19",
+		"@types/react": "^18.2.45",
+		"@types/react-dom": "^18.2.17",
+		"@vitejs/plugin-react": "^4.2.1",
+		"typescript": "^5.3.3",
+		"vite": "^5.0.8"
 	}
 }

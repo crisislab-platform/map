@@ -318,6 +318,8 @@ export default async function setupMap(
 			id: "unclustered-point",
 			type: "circle",
 			source: "earthquakes",
+			// @ts-expect-error Types aren't updated yet
+			slot: "middle",
 			filter: ["!", ["has", "point_count"]],
 			paint: {
 				"circle-color": ["get", "color"],

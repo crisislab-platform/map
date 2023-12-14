@@ -14,6 +14,8 @@ const MapComponent = React.lazy(() => import("./Map"));
 const managementAPIOrigin = "https://shakenet-manager.viggers.net";
 
 function PopupComponent({ activeSensor, sensors }: { [x: string]: any }) {
+	if (!activeSensor || !sensors) return null;
+
 	if (!document.getElementById("popup")) {
 		return null;
 	}
