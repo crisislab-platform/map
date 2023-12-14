@@ -94,10 +94,12 @@ export default async function setupMap(
 	};
 
 	const unclusteredMouseEnter = (ev: MapLayerMouseEvent) => {
-		map.getCanvas().style.cursor = "pointer";
 		// Copy coordinates array.
 		const coordinates = ev.features?.[0].geometry?.coordinates.slice();
 		const sensorId = ev?.features?.[0]?.properties?.id;
+
+		// Can't click geonet sensors
+		map.getCanvas().style.cursor = "pointer";
 
 		// Ensure that if the map is zoomed out such that multiple
 		// copies of the feature are visible, the popup appears
@@ -135,7 +137,9 @@ export default async function setupMap(
 	};
 
 	const unclusteredMouseEnterGeonet = (e) => {
-		map.getCanvas().style.cursor = "pointer";
+		// Can't click on the geonet ones, so just a popup
+		map.getCanvas().style.cursor = "help";
+
 		// Copy coordinates array.
 		const coordinates = e.features[0].geometry.coordinates.slice();
 		const sensorId = e.features[0].properties.id;
