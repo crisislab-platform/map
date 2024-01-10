@@ -68,6 +68,7 @@ export default async function setupMap(
 	popup: Popup,
 	setActiveSensor: (newActiveID: number) => void,
 	triggerRerender: () => void,
+	onDoneLoading?: (map: MapboxMap) => void,
 ) {
 	// inspect a cluster on click
 	const onClusterClick = (ev: MapLayerMouseEvent) => {
@@ -423,6 +424,7 @@ export default async function setupMap(
 	await cleanupAndSetup();
 
 	map.on("style.load", cleanupAndSetup);
+	onDoneLoading(map);
 
 	return () => {
 		map.off("style.load", cleanupAndSetup);

@@ -92,6 +92,7 @@ export default function App() {
 					newSensors[sensor.id!] = sensor as Sensor;
 				}
 			});
+
 			setSensors(newSensors);
 		})();
 	}, []);
@@ -142,6 +143,24 @@ export default function App() {
 				popup,
 				setActiveSensor,
 				triggerRerender,
+				(map) => {
+					// On done loading
+
+					const sensorInURL = Number(location.href.match(/\/sensor\/([0-9]+)/)[1]);
+					if (
+						sensorInURL &&
+						!Number.isNaN(sensorInURL) &&
+						Number.isInteger(sensorInURL) &&
+						sensors[sensorInURL]
+					) {
+						map.flyTo({
+							center: sensors[sensorInURL]?.public_location,
+							zoom: 16,
+							speed: 1.2,
+							curve: 1,
+						});
+					}
+				},
 			).then((t) => (teardown = t));
 
 			return teardown;
