@@ -2,10 +2,13 @@ import SvgIcon from "@mui/material/SvgIcon";
 import { type Sensor } from "../SensorsContext";
 import HealthAndSafetyIcon from "@mui/icons-material/HealthAndSafety";
 import SensorsIcon from "@mui/icons-material/Sensors";
-
+import CRISiSLabSensorIcon from "../assets/1024 Crisislab Native Logo transparent.png";
 export default function RPiIcon({ sensor, ...rest }: { sensor: Sensor; [x: string]: any }) {
-	if (sensor.type?.toLowerCase()?.includes("palert")) return <HealthAndSafetyIcon {...rest} />;
-	if (sensor.type?.toLowerCase()?.includes("raspberry"))
+	const sensorType = sensor.type?.toLowerCase() ?? "";
+
+	if (sensorType.includes("crisislab")) return <img width={48} height={48} src={CRISiSLabSensorIcon} />;
+	if (sensorType.includes("palert")) return <HealthAndSafetyIcon {...rest} />;
+	if (sensorType.includes("raspberry"))
 		return (
 			<SvgIcon {...rest}>
 				<path
