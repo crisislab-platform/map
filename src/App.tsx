@@ -8,6 +8,7 @@ import Sidebar from "./Sidebar/Sidebar";
 import { createPortal } from "react-dom";
 import setupMap from "./setupMap";
 import { useNavigate } from "react-router-dom";
+import { flyTo } from "./utils";
 
 const MapComponent = React.lazy(() => import("./Map"));
 
@@ -131,12 +132,7 @@ export default function App() {
 						coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
 					}
 
-					map?.flyTo({
-						center: [coordinates[0], coordinates[1]],
-						zoom: 12,
-						// speed: 0.2,
-						curve: 1,
-					});
+					flyTo(map, coordinates);
 
 					navigate(`/sensor/${e?.features?.[0]?.properties?.id}`);
 				},
@@ -153,12 +149,7 @@ export default function App() {
 						Number.isInteger(sensorInURL) &&
 						sensors[sensorInURL]
 					) {
-						map.flyTo({
-							center: sensors[sensorInURL]?.public_location,
-							zoom: 12,
-							speed: 1.2,
-							curve: 1,
-						});
+						flyTo(map, sensors[sensorInURL]?.public_location);
 					}
 				},
 			).then((t) => (teardown = t));

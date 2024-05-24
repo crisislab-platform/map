@@ -1,5 +1,5 @@
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { Box, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Stack, Typography } from "@mui/material";
 import MapContext from "../MapContext";
 import RPiIcon from "../assets/RPiIcon";
@@ -8,7 +8,27 @@ import { getDistance } from "geolib";
 
 function handleQuery(_query: string): null | { latitude: number; longitude: number } {
 	const query = _query.trim().toLowerCase();
+
 	if (!query) return null;
+
+	try {
+		// Try parse longitude & latitude
+		// Longitude and latitude are usually seperated by a comma and a space,
+		// but sometimes it's one or the other
+		let segments = query.split(", ");
+		if (segments.length != 2) segments = query.split(" ");
+		if (segments.length != 2) segments = query.split(",");
+
+		if (segments.length == 2) {
+			const longitude = Number.parseFloat(segments[0]);
+			const latitude = Number.parseFloat(segments[1]);
+
+			if (!Number.isNaN(longitude) && !Number.isNaN(latitude)) return { longitude, latitude };
+		}
+	} catch (err) {
+		console.warn("Error parsing search query: ", err);
+		return null;
+	}
 }
 
 export default function Search() {
@@ -18,6 +38,10 @@ export default function Search() {
 	const query = searchParams.get("query");
 	const [map] = useContext(MapContext);
 	const pos = handleQuery(query);
+
+	useEffect(() => {
+		map?.flyTo({});
+	}, [pos, map]);
 
 	const results = pos
 		? Object.values(sensors!)
@@ -51,12 +75,6 @@ export default function Search() {
 					<ListItemButton
 						sx={{ paddingInline: 4 }}
 						onClick={() => {
-							map?.flyTo({
-								center: sensor.public_location,
-								zoom: 12,
-								speed: 1.2,
-								curve: 1,
-							});
 							navigate(`/sensor/${sensor.id}`);
 						}}>
 						<ListItemIcon>
