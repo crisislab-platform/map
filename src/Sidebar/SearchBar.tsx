@@ -55,7 +55,6 @@ export default function SearchBar() {
 			navigate(`/search?${queryParams}`);
 		}
 		event.preventDefault();
-		formElement.query.value = "";
 	}
 
 	return (
@@ -68,6 +67,8 @@ export default function SearchBar() {
 			}}>
 			<TextField
 				autoFocus
+				// Select content on focus so it's easy to type a new query
+				onFocus={(e) => e.target.select()}
 				id="search-query-field"
 				name="query"
 				label="Search"
