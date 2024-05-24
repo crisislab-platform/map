@@ -2,19 +2,27 @@ import { Fade, IconButton, Tooltip, Box, Typography, Stack, Slide } from "@mui/m
 
 import { OpenInNew } from "@mui/icons-material";
 import RPiIcon from "../assets/RPiIcon";
-import React from "react";
+import { useContext, useEffect } from "react";
 import SensorsContext from "../SensorsContext";
 import { useParams } from "react-router-dom";
+import { flyTo } from "../utils";
+import MapContext from "../MapContext";
 
 const liveDataOrigin = "https://crisislab-data.massey.ac.nz";
 
 export default function Sensor() {
-	const [sensors] = React.useContext(SensorsContext);
+	const [sensors] = useContext(SensorsContext);
+	const [map] = useContext(MapContext);
 	const { id: _id } = useParams<{ id: string }>();
 
 	const id = Number(_id);
+	const sensor = sensors![id];
 
-	if (!_id || !sensors![id] || Number.isNaN(id)) {
+	useEffect(() => {
+		flyTo(map, sensor?.public_location);
+	}, [map, id]);
+
+	if (!_id || !sensor || Number.isNaN(id)) {
 		return (
 			<Typography p={2}>
 				{!_id
@@ -23,7 +31,6 @@ export default function Sensor() {
 			</Typography>
 		);
 	}
-	const sensor = sensors![id];
 
 	const { online, type, secondary_id: secondaryID, status_change_timestamp } = sensor;
 
