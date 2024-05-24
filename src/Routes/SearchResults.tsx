@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-
+import { useContext } from "react";
 import Box from "@mui/material/Box";
 import { Fade } from "@mui/material";
 import List from "@mui/material/List";
@@ -15,13 +15,13 @@ import { getDistance } from "geolib";
 import { useSearchParams } from "react-router-dom";
 
 export default function Search() {
-	const [sensors] = React.useContext(SensorsContext);
+	const [sensors] = useContext(SensorsContext);
 	const [searchParams] = useSearchParams();
 	const navigate = useNavigate();
 	const name = searchParams.get("name");
 	const center = searchParams.get("center") && JSON.parse(searchParams.get("center")!);
 	const bbox = searchParams.get("bbox") && JSON.parse(searchParams.get("bbox")!);
-	const [map] = React.useContext(MapContext);
+	const [map] = useContext(MapContext);
 
 	let results;
 
@@ -80,7 +80,7 @@ export default function Search() {
 									onClick={() => {
 										map?.flyTo({
 											center: sensor.public_location,
-											zoom: 16,
+											zoom: 12,
 											speed: 1.2,
 											curve: 1,
 										});

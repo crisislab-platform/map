@@ -133,7 +133,7 @@ export default function App() {
 
 					map?.flyTo({
 						center: [coordinates[0], coordinates[1]],
-						zoom: Math.max(map?.getZoom(), 17),
+						zoom: 12,
 						// speed: 0.2,
 						curve: 1,
 					});
@@ -155,7 +155,7 @@ export default function App() {
 					) {
 						map.flyTo({
 							center: sensors[sensorInURL]?.public_location,
-							zoom: 16,
+							zoom: 12,
 							speed: 1.2,
 							curve: 1,
 						});

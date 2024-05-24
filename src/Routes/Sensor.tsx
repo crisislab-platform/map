@@ -1,4 +1,4 @@
-import { Fade, IconButton, Tooltip, Box, Typography } from "@mui/material";
+import { Fade, IconButton, Tooltip, Box, Typography, Stack, Slide } from "@mui/material";
 
 import { OpenInNew } from "@mui/icons-material";
 import RPiIcon from "./RPiIcon";
@@ -12,14 +12,18 @@ export default function Sensor() {
 	const [sensors] = React.useContext(SensorsContext);
 	const { id: _id } = useParams<{ id: string }>();
 
-	if (!_id) {
-		return <p>I'm not sure which sensor you're looking for. Make sure to specify a sensor ID in the url.</p>;
-	}
-
 	const id = Number(_id);
 
-	if (!sensors![id]) {
-		return <p>I couldn't find that sensor ID in the list I have.</p>;
+	if (!_id || !sensors![id] || Number.isNaN(id)) {
+		return (
+			<Fade in>
+				<Typography p={2}>
+					{!_id
+						? `I'm not sure which sensor you're looking for. Make sure to specify a sensor ID in the url.`
+						: `I couldn't find sensor #${_id} in my list.`}
+				</Typography>
+			</Fade>
+		);
 	}
 	const sensor = sensors![id];
 
@@ -28,14 +32,9 @@ export default function Sensor() {
 	const lastOnline = status_change_timestamp && new Date(status_change_timestamp);
 
 	return (
-		<Fade in>
-			<Box
-				sx={{
-					paddingInline: 0,
-					paddingTop: 6,
-					// marginTop: 6,
-				}}>
-				<Box sx={{ display: "flex", paddingInline: 4 }}>
+		<Fade in key={id} timeout={300}>
+			<Stack sx={{ height: "100%" }}>
+				<Stack direction="row" p={2} py={0}>
 					<RPiIcon sensor={sensor} fontSize="large" sx={{ fontSize: 100, flexGrow: 0 }} />
 					<Box sx={{ flexGrow: 1, marginLeft: 1 }}>
 						<Typography
@@ -75,14 +74,14 @@ export default function Sensor() {
 							</Typography>
 						)}
 					</Box>
-				</Box>
+				</Stack>
 				<div
 					style={{
 						width: "100%",
-						height: "calc(100vh - 230px)",
 						marginTop: 10,
 						paddingInline: 10,
 						position: "relative",
+						flexGrow: "1",
 					}}>
 					<iframe
 						key="live-data-embed"
@@ -95,7 +94,6 @@ export default function Sensor() {
 							width: "100%",
 							height: "100%",
 						}}
-						frameBorder="0"
 					/>
 					<IconButton
 						component={"a"}
@@ -106,7 +104,7 @@ export default function Sensor() {
 						<OpenInNew />
 					</IconButton>
 				</div>
-			</Box>
+			</Stack>
 		</Fade>
 	);
 }
