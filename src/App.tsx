@@ -146,9 +146,9 @@ export default function App() {
 				(map) => {
 					// On done loading
 
-					const sensorInURL = Number(location.href.match(/\/sensor\/([0-9]+)/)[1]);
+					const sensorInURL = Number(location.href.match(/\/sensor\/([0-9]+)/)?.[1]);
 					if (
-						sensorInURL &&
+						sensorInURL !== null &&
 						!Number.isNaN(sensorInURL) &&
 						Number.isInteger(sensorInURL) &&
 						sensors[sensorInURL]

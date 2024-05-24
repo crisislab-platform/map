@@ -1,11 +1,11 @@
-import { Box, Collapse, Link, Typography } from "@mui/material";
+import { Box, Collapse, Fade, Link } from "@mui/material";
 import { Drawer, IconButton, Stack, Tooltip, useMediaQuery } from "@mui/material";
 
 import CloseIcon from "@mui/icons-material/Close";
 import MenuIcon from "@mui/icons-material/Menu";
 import Routes from "../Routes/index";
 import SearchBar from "./SearchBar";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { theme } from "beryllium";
 import { useLocation, Link as RouterLink } from "react-router-dom";
 
@@ -77,9 +77,11 @@ export default function Sidebar() {
 				</Collapse>
 				<SearchBar />
 
-				<Box sx={{ mt: onBigScreen ? 1 : 2, height: "100%" }}>
-					<Routes />
-				</Box>
+				<Fade in key={location.pathname}>
+					<Box sx={{ mt: onBigScreen ? 1 : 2, height: "100%" }}>
+						<Routes />
+					</Box>
+				</Fade>
 			</Drawer>
 		</>
 	);

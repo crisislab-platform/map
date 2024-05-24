@@ -1,118 +1,82 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useContext } from "react";
-import Box from "@mui/material/Box";
-import { Fade } from "@mui/material";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
+import { Box, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Stack, Typography } from "@mui/material";
 import MapContext from "../MapContext";
-import RPiIcon from "./RPiIcon";
-import React from "react";
+import RPiIcon from "../assets/RPiIcon";
 import SensorsContext from "../SensorsContext";
-import Typography from "@mui/material/Typography";
 import { getDistance } from "geolib";
-import { useSearchParams } from "react-router-dom";
+
+function handleQuery(_query: string): null | { latitude: number; longitude: number } {
+	const query = _query.trim().toLowerCase();
+	if (!query) return null;
+}
 
 export default function Search() {
 	const [sensors] = useContext(SensorsContext);
 	const [searchParams] = useSearchParams();
 	const navigate = useNavigate();
-	const name = searchParams.get("name");
-	const center = searchParams.get("center") && JSON.parse(searchParams.get("center")!);
-	const bbox = searchParams.get("bbox") && JSON.parse(searchParams.get("bbox")!);
+	const query = searchParams.get("query");
 	const [map] = useContext(MapContext);
+	const pos = handleQuery(query);
 
-	let results;
-
-	if (bbox) {
-		// Look for sensors inside the bounding box
-		results = Object.values(sensors!).filter((sensor) => {
-			const [latitude, longitude] = sensor.public_location;
-			return bbox[1] <= latitude && bbox[3] >= latitude && bbox[0] <= longitude && bbox[2] >= longitude;
-		});
-	} else if (center && center.length > 0) {
-		// Find the top 5 closest sensors to the location
-		const [longitude, latitude] = center;
-		// Use geolib to calculate the distance between the center and each sensor
-		results = Object.values(sensors!)
-			.map((sensor) => {
-				return {
-					...sensor,
-					distance: getDistance(
-						{ latitude, longitude },
-						{
+	const results = pos
+		? Object.values(sensors!)
+				.map((sensor) => {
+					return {
+						...sensor,
+						distance: getDistance(pos, {
 							latitude: sensor.public_location[0],
 							longitude: sensor.public_location[1],
-						},
-					),
-				};
-			})
-			.sort((a, b) => a.distance - b.distance)
-			.slice(0, 5);
-	}
+						}),
+					};
+				})
+				.sort((a, b) => a.distance - b.distance)
+				.slice(0, 5)
+		: [];
+
+	if (!results) return <Typography>Couldn't find any results for that query sorry.</Typography>;
 
 	return (
-		<>
-			<Fade in>
-				<Box
-					sx={
-						{
-							// p: 6,
-						}
-					}>
-					<Typography
-						variant="h6"
-						sx={{
-							fontWeight: "bold",
-							marginTop: 6,
-							marginLeft: 4,
-						}}>
-						{bbox ? "Sensors in" : "Sensors near"} {name}:
-					</Typography>
+		<Stack p={2}>
+			<Typography
+				variant="h6"
+				sx={{
+					fontWeight: "bold",
+					marginTop: 6,
+					marginLeft: 4,
+				}}></Typography>
 
-					{results.length > 0 ? (
-						<List>
-							{results.map((sensor) => (
-								<ListItem
-									button
-									sx={{ paddingInline: 4 }}
-									onClick={() => {
-										map?.flyTo({
-											center: sensor.public_location,
-											zoom: 12,
-											speed: 1.2,
-											curve: 1,
-										});
-										navigate(`/sensor/${sensor.id}`);
-									}}>
-									<ListItemIcon>
-										<RPiIcon sensor={sensor} fontSize="large" />
-									</ListItemIcon>
-									<ListItemText
-										primary={sensor.type}
-										secondary={`${
-											bbox
-												? ""
-												: `${
-														sensor.distance > 1000
-															? `${
-																	Math.round(sensor.distance / 100) / 10
-															  } kilometers away`
-															: `${sensor.distance} meters away`
-												  } • `
-										}${sensor.secondary_id || "#" + sensor.id} • ${
-											sensor.online ? "Online" : "Offline"
-										}`}
-									/>
-								</ListItem>
-							))}
-						</List>
-					) : (
-						<Typography>No sensors found</Typography>
-					)}
-				</Box>
-			</Fade>
-		</>
+			<List>
+				{results.map((sensor) => (
+					<ListItemButton
+						sx={{ paddingInline: 4 }}
+						onClick={() => {
+							map?.flyTo({
+								center: sensor.public_location,
+								zoom: 12,
+								speed: 1.2,
+								curve: 1,
+							});
+							navigate(`/sensor/${sensor.id}`);
+						}}>
+						<ListItemIcon>
+							<RPiIcon sensor={sensor} fontSize="large" />
+						</ListItemIcon>
+						<ListItemText
+							primary={sensor.type}
+							secondary={`${
+								/*bbox
+									? ""
+									: `${
+											sensor.distance > 1000
+												? `${Math.round(sensor.distance / 100) / 10} kilometers away`
+												: `${sensor.distance} meters away`
+									  } • `*/ ""
+							}${sensor.secondary_id || "#" + sensor.id} • ${sensor.online ? "Online" : "Offline"}`}
+						/>
+					</ListItemButton>
+				))}
+			</List>
+		</Stack>
 	);
 }
