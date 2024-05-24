@@ -6,7 +6,9 @@ import { useContext, useEffect, useRef } from "react";
 import MapContext from "./MapContext";
 import { useTheme } from "@mui/material";
 
-mapboxgl.accessToken = "pk.eyJ1IjoiemFkZXZpZ2dlcnMiLCJhIjoiY2t5dGF6cGpvMWMydTJ3cGhrb2ZhOTdlZCJ9.myQ3YnPgbI-QkuBlClYfCw";
+export const MAPBOX_TOKEN =
+	"pk.eyJ1IjoiemFkZXZpZ2dlcnMiLCJhIjoiY2t5dGF6cGpvMWMydTJ3cGhrb2ZhOTdlZCJ9.myQ3YnPgbI-QkuBlClYfCw";
+mapboxgl.accessToken = MAPBOX_TOKEN;
 
 export default function MapApp(props: { setPopup: (popup: Popup) => void; style: any }) {
 	const theme = useTheme();

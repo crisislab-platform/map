@@ -39,10 +39,6 @@ export default function Search() {
 	const [map] = useContext(MapContext);
 	const pos = handleQuery(query);
 
-	useEffect(() => {
-		map?.flyTo({});
-	}, [pos, map]);
-
 	const results = pos
 		? Object.values(sensors!)
 				.map((sensor) => {
