@@ -26,7 +26,7 @@ export default function Sensor() {
 		return (
 			<Typography p={2}>
 				{!_id
-					? `I'm not sure which sensor you're looking for. Make sure to specify a sensor ID in the url.`
+					? `I'm not sure which sensor you're looking for sorry. Make sure to specify a sensor ID in the url.`
 					: `I couldn't find sensor #${_id} in my list.`}
 			</Typography>
 		);

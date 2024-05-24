@@ -9,6 +9,7 @@ export default function Routes() {
 		<Router>
 			<Route path="/" element={<Home />} />
 			<Route path="search" element={<SearchResults />} />
+			<Route path="sensor" element={<Sensor />} />
 			<Route path="sensor/:id" element={<Sensor />} />
 		</Router>
 	);

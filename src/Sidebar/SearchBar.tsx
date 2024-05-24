@@ -47,11 +47,15 @@ export default function SearchBar() {
 		const matchingSensor = findSensorFromQueryString(query);
 		if (matchingSensor) {
 			navigate(`/sensor/${matchingSensor.id}`);
-			event.preventDefault();
-			formElement.query.value = "";
+		} else {
+			// If we don't find a sensor, emulate default form behavior
+			// and navigate to action url with query.
+			// This is to stop the map having to reload
+			const queryParams = new URLSearchParams(data as unknown as Record<string, string>);
+			navigate(`/search?${queryParams}`);
 		}
-
-		// If we don't find a sensor, fall through to default submit behaviour
+		event.preventDefault();
+		formElement.query.value = "";
 	}
 
 	return (

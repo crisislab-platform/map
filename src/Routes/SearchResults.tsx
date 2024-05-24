@@ -58,43 +58,43 @@ export default function Search() {
 				.slice(0, 5)
 		: [];
 
-	if (!results) return <Typography>Couldn't find any results for that query sorry.</Typography>;
+	useEffect(() => {
+		if (results.length == 1) {
+			navigate(`/sensor/${results[0].id}`);
+		}
+	}, [results, navigate]);
 
 	return (
-		<Stack p={2}>
-			<Typography
-				variant="h6"
-				sx={{
-					fontWeight: "bold",
-					marginTop: 6,
-					marginLeft: 4,
-				}}></Typography>
+		<Stack p={2} py={0}>
+			<Typography>{results.length == 0 ? `I couldn't find any sensors near '${query}' sorry.` : ""}</Typography>
 
-			<List>
-				{results.map((sensor) => (
-					<ListItemButton
-						sx={{ paddingInline: 4 }}
-						onClick={() => {
-							navigate(`/sensor/${sensor.id}`);
-						}}>
-						<ListItemIcon>
-							<RPiIcon sensor={sensor} fontSize="large" />
-						</ListItemIcon>
-						<ListItemText
-							primary={sensor.type}
-							secondary={`${
-								/*bbox
+			{results.length > 0 && (
+				<List>
+					{results.map((sensor) => (
+						<ListItemButton
+							sx={{ paddingInline: 4 }}
+							onClick={() => {
+								navigate(`/sensor/${sensor.id}`);
+							}}>
+							<ListItemIcon>
+								<RPiIcon sensor={sensor} fontSize="large" />
+							</ListItemIcon>
+							<ListItemText
+								primary={sensor.type}
+								secondary={`${
+									/*bbox
 									? ""
 									: `${
 											sensor.distance > 1000
 												? `${Math.round(sensor.distance / 100) / 10} kilometers away`
 												: `${sensor.distance} meters away`
 									  } • `*/ ""
-							}${sensor.secondary_id || "#" + sensor.id} • ${sensor.online ? "Online" : "Offline"}`}
-						/>
-					</ListItemButton>
-				))}
-			</List>
+								}${sensor.secondary_id || "#" + sensor.id} • ${sensor.online ? "Online" : "Offline"}`}
+							/>
+						</ListItemButton>
+					))}
+				</List>
+			)}
 		</Stack>
 	);
 }
