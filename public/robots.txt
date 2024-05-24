@@ -1,3 +1,4 @@
-# https://www.robotstxt.org/robotstxt.html
+# No AI training allowed
+# No content scraping allowed
 User-agent: *
-Disallow:
+Disallow: *

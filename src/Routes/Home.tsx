@@ -1,6 +1,5 @@
-import { Box, IconButton, Stack, Tooltip, Typography } from "@mui/material";
+import { Box, Stack, Typography } from "@mui/material";
 
-import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import SensorsContext from "../SensorsContext";
 import { useContext } from "react";
 
@@ -8,16 +7,9 @@ export default function Home() {
 	const [sensors] = useContext(SensorsContext);
 
 	return (
-		<Stack sx={{ px: 2, height: "100%" }}>
+		<Stack sx={{ px: 2, height: "100%", pt: 2 }}>
 			<Box sx={{ display: "flex", gap: 3 }}>
 				<img src="/crisis_lab_i_small.png" alt="CRISiSLab logo" style={{ height: 80, width: 120 }} />
-				{/* <Typography
-							variant="h4"
-							sx={{
-								fontWeight: 400,
-							}}>
-							EEW Experimental Sensor Network
-						</Typography> */}
 				<Typography
 					variant="h5"
 					sx={{
@@ -75,8 +67,8 @@ export default function Home() {
 				/>
 				Offline: {sensors && Object.values(sensors).filter((s) => !s.online).length}
 			</Typography>
-			<Box sx={{ mt: "auto" }}>
-				<Typography variant="h6" sx={{ marginTop: "5vh", mb: 2, textAlign: "center" }}>
+			<Box sx={{ mt: "auto", mb: 2 }}>
+				<Typography variant="h6" sx={{ marginTop: "5vh", pb: 4, textAlign: "center" }}>
 					Supported By
 				</Typography>
 
@@ -85,13 +77,6 @@ export default function Home() {
 					<img style={{ height: 40 }} alt="Massey logo" title="Massey University" src="/massey_logo.svg" />
 				</Box>
 			</Box>
-			<span>
-				<Tooltip title="Admin panel" placement="right">
-					<IconButton href="https://admin.crisislab.org.nz" rel="noopener norefferer">
-						<AdminPanelSettingsIcon />
-					</IconButton>
-				</Tooltip>
-			</span>
 		</Stack>
 	);
 }
