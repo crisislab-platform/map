@@ -78,7 +78,7 @@ export default function Sidebar() {
 				<SearchBar />
 
 				<Fade in key={location.pathname}>
-					<Box sx={{ mt: onBigScreen ? 1 : 2, height: "100%" }}>
+					<Box sx={{ height: "100%" }}>
 						<Routes />
 					</Box>
 				</Fade>
