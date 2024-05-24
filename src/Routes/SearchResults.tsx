@@ -13,7 +13,7 @@ function handleQuery(_query: string): null | { latitude: number; longitude: numb
 
 	try {
 		// Try parse longitude & latitude
-		// Longitude and latitude are usually seperated by a comma and a space,
+		// Longitude and latitude are usually separated by a comma and a space,
 		// but sometimes it's one or the other
 		let segments = query.split(", ");
 		if (segments.length != 2) segments = query.split(" ");
