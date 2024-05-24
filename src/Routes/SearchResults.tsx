@@ -48,7 +48,7 @@ async function handleQuery(_query: string, signal?: AbortSignal): Promise<null |
 		)}.json?country=nz&proximity=174.8,-41.325&types=region,postcode,district,place,locality,neighborhood,address,poi&limit=10&language=en&access_token=${MAPBOX_TOKEN}`;
 		const response = await fetch(url);
 		const json = await response.json();
-		console.info("Geocoding response: ", json);
+		// console.info("Geocoding response: ", json);
 
 		// Nasty data validation
 		if (Array.isArray(json?.features) && json.features.length > 0) {
@@ -105,7 +105,7 @@ export default function Search() {
 			console.warn("Search issue: getCenter returned false somehow");
 			return [];
 		}
-		console.info("Center ", center);
+		// console.info("Center ", center);
 
 		// Points can be near the center, or near any of the points
 		const allCoords = [...coords, center];
@@ -119,7 +119,7 @@ export default function Search() {
 			}
 			return false;
 		});
-		console.info("Sensors in radius: ", sensorsInRadius);
+		// console.info("Sensors in radius: ", sensorsInRadius);
 
 		const distances = sensorsInRadius.map((sensor) => {
 			// Store the average distance to all the points for each sensor
@@ -143,15 +143,16 @@ export default function Search() {
 				distance: centerDistance,
 			};
 		});
-		console.info("Distances: ", distances);
+		// console.info("Distances: ", distances);
 
 		// Sort by the computed distances
 		const sorted = distances.toSorted((a, b) => a.distance - b.distance);
-		console.info("Sorted: ", sorted);
+		// console.info("Sorted: ", sorted);
 
 		// We want at least 3
+		// TODO: In future, find a good metric to select the number of results with
 		const selection = sorted.slice(0, 6);
-		console.info("Selection: ", selection);
+		// console.info("Selection: ", selection);
 
 		return selection;
 	}, [coords]);
