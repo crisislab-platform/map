@@ -7,6 +7,7 @@ export interface Sensor {
 	secondary_id?: string;
 	status_change_timestamp?: number;
 	public_location: [number, number];
+	safeLocation: { longitude: number; latitude: number };
 }
 
 const SensorsContext = createContext<
