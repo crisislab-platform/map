@@ -4,7 +4,7 @@ import { Map as MapboxMap, Popup } from "mapbox-gl";
 import MapContext from "./MapContext";
 import MapSwitcher from "./MapSwitcher";
 import SensorsContext, { Sensor } from "./SensorsContext";
-import Sidebar from "./Sidebar.jsx";
+import Sidebar from "./Sidebar/Sidebar";
 import { createPortal } from "react-dom";
 import setupMap from "./setupMap";
 import { useNavigate } from "react-router-dom";

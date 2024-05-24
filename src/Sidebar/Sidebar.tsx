@@ -1,18 +1,22 @@
-import { Box, Typography } from "@mui/material";
+import { Box, Collapse, Link, Typography } from "@mui/material";
 import { Drawer, IconButton, Stack, Tooltip, useMediaQuery } from "@mui/material";
 
 import CloseIcon from "@mui/icons-material/Close";
 import MenuIcon from "@mui/icons-material/Menu";
-import Routes from "./Routes/index";
+import Routes from "../Routes/index";
 import SearchBar from "./SearchBar";
 import { useEffect, useState } from "react";
 import { theme } from "beryllium";
+import { useLocation, Link as RouterLink } from "react-router-dom";
 
 const desktopDrawerWidth = 500;
 
 export default function Sidebar() {
+	const location = useLocation();
 	const onBigScreen = useMediaQuery<typeof theme>((theme) => theme.breakpoints.up("md"));
 	const [drawerOpen, setDrawerOpen] = useState(false);
+
+	const onHomePage = location.pathname == "/";
 
 	function onDrawerClose() {
 		setDrawerOpen(false);
@@ -56,7 +60,23 @@ export default function Sidebar() {
 						</Tooltip>
 					</Stack>
 				)}
+				<Collapse in={!onHomePage}>
+					<Link
+						sx={{
+							ml: 2,
+							py: 0.5,
+							"&::before": {
+								content: `"← "`,
+							},
+						}}
+						component={RouterLink}
+						to="/"
+						aria-disabled={onHomePage}>
+						Home
+					</Link>
+				</Collapse>
 				<SearchBar />
+
 				<Box sx={{ mt: onBigScreen ? 1 : 2, height: "100%" }}>
 					<Routes />
 				</Box>
