@@ -2,6 +2,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { useContext, useEffect, useMemo, useState } from "react";
 import {
 	Box,
+	IconButton,
 	LinearProgress,
 	List,
 	ListItem,
@@ -9,6 +10,7 @@ import {
 	ListItemIcon,
 	ListItemText,
 	Stack,
+	Tooltip,
 	Typography,
 } from "@mui/material";
 import MapContext from "../MapContext";
@@ -16,7 +18,8 @@ import RPiIcon from "../assets/RPiIcon";
 import SensorsContext from "../SensorsContext";
 import { getCenter, getDistance, isPointWithinRadius } from "geolib";
 import { MAPBOX_TOKEN } from "../Map";
-import { titleCase } from "../utils";
+import { flyTo, titleCase } from "../utils";
+import PinDropIcon from "@mui/icons-material/PinDrop";
 
 // 5km is the max distance for sensors to show up in the search results
 const MAX_METERS_AWAY_FROM_POS = 15 * 1000;
@@ -190,6 +193,8 @@ export default function SearchResults() {
 		return selection;
 	}, [coords]);
 
+	// TODO: I'm not sure if this is helpful or not, since people
+	// lose the context of where it is
 	useEffect(() => {
 		if (results.length == 1) {
 			navigate(`/sensor/${results[0].id}`);
@@ -212,24 +217,40 @@ export default function SearchResults() {
 				results.length > 0 && (
 					<List>
 						{results.map((sensor) => (
-							<ListItemButton
-								onClick={() => {
-									navigate(`/sensor/${sensor.id}`);
-								}}>
-								<ListItemIcon>
-									<RPiIcon sensor={sensor} fontSize="large" />
-								</ListItemIcon>
-								<ListItemText
-									primary={
-										sensor.secondary_id ? `${sensor.secondary_id} (#${sensor.id})` : `#${sensor.id}`
-									}
-									secondary={`${
-										sensor.closestDistance > 1000
-											? `${Math.round(sensor.closestDistance / 100) / 10} kilometers`
-											: `${sensor.closestDistance} meters`
-									} away from ${sensor.closestFeatureName} • ${sensor.online ? "Online" : "Offline"}`}
-								/>
-							</ListItemButton>
+							<ListItem
+								disablePadding
+								key={sensor.id + sensor.closestFeatureName}
+								secondaryAction={
+									<Tooltip title="Show on map" placement="right">
+										<IconButton edge="end" onClick={() => flyTo(map, sensor.safeLocation)}>
+											<PinDropIcon />
+										</IconButton>
+									</Tooltip>
+								}>
+								<ListItemButton
+									dense
+									onClick={() => {
+										navigate(`/sensor/${sensor.id}`);
+									}}>
+									<ListItemIcon>
+										<RPiIcon sensor={sensor} fontSize="large" />
+									</ListItemIcon>
+									<ListItemText
+										primary={
+											sensor.secondary_id
+												? `${sensor.secondary_id} (#${sensor.id})`
+												: `#${sensor.id}`
+										}
+										secondary={`${
+											sensor.closestDistance > 1000
+												? `${Math.round(sensor.closestDistance / 100) / 10} kilometers`
+												: `${sensor.closestDistance} meters`
+										} away from ${sensor.closestFeatureName} • ${
+											sensor.online ? "Online" : "Offline"
+										}`}
+									/>
+								</ListItemButton>
+							</ListItem>
 						))}
 					</List>
 				)
