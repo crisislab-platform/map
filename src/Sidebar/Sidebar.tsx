@@ -1,15 +1,34 @@
-import { Box, Collapse, Fade, Link } from "@mui/material";
+import { Box, Collapse, Fade, Link, Slide } from "@mui/material";
 import { Drawer, IconButton, Stack, Tooltip, useMediaQuery } from "@mui/material";
 
 import CloseIcon from "@mui/icons-material/Close";
 import MenuIcon from "@mui/icons-material/Menu";
 import Routes from "../Routes/index";
 import SearchBar from "./SearchBar";
-import { useState } from "react";
+import { forwardRef, useState } from "react";
 import { theme } from "beryllium";
 import { useLocation, Link as RouterLink } from "react-router-dom";
 
 const desktopDrawerWidth = 500;
+
+const HomeLink = forwardRef<HTMLAnchorElement, { onHomePage: boolean }>(({ onHomePage }, ref) => {
+	return (
+		<Link
+			ref={ref}
+			sx={{
+				ml: 2,
+				py: 0.5,
+				"&::before": {
+					content: `"← "`,
+				},
+			}}
+			component={RouterLink}
+			to="/"
+			aria-disabled={onHomePage}>
+			Home
+		</Link>
+	);
+});
 
 export default function Sidebar() {
 	const location = useLocation();
@@ -52,7 +71,11 @@ export default function Sidebar() {
 				variant={onBigScreen ? "permanent" : "temporary"}
 				anchor="left">
 				{!onBigScreen && (
-					<Stack pt={1} pr={1}>
+					<Stack pt={1} pr={1} direction="row" alignItems="center">
+						<Slide in={!onHomePage} direction="right">
+							<HomeLink onHomePage={onHomePage} />
+						</Slide>
+
 						<Tooltip title="Close sidebar" placement="left">
 							<IconButton onClick={onDrawerClose} sx={{ ml: "auto" }}>
 								<CloseIcon />
@@ -60,21 +83,11 @@ export default function Sidebar() {
 						</Tooltip>
 					</Stack>
 				)}
-				<Collapse in={!onHomePage}>
-					<Link
-						sx={{
-							ml: 2,
-							py: 0.5,
-							"&::before": {
-								content: `"← "`,
-							},
-						}}
-						component={RouterLink}
-						to="/"
-						aria-disabled={onHomePage}>
-						Home
-					</Link>
-				</Collapse>
+				{onBigScreen && (
+					<Collapse in={!onHomePage}>
+						<HomeLink onHomePage={onHomePage} />
+					</Collapse>
+				)}
 				<SearchBar />
 
 				<Fade in key={location.pathname}>
