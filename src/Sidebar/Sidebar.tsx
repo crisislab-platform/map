@@ -2,7 +2,7 @@ import { Box, Button, Collapse, Fade, Link, Slide } from "@mui/material";
 import { Drawer, IconButton, Stack, Tooltip, useMediaQuery } from "@mui/material";
 
 import MapIcon from "@mui/icons-material/Map";
-import SearchIcon from "@mui/icons-material/Troubleshoot";
+import SearchAndDataIcon from "@mui/icons-material/Troubleshoot";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import Routes from "../Routes/index";
 import SearchBar from "./SearchBar";
@@ -47,7 +47,7 @@ export default function Sidebar() {
 				<Button
 					variant="contained"
 					size="small"
-					startIcon={<SearchIcon />}
+					startIcon={<SearchAndDataIcon />}
 					onClick={() => setDrawerOpen((oldState) => !oldState)}
 					sx={{
 						zIndex: (theme) => theme.zIndex.drawer - 1,

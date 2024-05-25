@@ -1,8 +1,9 @@
 import { useContext, type FormEvent as ReactFormEvent } from "react";
 
 import { useNavigate } from "react-router-dom";
-import { Box, TextField } from "@mui/material";
+import { Box, IconButton, InputAdornment, TextField, Tooltip } from "@mui/material";
 import SensorsContext, { Sensor } from "../SensorsContext";
+import SearchIcon from "@mui/icons-material/Search";
 
 export default function SearchBar() {
 	const navigate = useNavigate();
@@ -76,6 +77,17 @@ export default function SearchBar() {
 					placeholder="Enter a sensor ID, coordinates, or address"
 					variant="outlined"
 					fullWidth
+					InputProps={{
+						endAdornment: (
+							<InputAdornment position="end">
+								<Tooltip title="Submit query">
+									<IconButton type="submit">
+										<SearchIcon />
+									</IconButton>
+								</Tooltip>
+							</InputAdornment>
+						),
+					}}
 				/>
 			</search>
 		</Box>
