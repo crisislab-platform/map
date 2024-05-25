@@ -74,13 +74,17 @@ export default function Search() {
 	const [sensors] = useContext(SensorsContext);
 	const [searchParams] = useSearchParams();
 	const navigate = useNavigate();
-	const query = searchParams.get("query");
+	const query = searchParams.get("query")?.trim();
 	const [map] = useContext(MapContext);
 	const [coords, setCoords] = useState<null | Coordinate[]>(null);
 	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
-		if (!query) return;
+		if (!query) {
+			setLoading(false);
+			return;
+		}
+
 		const controller = new AbortController();
 		setLoading(true);
 
@@ -97,7 +101,7 @@ export default function Search() {
 	}, [query, setLoading]);
 
 	const results = useMemo(() => {
-		if (!coords) return [];
+		if (!coords || coords.length == 0) return [];
 
 		// Find the mid-point of all the returned points
 		let center: Coordinate | false = getCenter(coords);
