@@ -121,13 +121,14 @@ export default function SearchResults() {
 	}, [query, setLoading]);
 
 	const results = useMemo(() => {
-		if (!coords || coords.length == 0) return [];
+		const EMPTY_RESULT = { sensors: [], center: null };
+		if (!coords || coords.length == 0) return EMPTY_RESULT;
 
 		// Find the mid-point of all the returned points
 		const _center = getCenter(coords);
 		if (!_center) {
 			console.warn("[SEARCH] getCenter returned false somehow");
-			return [];
+			return EMPTY_RESULT;
 		}
 		const center: Coordinate = { ..._center, featureName: titleCase(`${query} center`) };
 
@@ -199,8 +200,12 @@ export default function SearchResults() {
 		// TODO: In future, find a good metric to select the number of results with
 		const selection = sorted.slice(0, 6);
 
-		return selection;
+		return { sensors: selection, center };
 	}, [coords, sensors]);
+
+	useEffect(() => {
+		flyTo(map, results.center, 10);
+	}, [results]);
 
 	function makeHandleShowOnMap(sensor: Sensor) {
 		return () => {
@@ -214,7 +219,7 @@ export default function SearchResults() {
 			<Typography fontSize="12pt" p={2}>
 				{loading
 					? `Loading search results for '${query}'... Please wait`
-					: results.length == 0
+					: results.sensors.length == 0
 					? `I couldn't find any sensors near '${query}' sorry.`
 					: `Sensors near ${titleCase(query)}:`}
 			</Typography>
@@ -222,9 +227,9 @@ export default function SearchResults() {
 			{loading ? (
 				<LinearProgress />
 			) : (
-				results.length > 0 && (
+				results.sensors.length > 0 && (
 					<List>
-						{results.map((sensor) => (
+						{results.sensors.map((sensor) => (
 							<ListItem
 								disablePadding
 								key={sensor.id + sensor.closestFeatureName}

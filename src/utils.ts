@@ -3,6 +3,7 @@ import mapboxgl from "mapbox-gl";
 export function flyTo(
 	map: mapboxgl.Map | null,
 	pos: null | { longitude: number; latitude: number } | [number, number],
+	zoom = 17,
 ) {
 	if (!map || !pos) return;
 	let longitude: number, latitude: number;
@@ -15,7 +16,7 @@ export function flyTo(
 
 	map.flyTo({
 		center: [longitude, latitude],
-		zoom: 17,
+		zoom,
 		speed: 1.2,
 		curve: 1,
 	});
