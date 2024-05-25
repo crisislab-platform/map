@@ -34,7 +34,7 @@ export default function SearchBar() {
 				if (sensor !== undefined) return sensor;
 			}
 		} catch (err) {
-			console.warn("Search error: ", err);
+			console.warn("[SEARCH] Error parsing sensor from query string: ", err);
 		}
 		return null;
 	}

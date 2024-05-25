@@ -51,10 +51,10 @@ async function handleQuery(_query: string, signal?: AbortSignal): Promise<null |
 		// Little cache to avoid hitting the API too much for re-searching the same thing
 		let json: any;
 		if (geocodingCache.has(query)) {
-			console.info("Geocoding request hit cache!");
+			console.info("[SEARCH] Geocoding request hit cache!");
 			json = geocodingCache.get(query);
 		} else {
-			console.info("Geocoding request missed cache");
+			console.info("[SEARCH] Geocoding request missed cache");
 			const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(
 				query,
 			)}.json?country=nz&proximity=174.8,-41.325&types=region,postcode,district,place,locality,neighborhood,address,poi&limit=10&language=en&access_token=${MAPBOX_TOKEN}`;
@@ -78,7 +78,7 @@ async function handleQuery(_query: string, signal?: AbortSignal): Promise<null |
 			if (filteredCoords.length > 0) return filteredCoords;
 		}
 	} catch (err) {
-		console.warn("Error parsing search query: ", err);
+		console.warn("[SEARCH] Error parsing query: ", err);
 		return null;
 	}
 
@@ -111,7 +111,7 @@ export default function Search() {
 		return () => {
 			controller.abort();
 			setLoading(false);
-			console.warn("Loading aborted!");
+			console.warn("[SEARCH] Geocoding data loading aborted!");
 		};
 	}, [query, setLoading]);
 
@@ -121,12 +121,10 @@ export default function Search() {
 		// Find the mid-point of all the returned points
 		const _center = getCenter(coords);
 		if (!_center) {
-			console.warn("Search issue: getCenter returned false somehow");
+			console.warn("[SEARCH] getCenter returned false somehow");
 			return [];
 		}
 		const center: Coordinate = { ..._center, featureName: titleCase(`${query} center`) };
-
-		// console.info("Center ", center);
 
 		// Points can be near the center, or near any of the points
 		const allCoords = [...coords, center];
@@ -140,9 +138,8 @@ export default function Search() {
 			}
 			return false;
 		});
-		// console.info("Sensors in radius: ", sensorsInRadius);
 
-		const distances = sensorsInRadius.map((sensor) => {
+		const rawDistances = sensorsInRadius.map((sensor) => {
 			// Store the average distance to all the points for each sensor
 			// let totalDistance = 0;
 			let closestDistance = Infinity;
@@ -151,7 +148,7 @@ export default function Search() {
 				const distance = getDistance(coord, sensor.safeLocation);
 				// This means that lower weights increase the distance, thereby making this
 				// a less good option
-				// 	totalDistance += distance / coord.weight;
+				// totalDistance += distance / coord.weight;
 				if (distance < closestDistance) {
 					closestDistance = distance;
 					closestFeatureName = coord.featureName;
@@ -165,23 +162,30 @@ export default function Search() {
 
 			return {
 				...sensor,
-				distance: centerDistance,
-				closestFeature: {
-					distance: closestDistance,
-					name: closestFeatureName,
-				},
+				centerDistance,
+				closestDistance,
+				// averageDistance,
+				closestFeatureName,
 			};
 		});
-		// console.info("Distances: ", distances);
+
+		const averageDistanceToCenter =
+			rawDistances.reduce((acc, curr) => acc + curr.centerDistance, 0) / rawDistances.length;
+
+		// When they're close to the center on average, use that,
+		// otherwise, use their individual distances to features
+		const distanceMetric: keyof (typeof rawDistances)[number] =
+			averageDistanceToCenter < MAX_METERS_AWAY_FROM_POS ? "centerDistance" : "closestDistance";
+		console.info("[SEARCH] Using distance metric " + distanceMetric);
+
+		const distances = rawDistances.map((distance) => ({ ...distance, distance: distance[distanceMetric] }));
 
 		// Sort by the computed distances
 		const sorted = distances.toSorted((a, b) => a.distance - b.distance);
-		// console.info("Sorted: ", sorted);
 
 		// We want at least 3
 		// TODO: In future, find a good metric to select the number of results with
 		const selection = sorted.slice(0, 6);
-		// console.info("Selection: ", selection);
 
 		return selection;
 	}, [coords]);
@@ -220,12 +224,10 @@ export default function Search() {
 										sensor.secondary_id ? `${sensor.secondary_id} (#${sensor.id})` : `#${sensor.id}`
 									}
 									secondary={`${
-										sensor.distance > 1000
-											? `${Math.round(sensor.closestFeature.distance / 100) / 10} kilometers`
-											: `${sensor.closestFeature.distance} meters`
-									} away from ${sensor.closestFeature.name} • ${
-										sensor.online ? "Online" : "Offline"
-									}`}
+										sensor.closestDistance > 1000
+											? `${Math.round(sensor.closestDistance / 100) / 10} kilometers`
+											: `${sensor.closestDistance} meters`
+									} away from ${sensor.closestFeatureName} • ${sensor.online ? "Online" : "Offline"}`}
 								/>
 							</ListItemButton>
 						))}
