@@ -20,3 +20,8 @@ export function flyTo(
 		curve: 1,
 	});
 }
+
+export function titleCase(str: string): string {
+	// Credit https://stackoverflow.com/a/40111894
+	return str.toLowerCase().replace(/\b\w/g, (s) => s.toUpperCase());
+}

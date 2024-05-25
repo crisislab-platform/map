@@ -16,11 +16,12 @@ import RPiIcon from "../assets/RPiIcon";
 import SensorsContext from "../SensorsContext";
 import { getCenter, getDistance, isPointWithinRadius } from "geolib";
 import { MAPBOX_TOKEN } from "../Map";
+import { titleCase } from "../utils";
 
 // 5km is the max distance for sensors to show up in the search results
 const MAX_METERS_AWAY_FROM_POS = 15 * 1000;
 
-type Coordinate = { latitude: number; longitude: number; weight?: number };
+type Coordinate = { latitude: number; longitude: number; weight?: number; featureName: string };
 
 async function handleQuery(_query: string, signal?: AbortSignal): Promise<null | Coordinate[]> {
 	const query = _query.trim().toLowerCase();
@@ -39,7 +40,8 @@ async function handleQuery(_query: string, signal?: AbortSignal): Promise<null |
 			const longitude = Number.parseFloat(segments[0]);
 			const latitude = Number.parseFloat(segments[1]);
 
-			if (!Number.isNaN(longitude) && !Number.isNaN(latitude)) return [{ longitude, latitude }];
+			if (!Number.isNaN(longitude) && !Number.isNaN(latitude))
+				return [{ longitude, latitude, featureName: "coordinates" }];
 		}
 
 		// If all else fails, try doing a geocoding lookup
@@ -52,12 +54,13 @@ async function handleQuery(_query: string, signal?: AbortSignal): Promise<null |
 
 		// Nasty data validation
 		if (Array.isArray(json?.features) && json.features.length > 0) {
-			const filteredCoords = json.features
+			const filteredCoords: Coordinate[] = json.features
 				.filter((feature) => Array.isArray(feature?.center) && feature.center.length == 2)
 				.map((feature) => ({
 					longitude: feature.center[0],
 					latitude: feature.center[1],
 					weight: feature.relevance ?? 1,
+					featureName: feature.text,
 				}));
 
 			if (filteredCoords.length > 0) return filteredCoords;
@@ -104,11 +107,13 @@ export default function Search() {
 		if (!coords || coords.length == 0) return [];
 
 		// Find the mid-point of all the returned points
-		let center: Coordinate | false = getCenter(coords);
-		if (!center) {
+		const _center = getCenter(coords);
+		if (!_center) {
 			console.warn("Search issue: getCenter returned false somehow");
 			return [];
 		}
+		const center: Coordinate = { ..._center, featureName: titleCase(`${query} center`) };
+
 		// console.info("Center ", center);
 
 		// Points can be near the center, or near any of the points
@@ -128,14 +133,18 @@ export default function Search() {
 		const distances = sensorsInRadius.map((sensor) => {
 			// Store the average distance to all the points for each sensor
 			// let totalDistance = 0;
-			// let closestDistance = Infinity;
-			// for (const coord of allCoords) {
-			// 	const distance = getDistance(coord, sensor.safeLocation);
-			// 	// This means that lower weights increase the distance, thereby making this
-			// 	// a less good option
-			// 	totalDistance += distance / coord.weight;
-			// 	if (distance < closestDistance) closestDistance = distance;
-			// }
+			let closestDistance = Infinity;
+			let closestFeatureName: string | null = null;
+			for (const coord of allCoords) {
+				const distance = getDistance(coord, sensor.safeLocation);
+				// This means that lower weights increase the distance, thereby making this
+				// a less good option
+				// 	totalDistance += distance / coord.weight;
+				if (distance < closestDistance) {
+					closestDistance = distance;
+					closestFeatureName = coord.featureName;
+				}
+			}
 			// const averageDistanceToPoints = totalDistance / allCoords.length;
 
 			const centerDistance = getDistance(center, sensor.safeLocation);
@@ -145,6 +154,10 @@ export default function Search() {
 			return {
 				...sensor,
 				distance: centerDistance,
+				closestFeature: {
+					distance: closestDistance,
+					name: closestFeatureName,
+				},
 			};
 		});
 		// console.info("Distances: ", distances);
@@ -174,7 +187,7 @@ export default function Search() {
 					? `Loading search results for '${query}'... Please wait`
 					: results.length == 0
 					? `I couldn't find any sensors near '${query}' sorry.`
-					: `Sensors near ${query}:`}
+					: `Sensors near ${titleCase(query)}:`}
 			</Typography>
 
 			{loading ? (
@@ -191,12 +204,14 @@ export default function Search() {
 									<RPiIcon sensor={sensor} fontSize="large" />
 								</ListItemIcon>
 								<ListItemText
-									primary={sensor.type}
+									primary={
+										sensor.secondary_id ? `${sensor.secondary_id} (#${sensor.id})` : `#${sensor.id}`
+									}
 									secondary={`${
 										sensor.distance > 1000
-											? `${Math.round(sensor.distance / 100) / 10} kilometers away`
-											: `${sensor.distance} meters away`
-									} • ${sensor.secondary_id || "#" + sensor.id} • ${
+											? `${Math.round(sensor.closestFeature.distance / 100) / 10} kilometers`
+											: `${sensor.closestFeature.distance} meters`
+									} away from ${sensor.closestFeature.name} • ${
 										sensor.online ? "Online" : "Offline"
 									}`}
 								/>
