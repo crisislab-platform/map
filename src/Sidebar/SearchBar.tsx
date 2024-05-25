@@ -1,6 +1,6 @@
 import { useContext, type FormEvent as ReactFormEvent } from "react";
 
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Box, IconButton, InputAdornment, TextField, Tooltip } from "@mui/material";
 import SensorsContext, { Sensor } from "../SensorsContext";
 import SearchIcon from "@mui/icons-material/Search";
@@ -8,6 +8,8 @@ import SearchIcon from "@mui/icons-material/Search";
 export default function SearchBar() {
 	const navigate = useNavigate();
 	const [sensors] = useContext(SensorsContext);
+	const [searchParams] = useSearchParams();
+	const query = searchParams.get("query")?.trim();
 
 	// This should be memoized, but this component won't run much,
 	// and the new react compiler will do it automatically soon enough
@@ -77,6 +79,7 @@ export default function SearchBar() {
 					placeholder="Enter a sensor ID, coordinates, or address"
 					variant="outlined"
 					fullWidth
+					defaultValue={query}
 					InputProps={{
 						endAdornment: (
 							<InputAdornment position="end">

@@ -21,8 +21,8 @@ import { MAPBOX_TOKEN } from "../Map";
 import { flyTo, titleCase } from "../utils";
 import PinDropIcon from "@mui/icons-material/PinDrop";
 
-// 5km is the max distance for sensors to show up in the search results
-const MAX_METERS_AWAY_FROM_POS = 15 * 1000;
+// The max distance for sensors to show up in the search results, in meters
+const MAX_METERS_AWAY_FROM_POS = 50 * 1000;
 
 type Coordinate = { latitude: number; longitude: number; weight?: number; featureName: string };
 
@@ -60,12 +60,12 @@ async function handleQuery(_query: string, signal?: AbortSignal): Promise<null |
 			console.info("[SEARCH] Geocoding request missed cache");
 			const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(
 				query,
-			)}.json?country=nz&proximity=174.8,-41.325&types=region,postcode,district,place,locality,neighborhood,address,poi&limit=10&language=en&access_token=${MAPBOX_TOKEN}`;
+			)}.json?country=nz&proximity=174.8,-41.325&types=region,postcode,place,neighborhood,address,poi&limit=3&language=en&access_token=${MAPBOX_TOKEN}`;
 			const response = await fetch(url);
 			json = await response.json();
 			geocodingCache.set(query, json);
 		}
-		// console.info("Geocoding response: ", json);
+		console.info("[SEARCH] Geocoding response: ", json);
 
 		// Nasty data validation
 		if (Array.isArray(json?.features) && json.features.length > 0) {
@@ -91,8 +91,8 @@ async function handleQuery(_query: string, signal?: AbortSignal): Promise<null |
 export default function SearchResults() {
 	const [sensors] = useContext(SensorsContext);
 	const [searchParams] = useSearchParams();
-	const navigate = useNavigate();
 	const query = searchParams.get("query")?.trim();
+	const navigate = useNavigate();
 	const [map] = useContext(MapContext);
 	const [coords, setCoords] = useState<null | Coordinate[]>(null);
 	const [loading, setLoading] = useState(true);
@@ -144,45 +144,52 @@ export default function SearchResults() {
 
 		const rawDistances = sensorsInRadius.map((sensor) => {
 			// Store the average distance to all the points for each sensor
-			// let totalDistance = 0;
+			let totalDistance = 0;
 			let closestDistance = Infinity;
 			let closestFeatureName: string | null = null;
 			for (const coord of allCoords) {
-				const distance = getDistance(coord, sensor.safeLocation);
 				// This means that lower weights increase the distance, thereby making this
 				// a less good option
-				// totalDistance += distance / coord.weight;
+				const distance = getDistance(coord, sensor.safeLocation) / coord.weight;
+				totalDistance += distance / coord.weight;
 				if (distance < closestDistance) {
 					closestDistance = distance;
 					closestFeatureName = coord.featureName;
 				}
 			}
-			// const averageDistanceToPoints = totalDistance / allCoords.length;
+			const averageDistanceToFeatures = totalDistance / allCoords.length;
 
 			const centerDistance = getDistance(center, sensor.safeLocation);
 
-			// const averageDistance = (centerDistance + averageDistanceToPoints + closestDistance) / 3;
+			const grandAverageDistance = (closestDistance + averageDistanceToFeatures + centerDistance) / 3;
 
 			return {
 				...sensor,
 				centerDistance,
 				closestDistance,
-				// averageDistance,
+				averageDistanceToFeatures,
+				grandAverageDistance,
 				closestFeatureName,
 			};
 		});
 
 		const averageDistanceToCenter =
 			rawDistances.reduce((acc, curr) => acc + curr.centerDistance, 0) / rawDistances.length;
-
+		console.info("[SEARCH] Center ", center, " average distance: ", averageDistanceToCenter);
 		// When they're close to the center on average, use that,
 		// otherwise, use their individual distances to features
-		const distanceMetric: keyof (typeof rawDistances)[number] =
-			averageDistanceToCenter < MAX_METERS_AWAY_FROM_POS ? "centerDistance" : "closestDistance";
+		let distanceMetric: keyof (typeof rawDistances)[number];
+		if (averageDistanceToCenter <= MAX_METERS_AWAY_FROM_POS) {
+			distanceMetric = "centerDistance";
+			// } else if (averageAverageDistanceToFeatures <= DISTANCE_METRIC_FEATURES_THRESHOLD) {
+			// 	distanceMetric = "closestDistance";
+		} else {
+			distanceMetric = "grandAverageDistance";
+		}
 		console.info("[SEARCH] Using distance metric " + distanceMetric);
 
 		const distances = rawDistances.map((distance) => ({ ...distance, distance: distance[distanceMetric] }));
-
+		console.info("[SEARCH] Distances ", distances);
 		// Sort by the computed distances
 		const sorted = distances.toSorted((a, b) => a.distance - b.distance);
 
@@ -191,7 +198,7 @@ export default function SearchResults() {
 		const selection = sorted.slice(0, 6);
 
 		return selection;
-	}, [coords]);
+	}, [coords, sensors]);
 
 	// TODO: I'm not sure if this is helpful or not, since people
 	// lose the context of where it is
@@ -243,7 +250,7 @@ export default function SearchResults() {
 										}
 										secondary={`${
 											sensor.closestDistance > 1000
-												? `${Math.round(sensor.closestDistance / 100) / 10} kilometers`
+												? `${Math.round(sensor.closestDistance / 100) / 10} kilometres`
 												: `${sensor.closestDistance} meters`
 										} away from ${sensor.closestFeatureName} • ${
 											sensor.online ? "Online" : "Offline"
