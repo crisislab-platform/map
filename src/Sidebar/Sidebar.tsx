@@ -2,7 +2,7 @@ import { Box, Button, Collapse, Fade, Link, Slide } from "@mui/material";
 import { Drawer, IconButton, Stack, Tooltip, useMediaQuery } from "@mui/material";
 
 import MapIcon from "@mui/icons-material/Map";
-import SearchIcon from "@mui/icons-material/TravelExplore";
+import SearchIcon from "@mui/icons-material/Troubleshoot";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import Routes from "../Routes/index";
 import SearchBar from "./SearchBar";
@@ -35,8 +35,7 @@ export default function Sidebar() {
 	const location = useLocation();
 	const onBigScreen = useMediaQuery<typeof theme>((theme) => theme.breakpoints.up("md"));
 	const [drawerOpen, setDrawerOpen] = useState(false);
-
-	const onHomePage = location.pathname == "/";
+	const onHomePage = location.pathname.trim().slice(1) == "";
 
 	function onDrawerClose() {
 		setDrawerOpen(false);
@@ -56,7 +55,7 @@ export default function Sidebar() {
 						top: (theme) => theme.spacing(1),
 						left: (theme) => theme.spacing(1),
 					}}>
-					Search
+					Search & Live data
 				</Button>
 			)}
 			<Drawer
