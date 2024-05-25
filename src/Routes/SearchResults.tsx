@@ -39,8 +39,8 @@ async function handleQuery(_query: string, signal?: AbortSignal): Promise<null |
 		if (segments.length != 2) segments = query.split(",");
 
 		if (segments.length == 2) {
-			const longitude = Number.parseFloat(segments[0]);
-			const latitude = Number.parseFloat(segments[1]);
+			const longitude = Number(segments[0]);
+			const latitude = Number(segments[1]);
 
 			if (!Number.isNaN(longitude) && !Number.isNaN(latitude))
 				return [{ longitude, latitude, featureName: "coordinates" }];
@@ -85,7 +85,7 @@ async function handleQuery(_query: string, signal?: AbortSignal): Promise<null |
 	return null;
 }
 
-export default function Search() {
+export default function SearchResults() {
 	const [sensors] = useContext(SensorsContext);
 	const [searchParams] = useSearchParams();
 	const navigate = useNavigate();

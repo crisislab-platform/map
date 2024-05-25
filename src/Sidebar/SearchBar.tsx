@@ -26,8 +26,8 @@ export default function SearchBar() {
 			if (secondaryIDSensor !== undefined) return secondaryIDSensor;
 
 			let id: number;
-			if (query.startsWith("#")) id = Number.parseInt(query.slice(1));
-			else id = Number.parseInt(query);
+			if (query.startsWith("#")) id = Number(query.slice(1));
+			else id = Number(query);
 
 			if (!Number.isNaN(id)) {
 				const sensor = sensors[id];
