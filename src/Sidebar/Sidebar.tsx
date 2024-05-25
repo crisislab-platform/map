@@ -1,8 +1,9 @@
-import { Box, Collapse, Fade, Link, Slide } from "@mui/material";
+import { Box, Button, Collapse, Fade, Link, Slide } from "@mui/material";
 import { Drawer, IconButton, Stack, Tooltip, useMediaQuery } from "@mui/material";
 
-import CloseIcon from "@mui/icons-material/Close";
-import MenuIcon from "@mui/icons-material/Menu";
+import MapIcon from "@mui/icons-material/Map";
+import SearchIcon from "@mui/icons-material/TravelExplore";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import Routes from "../Routes/index";
 import SearchBar from "./SearchBar";
 import { forwardRef, useState } from "react";
@@ -44,18 +45,19 @@ export default function Sidebar() {
 	return (
 		<>
 			{!onBigScreen && (
-				<Tooltip title="Open sidebar" placement="right">
-					<IconButton
-						onClick={() => setDrawerOpen((oldState) => !oldState)}
-						sx={{
-							zIndex: (theme) => theme.zIndex.drawer - 1,
-							position: "fixed",
-							top: (theme) => theme.spacing(1),
-							left: (theme) => theme.spacing(1),
-						}}>
-						<MenuIcon stroke="white" fill="black" />
-					</IconButton>
-				</Tooltip>
+				<Button
+					variant="contained"
+					size="small"
+					startIcon={<SearchIcon />}
+					onClick={() => setDrawerOpen((oldState) => !oldState)}
+					sx={{
+						zIndex: (theme) => theme.zIndex.drawer - 1,
+						position: "fixed",
+						top: (theme) => theme.spacing(1),
+						left: (theme) => theme.spacing(1),
+					}}>
+					Search
+				</Button>
 			)}
 			<Drawer
 				open={onBigScreen ? true : drawerOpen}
@@ -76,11 +78,15 @@ export default function Sidebar() {
 							<HomeLink onHomePage={onHomePage} />
 						</Slide>
 
-						<Tooltip title="Close sidebar" placement="left">
-							<IconButton onClick={onDrawerClose} sx={{ ml: "auto" }}>
-								<CloseIcon />
-							</IconButton>
-						</Tooltip>
+						<Button
+							startIcon={<MapIcon />}
+							endIcon={<ArrowForwardIcon />}
+							onClick={onDrawerClose}
+							sx={{
+								ml: "auto",
+							}}>
+							Show map
+						</Button>
 					</Stack>
 				)}
 				{onBigScreen && (

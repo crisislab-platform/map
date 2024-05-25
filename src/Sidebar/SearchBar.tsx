@@ -65,17 +65,19 @@ export default function SearchBar() {
 			sx={{
 				p: 2,
 			}}>
-			<TextField
-				autoFocus
-				// Select content on focus so it's easy to type a new query
-				onFocus={(e) => e.target.select()}
-				id="search-query-field"
-				name="query"
-				label="Search"
-				placeholder="Enter a sensor ID, coordinates, or address"
-				variant="outlined"
-				fullWidth
-			/>
+			<search>
+				<TextField
+					autoFocus
+					// Select content on focus so it's easy to type a new query
+					onFocus={(e) => e.target.select()}
+					id="search-query-field"
+					name="query"
+					label="Search"
+					placeholder="Enter a sensor ID, coordinates, or address"
+					variant="outlined"
+					fullWidth
+				/>
+			</search>
 		</Box>
 	);
 }
