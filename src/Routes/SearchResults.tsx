@@ -200,14 +200,6 @@ export default function SearchResults() {
 		return selection;
 	}, [coords, sensors]);
 
-	// TODO: I'm not sure if this is helpful or not, since people
-	// lose the context of where it is
-	useEffect(() => {
-		if (results.length == 1) {
-			navigate(`/sensor/${results[0].id}`);
-		}
-	}, [results, navigate]);
-
 	return (
 		<Stack>
 			<Typography fontSize="12pt" p={2}>
