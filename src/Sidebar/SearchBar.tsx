@@ -4,12 +4,14 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { Box, IconButton, InputAdornment, TextField, Tooltip } from "@mui/material";
 import SensorsContext, { Sensor } from "../contexts/SensorsContext";
 import SearchIcon from "@mui/icons-material/Search";
+import { useOnBigScreen } from "../utils";
 
 export default function SearchBar() {
 	const navigate = useNavigate();
 	const { sensors } = useContext(SensorsContext);
 	const [searchParams] = useSearchParams();
 	const query = searchParams.get("query")?.trim();
+	const onBigScreen = useOnBigScreen();
 
 	// This should be memoized, but this component won't run much,
 	// and the new react compiler will do it automatically soon enough
@@ -70,7 +72,7 @@ export default function SearchBar() {
 			}}>
 			<search>
 				<TextField
-					autoFocus
+					autoFocus={onBigScreen}
 					// Select content on focus so it's easy to type a new query
 					onFocus={(e) => e.target.select()}
 					id="search-query-field"

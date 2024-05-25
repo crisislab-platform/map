@@ -1,4 +1,6 @@
+import { useMediaQuery } from "@mui/material";
 import mapboxgl from "mapbox-gl";
+import { theme } from "beryllium";
 
 export function flyTo(
 	map: mapboxgl.Map | null,
@@ -25,4 +27,8 @@ export function flyTo(
 export function titleCase(str: string): string {
 	// Credit https://stackoverflow.com/a/40111894
 	return str.toLowerCase().replace(/\b\w/g, (s) => s.toUpperCase());
+}
+
+export function useOnBigScreen() {
+	return useMediaQuery<typeof theme>((theme) => theme.breakpoints.up("md"));
 }

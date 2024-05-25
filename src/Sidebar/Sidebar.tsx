@@ -1,15 +1,15 @@
 import { Box, Button, Collapse, Fade, Link, Slide } from "@mui/material";
-import { Drawer, IconButton, Stack, Tooltip, useMediaQuery } from "@mui/material";
+import { Drawer, Stack } from "@mui/material";
 
 import MapIcon from "@mui/icons-material/Map";
 import SearchAndDataIcon from "@mui/icons-material/Troubleshoot";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import Routes from "../Routes/index";
 import SearchBar from "./SearchBar";
-import { forwardRef, useContext, useState } from "react";
-import { theme } from "beryllium";
+import { forwardRef, useContext } from "react";
 import { useLocation, Link as RouterLink } from "react-router-dom";
 import { DrawerOpenContext } from "../contexts/DrawerOpenContext";
+import { useOnBigScreen } from "../utils";
 
 const desktopDrawerWidth = 500;
 
@@ -34,7 +34,7 @@ const HomeLink = forwardRef<HTMLAnchorElement, { onHomePage: boolean }>(({ onHom
 
 export default function Sidebar() {
 	const location = useLocation();
-	const onBigScreen = useMediaQuery<typeof theme>((theme) => theme.breakpoints.up("md"));
+	const onBigScreen = useOnBigScreen();
 	const { drawerOpen, setDrawerOpen } = useContext(DrawerOpenContext);
 	const onHomePage = location.pathname.trim().slice(1) == "";
 
