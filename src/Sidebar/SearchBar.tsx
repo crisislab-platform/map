@@ -2,12 +2,12 @@ import { useContext, type FormEvent as ReactFormEvent } from "react";
 
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Box, IconButton, InputAdornment, TextField, Tooltip } from "@mui/material";
-import SensorsContext, { Sensor } from "../SensorsContext";
+import SensorsContext, { Sensor } from "../contexts/SensorsContext";
 import SearchIcon from "@mui/icons-material/Search";
 
 export default function SearchBar() {
 	const navigate = useNavigate();
-	const [sensors] = useContext(SensorsContext);
+	const { sensors } = useContext(SensorsContext);
 	const [searchParams] = useSearchParams();
 	const query = searchParams.get("query")?.trim();
 

@@ -2,7 +2,7 @@ import { ButtonBase, Paper, Stack, Typography, useTheme } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
 
 import BoltIcon from "@mui/icons-material/Bolt";
-import MapContext from "./MapContext";
+import MapContext from "./contexts/MapContext";
 import CrisisAlertIcon from "@mui/icons-material/CrisisAlert";
 import EmergencyShareIcon from "@mui/icons-material/EmergencyShare";
 
@@ -62,7 +62,7 @@ function showFaultLineLabels(show, map) {
 }
 
 export default function Switcher() {
-	const [map, , mapLoaded, setMapLoaded] = useContext(MapContext);
+	const { map } = useContext(MapContext);
 	const theme = useTheme();
 	const [faultLinesEnabled, setFaultLinesEnabled] = useState(false);
 	const [geonetEnabled, setGeonetEnabled] = useState(false);
@@ -144,7 +144,6 @@ export default function Switcher() {
 	function onPopupClose() {
 		setPopupOpen(false);
 	}
-
 
 	return (
 		<Stack

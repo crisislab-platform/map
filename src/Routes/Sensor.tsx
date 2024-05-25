@@ -3,16 +3,16 @@ import { Fade, IconButton, Tooltip, Box, Typography, Stack, Slide } from "@mui/m
 import { OpenInNew } from "@mui/icons-material";
 import RPiIcon from "../assets/RPiIcon";
 import { useContext, useEffect } from "react";
-import SensorsContext from "../SensorsContext";
+import SensorsContext from "../contexts/SensorsContext";
 import { useParams } from "react-router-dom";
 import { flyTo } from "../utils";
-import MapContext from "../MapContext";
+import MapContext from "../contexts/MapContext";
 
 const liveDataOrigin = "https://crisislab-data.massey.ac.nz";
 
 export default function Sensor() {
-	const [sensors] = useContext(SensorsContext);
-	const [map] = useContext(MapContext);
+	const { sensors } = useContext(SensorsContext);
+	const { map } = useContext(MapContext);
 	const { id: _id } = useParams<{ id: string }>();
 
 	const id = Number(_id);

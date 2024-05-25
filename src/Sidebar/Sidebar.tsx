@@ -6,9 +6,10 @@ import SearchAndDataIcon from "@mui/icons-material/Troubleshoot";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import Routes from "../Routes/index";
 import SearchBar from "./SearchBar";
-import { forwardRef, useState } from "react";
+import { forwardRef, useContext, useState } from "react";
 import { theme } from "beryllium";
 import { useLocation, Link as RouterLink } from "react-router-dom";
+import { DrawerOpenContext } from "../contexts/DrawerOpenContext";
 
 const desktopDrawerWidth = 500;
 
@@ -34,11 +35,15 @@ const HomeLink = forwardRef<HTMLAnchorElement, { onHomePage: boolean }>(({ onHom
 export default function Sidebar() {
 	const location = useLocation();
 	const onBigScreen = useMediaQuery<typeof theme>((theme) => theme.breakpoints.up("md"));
-	const [drawerOpen, setDrawerOpen] = useState(false);
+	const { drawerOpen, setDrawerOpen } = useContext(DrawerOpenContext);
 	const onHomePage = location.pathname.trim().slice(1) == "";
 
 	function onDrawerClose() {
 		setDrawerOpen(false);
+	}
+
+	function onDrawerOpen() {
+		setDrawerOpen(true);
 	}
 
 	return (
@@ -48,7 +53,7 @@ export default function Sidebar() {
 					variant="contained"
 					size="small"
 					startIcon={<SearchAndDataIcon />}
-					onClick={() => setDrawerOpen((oldState) => !oldState)}
+					onClick={onDrawerOpen}
 					sx={{
 						zIndex: (theme) => theme.zIndex.drawer - 1,
 						position: "fixed",

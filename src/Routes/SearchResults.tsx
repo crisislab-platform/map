@@ -13,13 +13,14 @@ import {
 	Tooltip,
 	Typography,
 } from "@mui/material";
-import MapContext from "../MapContext";
+import MapContext from "../contexts/MapContext";
 import RPiIcon from "../assets/RPiIcon";
-import SensorsContext from "../SensorsContext";
+import SensorsContext, { Sensor } from "../contexts/SensorsContext";
 import { getCenter, getDistance, isPointWithinRadius } from "geolib";
 import { MAPBOX_TOKEN } from "../Map";
 import { flyTo, titleCase } from "../utils";
 import PinDropIcon from "@mui/icons-material/PinDrop";
+import { DrawerOpenContext } from "../contexts/DrawerOpenContext";
 
 // The max distance for sensors to show up in the search results, in meters
 const MAX_METERS_AWAY_FROM_POS = 50 * 1000;
@@ -89,11 +90,12 @@ async function handleQuery(_query: string, signal?: AbortSignal): Promise<null |
 }
 
 export default function SearchResults() {
-	const [sensors] = useContext(SensorsContext);
+	const { setDrawerOpen } = useContext(DrawerOpenContext);
+	const { sensors } = useContext(SensorsContext);
 	const [searchParams] = useSearchParams();
 	const query = searchParams.get("query")?.trim();
 	const navigate = useNavigate();
-	const [map] = useContext(MapContext);
+	const { map } = useContext(MapContext);
 	const [coords, setCoords] = useState<null | Coordinate[]>(null);
 	const [loading, setLoading] = useState(true);
 
@@ -200,6 +202,13 @@ export default function SearchResults() {
 		return selection;
 	}, [coords, sensors]);
 
+	function makeHandleShowOnMap(sensor: Sensor) {
+		return () => {
+			flyTo(map, sensor.safeLocation);
+			setDrawerOpen(false);
+		};
+	}
+
 	return (
 		<Stack>
 			<Typography fontSize="12pt" p={2}>
@@ -221,13 +230,13 @@ export default function SearchResults() {
 								key={sensor.id + sensor.closestFeatureName}
 								secondaryAction={
 									<Tooltip title="Show on map" placement="right">
-										<IconButton edge="end" onClick={() => flyTo(map, sensor.safeLocation)}>
+										<IconButton edge="end" onClick={makeHandleShowOnMap(sensor)}>
 											<PinDropIcon />
 										</IconButton>
 									</Tooltip>
 								}>
 								<ListItemButton
-									dense
+									sx={{ px: 2 }}
 									onClick={() => {
 										navigate(`/sensor/${sensor.id}`);
 									}}>

@@ -1,10 +1,10 @@
 import { Box, Stack, Typography } from "@mui/material";
 
-import SensorsContext from "../SensorsContext";
+import SensorsContext from "../contexts/SensorsContext";
 import { useContext } from "react";
 
 export default function Home() {
-	const [sensors] = useContext(SensorsContext);
+	const { sensors } = useContext(SensorsContext);
 
 	return (
 		<Stack sx={{ px: 2, height: "100%", pt: 2 }}>

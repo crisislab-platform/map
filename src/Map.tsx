@@ -3,7 +3,7 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import mapboxgl, { GeolocateControl, Map as MapboxMap, NavigationControl, Popup, ScaleControl } from "mapbox-gl";
 import { useContext, useEffect, useRef } from "react";
 
-import MapContext from "./MapContext";
+import MapContext from "./contexts/MapContext";
 import { useTheme } from "@mui/material";
 
 export const MAPBOX_TOKEN =
@@ -13,7 +13,7 @@ mapboxgl.accessToken = MAPBOX_TOKEN;
 export default function MapApp(props: { setPopup: (popup: Popup) => void; style: any }) {
 	const theme = useTheme();
 	const mapContainerRef = useRef(null);
-	const [map, setMap, mapLoaded, setMapLoaded] = useContext(MapContext);
+	const { setMap, setMapLoaded } = useContext(MapContext);
 
 	useEffect(() => {
 		if (mapContainerRef.current) {
