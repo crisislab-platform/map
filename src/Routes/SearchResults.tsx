@@ -23,6 +23,8 @@ const MAX_METERS_AWAY_FROM_POS = 15 * 1000;
 
 type Coordinate = { latitude: number; longitude: number; weight?: number; featureName: string };
 
+const geocodingCache = new Map<string, any>();
+
 async function handleQuery(_query: string, signal?: AbortSignal): Promise<null | Coordinate[]> {
 	const query = _query.trim().toLowerCase();
 
@@ -45,11 +47,21 @@ async function handleQuery(_query: string, signal?: AbortSignal): Promise<null |
 		}
 
 		// If all else fails, try doing a geocoding lookup
-		const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(
-			query,
-		)}.json?country=nz&proximity=174.8,-41.325&types=region,postcode,district,place,locality,neighborhood,address,poi&limit=10&language=en&access_token=${MAPBOX_TOKEN}`;
-		const response = await fetch(url);
-		const json = await response.json();
+
+		// Little cache to avoid hitting the API too much for re-searching the same thing
+		let json: any;
+		if (geocodingCache.has(query)) {
+			console.info("Geocoding request hit cache!");
+			json = geocodingCache.get(query);
+		} else {
+			console.info("Geocoding request missed cache");
+			const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(
+				query,
+			)}.json?country=nz&proximity=174.8,-41.325&types=region,postcode,district,place,locality,neighborhood,address,poi&limit=10&language=en&access_token=${MAPBOX_TOKEN}`;
+			const response = await fetch(url);
+			json = await response.json();
+			geocodingCache.set(query, json);
+		}
 		// console.info("Geocoding response: ", json);
 
 		// Nasty data validation
