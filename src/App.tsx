@@ -136,7 +136,7 @@ export default function App() {
 					}
 
 					flyTo(map, coordinates);
-
+					setDrawerOpen(true);
 					navigate(`/sensor/${e?.features?.[0]?.properties?.id}`);
 				},
 				popup,
