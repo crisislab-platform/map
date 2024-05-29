@@ -57,6 +57,10 @@ export default function SearchBar() {
 			// and navigate to action url with query.
 			// This is to stop the map having to reload
 			const queryParams = new URLSearchParams(data as unknown as Record<string, string>);
+			// This timestamp is updated every time the form is submitted,
+			// so the search results can know when the form was re-submitted,
+			// even if the query didn't change
+			queryParams.set("ts", new Date().getTime() + "");
 			navigate(`/search?${queryParams}`);
 		}
 		event.preventDefault();

@@ -161,7 +161,7 @@ export default function Switcher() {
 					display: "flex",
 					flexDirection: "column",
 					gap: 1,
-					backgroundColor: theme.palette.background.paper,
+					backgroundColor: `color-mix(rgba(255,255,255,0), ${theme.palette.background.paper})`,
 					borderRadius: theme.spacing(1),
 					padding: 1,
 					transition: "opacity 0.2s",

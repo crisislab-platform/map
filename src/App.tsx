@@ -92,7 +92,7 @@ export default function App() {
 			const newSensors: Record<number, Sensor> = {};
 			Object.values(data.sensors as Partial<Sensor>[]).forEach((sensor) => {
 				if (sensor.public_location) {
-					sensor.safeLocation = { longitude: sensor.public_location[0], latitude: sensor.public_location[1] };
+					sensor.safeLocation = { lng: sensor.public_location[0], lat: sensor.public_location[1] };
 					newSensors[sensor.id!] = sensor as Sensor;
 				}
 			});

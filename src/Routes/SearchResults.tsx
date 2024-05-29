@@ -21,11 +21,12 @@ import { MAPBOX_TOKEN } from "../Map";
 import { flyTo, titleCase } from "../utils";
 import PinDropIcon from "@mui/icons-material/PinDrop";
 import { DrawerOpenContext } from "../contexts/DrawerOpenContext";
+import { LngLatBounds } from "mapbox-gl";
 
 // The max distance for sensors to show up in the search results, in meters
 const MAX_METERS_AWAY_FROM_POS = 50 * 1000;
 
-type Coordinate = { latitude: number; longitude: number; weight?: number; featureName: string };
+type Coordinate = { lat: number; lng: number; weight?: number; featureName: string };
 
 const geocodingCache = new Map<string, any>();
 
@@ -47,7 +48,7 @@ async function handleQuery(_query: string, signal?: AbortSignal): Promise<null |
 			const latitude = Number(segments[1]);
 
 			if (!Number.isNaN(longitude) && !Number.isNaN(latitude))
-				return [{ longitude, latitude, featureName: "coordinates" }];
+				return [{ lng: longitude, lat: latitude, featureName: "coordinates" }];
 		}
 
 		// If all else fails, try doing a geocoding lookup
@@ -94,6 +95,9 @@ export default function SearchResults() {
 	const { sensors } = useContext(SensorsContext);
 	const [searchParams] = useSearchParams();
 	const query = searchParams.get("query")?.trim();
+	// This timestamp is updated every time the form is submitted,
+	// so we can use that to know when to re-calculate the zoom position
+	const tsToTriggerReZoom = searchParams.get("ts");
 	const navigate = useNavigate();
 	const { map } = useContext(MapContext);
 	const [coords, setCoords] = useState<null | Coordinate[]>(null);
@@ -121,7 +125,7 @@ export default function SearchResults() {
 	}, [query, setLoading]);
 
 	const results = useMemo(() => {
-		const EMPTY_RESULT = { sensors: [], center: null };
+		const EMPTY_RESULT = { sensors: [], center: null, bounds: null };
 		if (!coords || coords.length == 0) return EMPTY_RESULT;
 
 		// Find the mid-point of all the returned points
@@ -130,7 +134,11 @@ export default function SearchResults() {
 			console.warn("[SEARCH] getCenter returned false somehow");
 			return EMPTY_RESULT;
 		}
-		const center: Coordinate = { ..._center, featureName: titleCase(`${query} center`) };
+		const center: Coordinate = {
+			lng: _center.longitude,
+			lat: _center.latitude,
+			featureName: titleCase(`${query} center`),
+		};
 
 		// Points can be near the center, or near any of the points
 		const allCoords = [...coords, center];
@@ -200,12 +208,30 @@ export default function SearchResults() {
 		// TODO: In future, find a good metric to select the number of results with
 		const selection = sorted.slice(0, 6);
 
-		return { sensors: selection, center };
+		let bounds = null;
+		if (selection.length > 0) {
+			bounds = new LngLatBounds();
+
+			for (const sensor of selection) {
+				bounds.extend(sensor.safeLocation);
+			}
+		}
+
+		return { sensors: selection, center, bounds };
 	}, [coords, sensors]);
 
 	useEffect(() => {
-		flyTo(map, results.center, 10);
-	}, [results]);
+		if (results.bounds) {
+			try {
+				map.fitBounds(results.bounds, { padding: 50 });
+			} catch (err) {
+				console.error(`map.fitBounds(...) threw an error! Falling back to map.flyTo(...)`);
+				flyTo(map, results?.center);
+			}
+		} else {
+			flyTo(map, results?.center);
+		}
+	}, [results, tsToTriggerReZoom]);
 
 	function makeHandleShowOnMap(sensor: Sensor) {
 		return () => {

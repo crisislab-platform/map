@@ -4,7 +4,7 @@ import { theme } from "beryllium";
 
 export function flyTo(
 	map: mapboxgl.Map | null,
-	pos: null | { longitude: number; latitude: number } | [number, number],
+	pos: null | { lng: number; lat: number } | [number, number],
 	zoom = 17,
 ) {
 	if (!map || !pos) return;
@@ -12,8 +12,8 @@ export function flyTo(
 	if (Array.isArray(pos)) {
 		[longitude, latitude] = pos;
 	} else {
-		longitude = pos.longitude;
-		latitude = pos.latitude;
+		longitude = pos.lng;
+		latitude = pos.lat;
 	}
 
 	map.flyTo({
