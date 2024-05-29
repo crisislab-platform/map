@@ -2,6 +2,7 @@ const ENABLE_CLUSTERS = true;
 
 import { theme } from "beryllium";
 import { Map as MapboxMap, MapLayerMouseEvent, Popup } from "mapbox-gl";
+import { flyTo } from "./utils";
 function makeCircleColourGetter(text = false, dark = false) {
 	return [
 		"step",
@@ -79,11 +80,7 @@ export default async function setupMap(
 		map.getSource("crisislab-sensors").getClusterExpansionZoom!(clusterId, (err, zoom) => {
 			if (err) return;
 
-			map.flyTo({
-				center: features[0].geometry.coordinates,
-				zoom: zoom + 2,
-				duration: 1000,
-			});
+			flyTo(map, features[0].geometry.coordinates, zoom + 2);
 		});
 	};
 
@@ -129,11 +126,7 @@ export default async function setupMap(
 		map.getSource("geonet").getClusterExpansionZoom(clusterId, (err, zoom) => {
 			if (err) return;
 
-			map.flyTo({
-				center: features[0].geometry.coordinates,
-				zoom: zoom + 2,
-				duration: 1000,
-			});
+			flyTo(map, features[0].geometry.coordinates, zoom + 2);
 		});
 	};
 

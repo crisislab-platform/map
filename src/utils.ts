@@ -19,7 +19,7 @@ export function flyTo(
 	map.flyTo({
 		center: [longitude, latitude],
 		zoom,
-		speed: 1.2,
+		duration: 3000,
 		curve: 1,
 	});
 }

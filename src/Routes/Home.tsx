@@ -1,10 +1,18 @@
 import { Box, Stack, Typography } from "@mui/material";
 
 import SensorsContext from "../contexts/SensorsContext";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
+import MapContext from "../contexts/MapContext";
+import { flyTo } from "../utils";
+import { CENTER_OF_NZ, SHOW_ALL_OF_NZ_ZOOM } from "../Map";
 
 export default function Home() {
 	const { sensors } = useContext(SensorsContext);
+	const { map } = useContext(MapContext);
+
+	useEffect(() => {
+		flyTo(map, CENTER_OF_NZ, SHOW_ALL_OF_NZ_ZOOM);
+	}, [map]);
 
 	return (
 		<Stack sx={{ px: 2, height: "100%", pt: 2 }}>
