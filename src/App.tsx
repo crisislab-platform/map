@@ -1,13 +1,15 @@
 import { Box, CssBaseline, Typography } from "@mui/material";
 import React, { Suspense, useEffect, useState } from "react";
 import { Map as MapboxMap, Popup } from "mapbox-gl";
-import MapContext from "./MapContext";
+import MapContext from "./contexts/MapContext";
 import MapSwitcher from "./MapSwitcher";
-import SensorsContext, { Sensor } from "./SensorsContext";
-import Sidebar from "./Sidebar.jsx";
+import SensorsContext, { Sensor } from "./contexts/SensorsContext";
+import Sidebar from "./Sidebar/Sidebar";
 import { createPortal } from "react-dom";
 import setupMap from "./setupMap";
 import { useNavigate } from "react-router-dom";
+import { flyTo } from "./utils";
+import { DrawerOpenContext } from "./contexts/DrawerOpenContext";
 
 const MapComponent = React.lazy(() => import("./Map"));
 
@@ -76,6 +78,7 @@ export default function App() {
 	const [mapLoaded, setMapLoaded] = useState(false);
 	const [activeSensor, setActiveSensor] = useState(null);
 	const [rerenderTrigger, setRerenderTrigger] = useState(0);
+	const [drawerOpen, setDrawerOpen] = useState(false);
 	const [popup, setPopup] = useState<Popup>();
 
 	const triggerRerender = () => setRerenderTrigger((a) => a + 1);
@@ -89,6 +92,7 @@ export default function App() {
 			const newSensors: Record<number, Sensor> = {};
 			Object.values(data.sensors as Partial<Sensor>[]).forEach((sensor) => {
 				if (sensor.public_location) {
+					sensor.safeLocation = { lng: sensor.public_location[0], lat: sensor.public_location[1] };
 					newSensors[sensor.id!] = sensor as Sensor;
 				}
 			});
@@ -131,13 +135,8 @@ export default function App() {
 						coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
 					}
 
-					map?.flyTo({
-						center: [coordinates[0], coordinates[1]],
-						zoom: Math.max(map?.getZoom(), 17),
-						// speed: 0.2,
-						curve: 1,
-					});
-
+					flyTo(map, coordinates);
+					setDrawerOpen(true);
 					navigate(`/sensor/${e?.features?.[0]?.properties?.id}`);
 				},
 				popup,
@@ -146,19 +145,14 @@ export default function App() {
 				(map) => {
 					// On done loading
 
-					const sensorInURL = Number(location.href.match(/\/sensor\/([0-9]+)/)[1]);
+					const sensorInURL = Number(location.href.match(/\/sensor\/([0-9]+)/)?.[1]);
 					if (
-						sensorInURL &&
+						sensorInURL !== null &&
 						!Number.isNaN(sensorInURL) &&
 						Number.isInteger(sensorInURL) &&
 						sensors[sensorInURL]
 					) {
-						map.flyTo({
-							center: sensors[sensorInURL]?.public_location,
-							zoom: 16,
-							speed: 1.2,
-							curve: 1,
-						});
+						flyTo(map, sensors[sensorInURL]?.public_location);
 					}
 				},
 			).then((t) => (teardown = t));
@@ -168,56 +162,58 @@ export default function App() {
 	}, [mapLoaded, sensors]);
 
 	return (
-		<SensorsContext.Provider value={[sensors, setSensors]}>
-			<MapContext.Provider value={[map, setMap, mapLoaded, setMapLoaded]}>
-				<Box
-					sx={{
-						display: "flex",
-						position: "absolute",
-						top: 0,
-						bottom: 0,
-						left: 0,
-						right: 0,
-					}}>
-					<CssBaseline />
-					<Sidebar />
-
+		<DrawerOpenContext.Provider value={{ drawerOpen, setDrawerOpen }}>
+			<SensorsContext.Provider value={{ sensors, setSensors }}>
+				<MapContext.Provider value={{ map, setMap, mapLoaded, setMapLoaded }}>
 					<Box
-						component="main"
 						sx={{
-							flexGrow: 1,
-							bgcolor: "background.default",
-							p: 3,
-							position: "relative",
-							height: "100%",
+							display: "flex",
+							position: "absolute",
+							top: 0,
+							bottom: 0,
+							left: 0,
+							right: 0,
 						}}>
-						<Suspense
-							fallback={
-								// div with text in middle
-								<div
-									style={{
-										position: "absolute",
-										top: 0,
-										bottom: 0,
-										left: 0,
-										right: 0,
-										backgroundColor: "#78bced",
-										display: "flex",
-										justifyContent: "center",
-										alignItems: "center",
-									}}>
-									<Typography variant="h5" style={{ color: "white" }}>
-										Loading map...
-									</Typography>
-								</div>
-							}>
-							<MapComponent style={{}} setPopup={setPopup} />
-						</Suspense>
+						<CssBaseline />
+						<Sidebar />
+
+						<Box
+							component="main"
+							sx={{
+								flexGrow: 1,
+								bgcolor: "background.default",
+								p: 3,
+								position: "relative",
+								height: "100%",
+							}}>
+							<Suspense
+								fallback={
+									// div with text in middle
+									<div
+										style={{
+											position: "absolute",
+											top: 0,
+											bottom: 0,
+											left: 0,
+											right: 0,
+											backgroundColor: "#78bced",
+											display: "flex",
+											justifyContent: "center",
+											alignItems: "center",
+										}}>
+										<Typography variant="h5" style={{ color: "white" }}>
+											Loading map...
+										</Typography>
+									</div>
+								}>
+								<MapComponent style={{}} setPopup={setPopup} />
+							</Suspense>
+						</Box>
+						<MapSwitcher />
+						<PopupComponent activeSensor={activeSensor} sensors={sensors} />
 					</Box>
-					<MapSwitcher />
-					<PopupComponent activeSensor={activeSensor} sensors={sensors} />
-				</Box>
-			</MapContext.Provider>
-		</SensorsContext.Provider>
+				</MapContext.Provider>
+			</SensorsContext.Provider>
+		</DrawerOpenContext.Provider>
 	);
 }

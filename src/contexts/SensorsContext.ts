@@ -7,10 +7,12 @@ export interface Sensor {
 	secondary_id?: string;
 	status_change_timestamp?: number;
 	public_location: [number, number];
+	safeLocation: { lng: number; lat: number };
 }
 
-const SensorsContext = createContext<
-	[Record<number, Sensor>, React.Dispatch<React.SetStateAction<Record<number, Sensor>>>] | []
->([]);
+const SensorsContext = createContext<{
+	sensors: Record<number, Sensor>;
+	setSensors: React.Dispatch<React.SetStateAction<Record<number, Sensor>>>;
+}>({ sensors: {}, setSensors: () => {} });
 
 export default SensorsContext;

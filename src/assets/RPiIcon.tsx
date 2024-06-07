@@ -1,5 +1,5 @@
 import SvgIcon from "@mui/material/SvgIcon";
-import { type Sensor } from "../SensorsContext";
+import { type Sensor } from "../contexts/SensorsContext";
 import HealthAndSafetyIcon from "@mui/icons-material/HealthAndSafety";
 import SensorsIcon from "@mui/icons-material/Sensors";
 import CRISiSLabSensorIcon from "../assets/1024 Crisislab Native Logo transparent.png";

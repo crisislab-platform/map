@@ -3,22 +3,27 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import mapboxgl, { GeolocateControl, Map as MapboxMap, NavigationControl, Popup, ScaleControl } from "mapbox-gl";
 import { useContext, useEffect, useRef } from "react";
 
-import MapContext from "./MapContext";
+import MapContext from "./contexts/MapContext";
 import { useTheme } from "@mui/material";
 
-mapboxgl.accessToken = "pk.eyJ1IjoiemFkZXZpZ2dlcnMiLCJhIjoiY2t5dGF6cGpvMWMydTJ3cGhrb2ZhOTdlZCJ9.myQ3YnPgbI-QkuBlClYfCw";
+export const CENTER_OF_NZ: [number, number] = [174.8, -41.325];
+export const SHOW_ALL_OF_NZ_ZOOM = 4.8;
+
+export const MAPBOX_TOKEN =
+	"pk.eyJ1IjoiemFkZXZpZ2dlcnMiLCJhIjoiY2t5dGF6cGpvMWMydTJ3cGhrb2ZhOTdlZCJ9.myQ3YnPgbI-QkuBlClYfCw";
+mapboxgl.accessToken = MAPBOX_TOKEN;
 
 export default function MapApp(props: { setPopup: (popup: Popup) => void; style: any }) {
 	const theme = useTheme();
 	const mapContainerRef = useRef(null);
-	const [map, setMap, mapLoaded, setMapLoaded] = useContext(MapContext);
+	const { setMap, setMapLoaded } = useContext(MapContext);
 
 	useEffect(() => {
 		if (mapContainerRef.current) {
 			const map = new MapboxMap({
 				container: mapContainerRef.current,
-				center: [174.8, -41.325],
-				zoom: 4.8,
+				center: CENTER_OF_NZ,
+				zoom: SHOW_ALL_OF_NZ_ZOOM,
 			});
 
 			setMap!(map);
