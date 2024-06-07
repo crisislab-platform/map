@@ -16,7 +16,7 @@ import {
 import MapContext from "../contexts/MapContext";
 import RPiIcon from "../assets/RPiIcon";
 import SensorsContext, { Sensor } from "../contexts/SensorsContext";
-import { getCenter, getDistance, isPointWithinRadius } from "geolib";
+import { getBounds, getCenter, getDistance, isPointWithinRadius } from "geolib";
 import { MAPBOX_TOKEN } from "../Map";
 import { flyTo, titleCase } from "../utils";
 import PinDropIcon from "@mui/icons-material/PinDrop";
@@ -124,7 +124,11 @@ export default function SearchResults() {
 		};
 	}, [query, setLoading]);
 
-	const results = useMemo(() => {
+	const results: {
+		sensors: (Sensor & Record<string, any>)[];
+		center: Coordinate | null;
+		bounds: ReturnType<typeof getBounds> | null;
+	} = useMemo(() => {
 		const EMPTY_RESULT = { sensors: [], center: null, bounds: null };
 		if (!coords || coords.length == 0) return EMPTY_RESULT;
 
@@ -208,14 +212,7 @@ export default function SearchResults() {
 		// TODO: In future, find a good metric to select the number of results with
 		const selection = sorted.slice(0, 6);
 
-		let bounds = null;
-		if (selection.length > 0) {
-			bounds = new LngLatBounds();
-
-			for (const sensor of selection) {
-				bounds.extend(sensor.safeLocation);
-			}
-		}
+		const bounds = getBounds(selection.map((s) => s.safeLocation));
 
 		return { sensors: selection, center, bounds };
 	}, [coords, sensors]);
