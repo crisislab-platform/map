@@ -1,9 +1,10 @@
-import { Box, Button, Collapse, Fade, Link, Slide } from "@mui/material";
+import { Box, Button, Collapse, Fade, Grow, IconButton, InputAdornment, Link, Slide, Tooltip } from "@mui/material";
 import { Drawer, Stack } from "@mui/material";
 
 import MapIcon from "@mui/icons-material/Map";
 import SearchAndDataIcon from "@mui/icons-material/Troubleshoot";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import Routes from "../Routes/index";
 import SearchBar from "./SearchBar";
 import { forwardRef, useContext } from "react";
@@ -12,25 +13,6 @@ import { DrawerOpenContext } from "../contexts/DrawerOpenContext";
 import { useOnBigScreen } from "../utils";
 
 const desktopDrawerWidth = 500;
-
-const HomeLink = forwardRef<HTMLAnchorElement, { onHomePage: boolean }>(({ onHomePage }, ref) => {
-	return (
-		<Link
-			ref={ref}
-			sx={{
-				ml: 2,
-				py: 0.5,
-				"&::before": {
-					content: `"← "`,
-				},
-			}}
-			component={RouterLink}
-			to="/"
-			aria-disabled={onHomePage}>
-			Home
-		</Link>
-	);
-});
 
 export default function Sidebar() {
 	const location = useLocation();
@@ -78,10 +60,6 @@ export default function Sidebar() {
 				anchor="left">
 				{!onBigScreen && (
 					<Stack pt={1} pr={1} direction="row" alignItems="center">
-						<Slide in={!onHomePage} direction="right">
-							<HomeLink onHomePage={onHomePage} />
-						</Slide>
-
 						<Button
 							startIcon={<MapIcon />}
 							endIcon={<ArrowForwardIcon />}
@@ -93,12 +71,22 @@ export default function Sidebar() {
 						</Button>
 					</Stack>
 				)}
-				{onBigScreen && (
-					<Collapse in={!onHomePage}>
-						<HomeLink onHomePage={onHomePage} />
-					</Collapse>
-				)}
-				<SearchBar />
+
+				<SearchBar
+					backButton={
+						!onHomePage && (
+							<InputAdornment position="start">
+								<Grow in={!onHomePage} style={{ transformOrigin: "left" }}>
+									<Tooltip title="Home" placement="bottom">
+										<IconButton component={RouterLink} to="/" aria-disabled={onHomePage}>
+											<ArrowBackIcon />
+										</IconButton>
+									</Tooltip>
+								</Grow>
+							</InputAdornment>
+						)
+					}
+				/>
 
 				<Fade in key={location.pathname}>
 					<Box sx={{ height: "100%" }}>
