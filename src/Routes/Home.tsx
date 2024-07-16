@@ -81,8 +81,13 @@ export default function Home() {
 				</Typography>
 
 				<Box sx={{ display: "flex", justifyContent: "space-evenly" }}>
-					<img style={{ height: 40 }} alt="EQC logo" title="EQC Toka Tū Ake" src="/new_eqc.svg" />
-					<img style={{ height: 40 }} alt="Massey logo" title="Massey University" src="/massey_logo.svg" />
+					<img
+						style={{ height: 50 }}
+						alt="Natural Hazards Commission logo"
+						title="Toka Tū Ake - Natural Hazards Commission"
+						src="/nhc-logo.svg"
+					/>
+					<img style={{ height: 50 }} alt="Massey logo" title="Massey University" src="/massey_logo.svg" />
 				</Box>
 			</Box>
 		</Stack>
