@@ -5,6 +5,8 @@ import { useContext, useEffect } from "react";
 import MapContext from "../contexts/MapContext";
 import { flyTo } from "../utils";
 import { CENTER_OF_NZ, SHOW_ALL_OF_NZ_ZOOM } from "../Map";
+import SensorsIcon from "@mui/icons-material/Sensors";
+import SensorsOffIcon from "@mui/icons-material/SensorsOff";
 
 export default function Home() {
 	const { sensors } = useContext(SensorsContext);
@@ -48,32 +50,12 @@ export default function Home() {
 				Network status:
 			</Typography>
 			<Typography variant="body1" sx={{ display: "flex", alignItems: "center" }}>
-				<span
-					style={{
-						backgroundColor: "green",
-						borderRadius: "50%",
-						height: "1rem",
-						width: "1rem",
-						display: "inline-block",
-						marginBottom: "-0.1rem",
-						marginRight: "5px",
-					}}
-				/>
+				<SensorsIcon color="success" sx={{ mr: 1 }} />
 				Online:{" "}
 				{Object.values(sensors).length > 0 ? Object.values(sensors).filter((s) => s.online).length : "--"}
 			</Typography>
 			<Typography variant="body1" sx={{ display: "flex", alignItems: "center" }}>
-				<span
-					style={{
-						backgroundColor: "red",
-						borderRadius: "50%",
-						height: "1rem",
-						width: "1rem",
-						display: "inline-block",
-						marginBottom: "-0.1rem",
-						marginRight: "5px",
-					}}
-				/>
+				<SensorsOffIcon color="error" sx={{ mr: 1 }} />
 				Offline:{" "}
 				{Object.values(sensors).length > 0 ? Object.values(sensors).filter((s) => !s.online).length : "--"}
 			</Typography>
