@@ -59,7 +59,8 @@ export default function Home() {
 						marginRight: "5px",
 					}}
 				/>
-				Online: {sensors && Object.values(sensors).filter((s) => s.online).length}
+				Online:{" "}
+				{Object.values(sensors).length > 0 ? Object.values(sensors).filter((s) => s.online).length : "--"}
 			</Typography>
 			<Typography variant="body1" sx={{ display: "flex", alignItems: "center" }}>
 				<span
@@ -73,7 +74,8 @@ export default function Home() {
 						marginRight: "5px",
 					}}
 				/>
-				Offline: {sensors && Object.values(sensors).filter((s) => !s.online).length}
+				Offline:{" "}
+				{Object.values(sensors).length > 0 ? Object.values(sensors).filter((s) => !s.online).length : "--"}
 			</Typography>
 			<Box sx={{ mt: "auto", mb: 2 }}>
 				<Typography variant="h6" sx={{ marginTop: "5vh", pb: 4, textAlign: "center" }}>
