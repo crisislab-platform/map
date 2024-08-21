@@ -64,7 +64,7 @@ export default function Home() {
 					Supported By
 				</Typography>
 
-				<Box sx={{ display: "flex", justifyContent: "space-evenly" }}>
+				<Box sx={{ display: "flex", justifyContent: "space-evenly", flexWrap: "wrap", gap: 2 }}>
 					<img
 						style={{ height: 50 }}
 						alt="Natural Hazards Commission logo"
@@ -72,6 +72,12 @@ export default function Home() {
 						src="/nhc-logo.svg"
 					/>
 					<img style={{ height: 50 }} alt="Massey logo" title="Massey University" src="/massey_logo.svg" />
+					{/* <img
+						style={{ height: 50 }}
+						alt="Resilience to Nature's Challenges logo"
+						title="Resilience to Nature's Challenges"
+						src="/resilience-to-nature-challenges-logo-brown.svg"
+					/> */}
 				</Box>
 			</Box>
 		</Stack>
