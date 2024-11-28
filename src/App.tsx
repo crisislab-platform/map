@@ -8,12 +8,10 @@ import Sidebar from "./Sidebar/Sidebar";
 import { createPortal } from "react-dom";
 import setupMap from "./setupMap";
 import { useNavigate } from "react-router-dom";
-import { flyTo } from "./utils";
+import { APIOrigin, flyTo } from "./utils";
 import { DrawerOpenContext } from "./contexts/DrawerOpenContext";
 
 const MapComponent = React.lazy(() => import("./Map"));
-
-const managementAPIOrigin = "https://crisislab-data.massey.ac.nz";
 
 function PopupComponent({ activeSensor, sensors }: { [x: string]: any }) {
 	if (!activeSensor || !sensors) return null;
@@ -87,7 +85,7 @@ export default function App() {
 
 	useEffect(() => {
 		(async () => {
-			const res = await fetch(`${managementAPIOrigin}/api/v2/sensors`);
+			const res = await fetch(`${APIOrigin}/api/v2/sensors`);
 			const data = await res.json();
 			const newSensors: Record<number, Sensor> = {};
 			Object.values(data.sensors as Partial<Sensor>[]).forEach((sensor) => {
