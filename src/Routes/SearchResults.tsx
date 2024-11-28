@@ -17,7 +17,6 @@ import MapContext from "../contexts/MapContext";
 import RPiIcon from "../assets/RPiIcon";
 import SensorsContext, { Sensor } from "../contexts/SensorsContext";
 import { getBounds, getCenter, getDistance, isPointWithinRadius } from "geolib";
-import { MAPBOX_TOKEN } from "../Map";
 import { flyTo, titleCase } from "../utils";
 import PinDropIcon from "@mui/icons-material/PinDrop";
 import { DrawerOpenContext } from "../contexts/DrawerOpenContext";
@@ -62,7 +61,9 @@ async function handleQuery(_query: string, signal?: AbortSignal): Promise<null |
 			console.info("[SEARCH] Geocoding request missed cache");
 			const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(
 				query,
-			)}.json?country=nz&proximity=174.8,-41.325&types=region,postcode,place,neighborhood,address,poi&limit=3&language=en&access_token=${MAPBOX_TOKEN}`;
+			)}.json?country=nz&proximity=174.8,-41.325&types=region,postcode,place,neighborhood,address,poi&limit=3&language=en&access_token=${
+				import.meta.env.VITE_MAPBOX_TOKEN
+			}`;
 			const response = await fetch(url);
 			json = await response.json();
 			geocodingCache.set(query, json);

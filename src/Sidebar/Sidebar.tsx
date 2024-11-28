@@ -5,12 +5,13 @@ import MapIcon from "@mui/icons-material/Map";
 import SearchAndDataIcon from "@mui/icons-material/Troubleshoot";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import PermDataSettingIcon from "@mui/icons-material/PermDataSetting";
 import Routes from "../Routes/index";
 import SearchBar from "./SearchBar";
 import { forwardRef, useContext } from "react";
 import { useLocation, Link as RouterLink } from "react-router-dom";
 import { DrawerOpenContext } from "../contexts/DrawerOpenContext";
-import { useOnBigScreen } from "../utils";
+import { setCustomAPIOrigin, useOnBigScreen } from "../utils";
 
 const desktopDrawerWidth = 500;
 
@@ -93,6 +94,14 @@ export default function Sidebar() {
 						<Routes />
 					</Box>
 				</Fade>
+
+				<Box sx={{ ml: 1, mt: "auto" }}>
+					<Tooltip title="Use custom API origin" placement="right">
+						<IconButton onClick={setCustomAPIOrigin} size="small">
+							<PermDataSettingIcon />
+						</IconButton>
+					</Tooltip>
+				</Box>
 			</Drawer>
 		</>
 	);
