@@ -1,5 +1,5 @@
 import { Box, CssBaseline, Typography } from "@mui/material";
-import React, { Suspense, useEffect, useState } from "react";
+import React, { Suspense, useDeferredValue, useEffect, useMemo, useState } from "react";
 import { Map as MapboxMap, Popup } from "mapbox-gl";
 import MapContext from "./contexts/MapContext";
 import MapSwitcher from "./MapSwitcher";
@@ -78,10 +78,25 @@ export default function App() {
 	const [rerenderTrigger, setRerenderTrigger] = useState(0);
 	const [drawerOpen, setDrawerOpen] = useState(false);
 	const [popup, setPopup] = useState<Popup>();
+	const [allowOnlineStatus, setAllowOnlineStatus] = useState<"all" | "online" | "offline">("all");
 
 	const triggerRerender = () => setRerenderTrigger((a) => a + 1);
 
 	const navigate = useNavigate();
+
+	const filteredSensors = useMemo(() => {
+		if (allowOnlineStatus === "all") return sensors;
+
+		return Object.fromEntries(
+			Object.entries(sensors).filter(([id, sensor]) => {
+				if (allowOnlineStatus === "online") return sensor.online === true;
+
+				if (allowOnlineStatus === "offline") return sensor.online === false;
+
+				throw "Unrecognised filter value '" + allowOnlineStatus + "' when filtering sensors";
+			}),
+		);
+	}, [sensors, allowOnlineStatus]);
 
 	useEffect(() => {
 		(async () => {
@@ -100,11 +115,11 @@ export default function App() {
 	}, []);
 
 	useEffect(() => {
-		if (map && mapLoaded && sensors && Object.keys(sensors).length) {
+		if (map && mapLoaded && Object.keys(filteredSensors).length > 0) {
 			// Construct geoJSON
 			const geoJSON = {
 				type: "FeatureCollection",
-				features: Object.values(sensors).map((sensor) => ({
+				features: Object.values(filteredSensors).map((sensor) => ({
 					type: "Feature",
 					geometry: {
 						type: "Point",
@@ -149,20 +164,26 @@ export default function App() {
 						sensorInURL !== null &&
 						!Number.isNaN(sensorInURL) &&
 						Number.isInteger(sensorInURL) &&
-						sensors[sensorInURL]
+						filteredSensors[sensorInURL]
 					) {
-						flyTo(map, sensors[sensorInURL]?.public_location);
+						flyTo(map, filteredSensors[sensorInURL]?.public_location);
 					}
 				},
 			).then((t) => (teardown = t));
 
 			return teardown;
 		}
-	}, [mapLoaded, sensors]);
+	}, [mapLoaded, filteredSensors]);
 
 	return (
 		<DrawerOpenContext.Provider value={{ drawerOpen, setDrawerOpen }}>
-			<SensorsContext.Provider value={{ sensors, setSensors }}>
+			<SensorsContext.Provider
+				value={{
+					unfilteredSensors: sensors,
+					sensors: filteredSensors,
+					allowOnlineStatus,
+					setAllowOnlineStatus,
+				}}>
 				<MapContext.Provider value={{ map, setMap, mapLoaded, setMapLoaded }}>
 					<Box
 						sx={{

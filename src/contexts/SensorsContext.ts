@@ -11,8 +11,10 @@ export interface Sensor {
 }
 
 const SensorsContext = createContext<{
+	unfilteredSensors: Record<number, Sensor>;
 	sensors: Record<number, Sensor>;
-	setSensors: React.Dispatch<React.SetStateAction<Record<number, Sensor>>>;
-}>({ sensors: {}, setSensors: () => {} });
+	allowOnlineStatus: "all" | "online" | "offline";
+	setAllowOnlineStatus: React.Dispatch<React.SetStateAction<"all" | "online" | "offline">>;
+}>({ unfilteredSensors: {}, sensors: {}, allowOnlineStatus: "all", setAllowOnlineStatus: () => {} });
 
 export default SensorsContext;

@@ -1,5 +1,3 @@
-const ENABLE_CLUSTERS = true;
-
 import { theme } from "beryllium";
 import { Map as MapboxMap, MapLayerMouseEvent, Popup } from "mapbox-gl";
 import { flyTo } from "./utils";
@@ -70,6 +68,7 @@ export default async function setupMap(
 	setActiveSensor: (newActiveID: number) => void,
 	triggerRerender: () => void,
 	onDoneLoading?: (map: MapboxMap) => void,
+	enableClusters: boolean = true,
 ) {
 	// inspect a cluster on click
 	const onClusterClick = (ev: MapLayerMouseEvent) => {
@@ -229,7 +228,7 @@ export default async function setupMap(
 				features: await getGeonetData(),
 				type: "FeatureCollection",
 			},
-			cluster: ENABLE_CLUSTERS,
+			cluster: enableClusters,
 			clusterMaxZoom: 14, // Max zoom to cluster points on
 			clusterRadius: 50, // Radius of each cluster when clustering points (defaults to 50)
 		});
@@ -248,7 +247,7 @@ export default async function setupMap(
 			},
 		});
 
-		if (ENABLE_CLUSTERS) {
+		if (enableClusters) {
 			map.addLayer(
 				{
 					id: "cluster-count-geonet",
@@ -307,7 +306,7 @@ export default async function setupMap(
 		map.addSource("crisislab-sensors", {
 			type: "geojson",
 			data: geoJSON,
-			cluster: ENABLE_CLUSTERS,
+			cluster: enableClusters,
 			clusterMaxZoom: 14, // Max zoom to cluster points on
 			clusterRadius: 30, // Radius of each cluster when clustering points (defaults to 50)
 		});
@@ -327,7 +326,7 @@ export default async function setupMap(
 			},
 		});
 
-		if (ENABLE_CLUSTERS) {
+		if (enableClusters) {
 			map.addLayer(
 				{
 					id: "clusters",

@@ -9,7 +9,7 @@ import SensorsIcon from "@mui/icons-material/Sensors";
 import SensorsOffIcon from "@mui/icons-material/SensorsOff";
 
 export default function Home() {
-	const { sensors } = useContext(SensorsContext);
+	const { unfilteredSensors: sensors } = useContext(SensorsContext);
 	const { map } = useContext(MapContext);
 
 	useEffect(() => {

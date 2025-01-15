@@ -1,4 +1,14 @@
-import { Paper, Stack, Typography, useTheme } from "@mui/material";
+import {
+	Collapse,
+	Paper,
+	Stack,
+	styled,
+	ToggleButton,
+	ToggleButtonGroup,
+	ToggleButtonProps,
+	Typography,
+	useTheme,
+} from "@mui/material";
 import { useContext, useEffect, useState } from "react";
 
 import BoltIcon from "@mui/icons-material/Bolt";
@@ -6,6 +16,8 @@ import MapContext from "./contexts/MapContext";
 import CrisisAlertIcon from "@mui/icons-material/CrisisAlert";
 import EmergencyShareIcon from "@mui/icons-material/EmergencyShare";
 import { SquareToggleButton } from "./components/SquareToggleButton";
+import { SmallToggleButton } from "./components/SmallToggleButton";
+import SensorsContext from "./contexts/SensorsContext";
 
 const crisislabSensorsLayers = ["clusters", "unclustered-point", "cluster-count"];
 const geonetSensorsLayers = ["unclustered-point-geonet", "cluster-count-geonet", "clusters-geonet"];
@@ -27,6 +39,13 @@ export default function Switcher() {
 	const [faultLinesEnabled, setFaultLinesEnabled] = useState(false);
 	const [geonetEnabled, setGeonetEnabled] = useState(false);
 	const [crisislabEnabled, setCrisislabEnabled] = useState(true);
+	const { allowOnlineStatus, setAllowOnlineStatus } = useContext(SensorsContext);
+
+	function handleCrisislabFilterChange(_event, newValue) {
+		if (newValue !== null) {
+			setAllowOnlineStatus(newValue);
+		}
+	}
 
 	// Extra data layers (sensor locations, fault lines, etc)
 
@@ -92,8 +111,9 @@ export default function Switcher() {
 	useEffect(() => {
 		if (map?.loaded()) {
 			for (const layer of crisislabSensorsLayers) {
-				if (map.getLayer(layer))
+				if (map.getLayer(layer)) {
 					map.setLayoutProperty(layer, "visibility", crisislabEnabled ? "visible" : "none");
+				}
 			}
 		}
 	}, [map, crisislabEnabled]);
@@ -113,6 +133,7 @@ export default function Switcher() {
 				sx={{
 					display: "flex",
 					flexDirection: "column",
+					alignItems: "center",
 					gap: 1,
 					backgroundColor: `color-mix(rgba(255,255,255,0), ${theme.palette.background.paper})`,
 					borderRadius: theme.spacing(1),
@@ -147,6 +168,24 @@ export default function Switcher() {
 						Icon={BoltIcon}
 					/>
 				</Stack>
+				<Collapse in={crisislabEnabled}>
+					<ToggleButtonGroup
+						size="small"
+						value={allowOnlineStatus}
+						exclusive
+						onChange={handleCrisislabFilterChange}
+						aria-label="Filter CRISiSLab sensors">
+						<SmallToggleButton value="all" selected={allowOnlineStatus === "all"} size="small">
+							All
+						</SmallToggleButton>
+						<SmallToggleButton value="online" selected={allowOnlineStatus === "online"} size="small">
+							Online
+						</SmallToggleButton>
+						<SmallToggleButton value="offline" selected={allowOnlineStatus === "offline"} size="small">
+							Offline
+						</SmallToggleButton>
+					</ToggleButtonGroup>
+				</Collapse>
 			</Paper>
 		</Stack>
 	);
