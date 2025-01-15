@@ -5,10 +5,8 @@ import RPiIcon from "../assets/RPiIcon";
 import { useContext, useEffect } from "react";
 import SensorsContext from "../contexts/SensorsContext";
 import { useParams } from "react-router-dom";
-import { flyTo } from "../utils";
+import { APIOrigin, flyTo } from "../utils";
 import MapContext from "../contexts/MapContext";
-
-const liveDataOrigin = "https://crisislab-data.massey.ac.nz";
 
 export default function Sensor() {
 	const { sensors } = useContext(SensorsContext);
@@ -90,7 +88,7 @@ export default function Sensor() {
 				<iframe
 					key="live-data-embed"
 					id="live-data-embed"
-					src={`${liveDataOrigin}/consume/${id}?hide-hover-inspector=yes&sort-channels=display`}
+					src={`${APIOrigin}/consume/${id}?hide-hover-inspector=yes&sort-channels=display`}
 					style={{
 						position: "absolute",
 						top: 0,
@@ -102,7 +100,7 @@ export default function Sensor() {
 				<IconButton
 					component={"a"}
 					style={{ position: "absolute", top: -10, right: 5, color: "black" }}
-					href={`${liveDataOrigin}/consume/${id}?sort-channels=display`}
+					href={`${APIOrigin}/consume/${id}?sort-channels=display`}
 					target="_blank"
 					rel="noopener noreferrer">
 					<OpenInNew />

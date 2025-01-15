@@ -8,10 +8,7 @@ import { useTheme } from "@mui/material";
 
 export const CENTER_OF_NZ: [number, number] = [174.8, -41.325];
 export const SHOW_ALL_OF_NZ_ZOOM = 4.8;
-
-export const MAPBOX_TOKEN =
-	"pk.eyJ1IjoiemFkZXZpZ2dlcnMiLCJhIjoiY2t5dGF6cGpvMWMydTJ3cGhrb2ZhOTdlZCJ9.myQ3YnPgbI-QkuBlClYfCw";
-mapboxgl.accessToken = MAPBOX_TOKEN;
+mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN;
 
 export default function MapApp(props: { setPopup: (popup: Popup) => void; style: any }) {
 	const theme = useTheme();
