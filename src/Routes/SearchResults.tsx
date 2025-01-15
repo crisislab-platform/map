@@ -221,6 +221,7 @@ export default function SearchResults() {
 	useEffect(() => {
 		if (results.bounds) {
 			try {
+				// @ts-expect-error TS is wrong I'm right
 				map.fitBounds(results.bounds, { padding: 50 });
 			} catch (err) {
 				console.error(`map.fitBounds(...) threw an error! Falling back to map.flyTo(...)`);

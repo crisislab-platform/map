@@ -9,7 +9,7 @@ import { APIOrigin, flyTo } from "../utils";
 import MapContext from "../contexts/MapContext";
 
 export default function Sensor() {
-	const { sensors } = useContext(SensorsContext);
+	const { unfilteredSensors: sensors } = useContext(SensorsContext);
 	const { map } = useContext(MapContext);
 	const { id: _id } = useParams<{ id: string }>();
 
