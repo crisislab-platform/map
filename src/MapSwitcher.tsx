@@ -1,51 +1,11 @@
-import { ButtonBase, Paper, Stack, Typography, useTheme } from "@mui/material";
+import { Paper, Stack, Typography, useTheme } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
 
 import BoltIcon from "@mui/icons-material/Bolt";
 import MapContext from "./contexts/MapContext";
 import CrisisAlertIcon from "@mui/icons-material/CrisisAlert";
 import EmergencyShareIcon from "@mui/icons-material/EmergencyShare";
-
-const squareSize = 50;
-const labelHeight = 15;
-
-function FlexSquare({ color, text, row, onClick, style, selected, Icon, selectedColor }) {
-	const theme = useTheme();
-
-	const backgroundColor = theme.palette[color]?.main || color;
-
-	return (
-		<ButtonBase
-			onClick={onClick}
-			elevation={0}
-			sx={{
-				width: squareSize + 4,
-				height: "min-content",
-				backgroundColor: "none",
-				padding: "2px",
-				borderRadius: theme.spacing(1),
-				...style,
-			}}>
-			<Stack>
-				<Paper
-					sx={{
-						backgroundColor,
-						width: squareSize,
-						height: squareSize,
-						border: `4px solid ${selected ? theme.palette[color]?.dark || selectedColor : "transparent"}`,
-						transition: "border 0.5s",
-						display: "grid",
-						placeItems: "center",
-						borderRadius: theme.spacing(1),
-					}}
-					elevation={0}>
-					<Icon sx={{ display: "block", color: "white" }} />
-				</Paper>
-				<Typography sx={{ fontSize: "8pt" }}>{text}</Typography>
-			</Stack>
-		</ButtonBase>
-	);
-}
+import { SquareToggleButton } from "./components/SquareToggleButton";
 
 const crisislabSensorsLayers = ["clusters", "unclustered-point", "cluster-count"];
 const geonetSensorsLayers = ["unclustered-point-geonet", "cluster-count-geonet", "clusters-geonet"];
@@ -62,8 +22,8 @@ function showFaultLineLabels(show, map) {
 }
 
 export default function Switcher() {
-	const { map } = useContext(MapContext);
 	const theme = useTheme();
+	const { map } = useContext(MapContext);
 	const [faultLinesEnabled, setFaultLinesEnabled] = useState(false);
 	const [geonetEnabled, setGeonetEnabled] = useState(false);
 	const [crisislabEnabled, setCrisislabEnabled] = useState(true);
@@ -138,13 +98,6 @@ export default function Switcher() {
 		}
 	}, [map, crisislabEnabled]);
 
-	function onPopupOpen() {
-		setPopupOpen(true);
-	}
-	function onPopupClose() {
-		setPopupOpen(false);
-	}
-
 	return (
 		<Stack
 			sx={{
@@ -172,24 +125,21 @@ export default function Switcher() {
 					Map layers
 				</Typography>
 				<Stack gap={1} direction="row">
-					<FlexSquare
-						row="top"
+					<SquareToggleButton
 						selected={crisislabEnabled}
 						onClick={() => setCrisislabEnabled((oldState) => !oldState)}
 						color="primary"
 						text="CRISiSLab sensors"
 						Icon={CrisisAlertIcon}
 					/>
-					<FlexSquare
-						row="top"
+					<SquareToggleButton
 						selected={geonetEnabled}
 						onClick={() => setGeonetEnabled((oldState) => !oldState)}
 						color="geonet"
 						text="Geonet sensors"
 						Icon={EmergencyShareIcon}
 					/>
-					<FlexSquare
-						row="top"
+					<SquareToggleButton
 						selected={faultLinesEnabled}
 						onClick={() => setFaultLinesEnabled((oldState) => !oldState)}
 						color="error"

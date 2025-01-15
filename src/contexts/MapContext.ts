@@ -3,9 +3,9 @@ import { Map as MapboxMap } from "mapbox-gl";
 
 const MapContext = createContext<{
 	map: MapboxMap;
-	setMap: React.Dispatch<React.SetStateAction<MapboxMap>>;
+	setMap: (old: MapboxMap) => MapboxMap | void;
 	mapLoaded: boolean;
-	setMapLoaded: React.Dispatch<React.SetStateAction<boolean>>;
+	setMapLoaded: (old: boolean) => boolean | void;
 }>({ map: null, setMap: () => {}, mapLoaded: false, setMapLoaded: () => {} });
 
 export default MapContext;

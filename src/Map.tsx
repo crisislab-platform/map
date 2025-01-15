@@ -4,14 +4,12 @@ import mapboxgl, { GeolocateControl, Map as MapboxMap, NavigationControl, Popup,
 import { useContext, useEffect, useRef } from "react";
 
 import MapContext from "./contexts/MapContext";
-import { useTheme } from "@mui/material";
 
 export const CENTER_OF_NZ: [number, number] = [174.8, -41.325];
 export const SHOW_ALL_OF_NZ_ZOOM = 4.8;
 mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN;
 
 export default function MapApp(props: { setPopup: (popup: Popup) => void; style: any }) {
-	const theme = useTheme();
 	const mapContainerRef = useRef(null);
 	const { setMap, setMapLoaded } = useContext(MapContext);
 

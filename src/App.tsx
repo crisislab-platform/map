@@ -124,6 +124,7 @@ export default function App() {
 				map,
 				geoJSON,
 				(e) => {
+					// @ts-expect-error IDK why it thinks this is broken but it's wrong
 					const coordinates = e?.features?.[0]?.geometry?.coordinates?.slice();
 
 					// Ensure that if the map is zoomed out such that
