@@ -10,7 +10,17 @@ export function SmallToggleButton({ children, selected, sx = {}, ...props }: Tog
 				...sx,
 			}}
 			{...props}>
-			<Collapse in={selected} orientation="horizontal">
+			<Collapse
+				in={selected}
+				orientation="horizontal"
+				sx={{
+					"& .MuiCollapse-wrapperInner": {
+						display: "flex",
+						flexDirection: "column",
+						justifyContent: "center",
+					},
+					mr: 0.5,
+				}}>
 				<CheckIcon fontSize="inherit" />
 			</Collapse>
 			{children}
