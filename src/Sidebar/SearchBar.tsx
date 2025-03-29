@@ -1,9 +1,9 @@
 import { ReactElement, useContext, type FormEvent as ReactFormEvent } from "react";
 
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { Search as SearchIcon } from "@mui/icons-material";
 import { Box, IconButton, InputAdornment, TextField, Tooltip } from "@mui/material";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import SensorsContext, { Sensor } from "../contexts/SensorsContext";
-import SearchIcon from "@mui/icons-material/Search";
 import { useOnBigScreen } from "../utils";
 
 export default function SearchBar({ backButton }: { backButton: ReactElement }) {

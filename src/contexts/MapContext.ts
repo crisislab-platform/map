@@ -1,5 +1,5 @@
-import { createContext } from "react";
 import { Map as MapboxMap } from "mapbox-gl";
+import { createContext } from "react";
 
 const MapContext = createContext<{
 	map: MapboxMap;

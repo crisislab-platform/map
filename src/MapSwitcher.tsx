@@ -1,23 +1,20 @@
-import {
-	Collapse,
-	Paper,
-	Stack,
-	styled,
-	ToggleButton,
-	ToggleButtonGroup,
-	ToggleButtonProps,
-	Typography,
-	useTheme,
-} from "@mui/material";
+import { Collapse, Paper, Stack, ToggleButton, ToggleButtonGroup, Tooltip, Typography } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
 
-import BoltIcon from "@mui/icons-material/Bolt";
-import MapContext from "./contexts/MapContext";
-import CrisisAlertIcon from "@mui/icons-material/CrisisAlert";
-import EmergencyShareIcon from "@mui/icons-material/EmergencyShare";
-import { SquareToggleButton } from "./components/SquareToggleButton";
+import { Bolt as BoltIcon } from "@mui/icons-material";
+import { Map } from "mapbox-gl";
+import { CRISiSLabIcon } from "./assets/CRISiSLabIcon";
+import { GNSIcon } from "./assets/GNSIcon";
 import { SmallToggleButton } from "./components/SmallToggleButton";
+import MapContext from "./contexts/MapContext";
 import SensorsContext from "./contexts/SensorsContext";
+
+// Fix types for buttons
+declare module "@mui/material/ToggleButton" {
+	interface ButtonPropsColorOverrides {
+		geonet: true;
+	}
+}
 
 const crisislabSensorsLayers = ["clusters", "unclustered-point", "cluster-count"];
 const geonetSensorsLayers = ["unclustered-point-geonet", "cluster-count-geonet", "clusters-geonet"];
@@ -34,7 +31,6 @@ function showFaultLineLabels(show, map) {
 }
 
 export default function Switcher() {
-	const theme = useTheme();
 	const { map } = useContext(MapContext);
 	const [faultLinesEnabled, setFaultLinesEnabled] = useState(false);
 	const [geonetEnabled, setGeonetEnabled] = useState(false);
@@ -50,7 +46,7 @@ export default function Switcher() {
 	// Extra data layers (sensor locations, fault lines, etc)
 
 	useEffect(() => {
-		function onFaultLinesExpand(map) {
+		function onFaultLinesExpand(map: Map) {
 			showFaultLineLabels(true, map);
 
 			map.setPaintProperty("fault-lines-render-layer", "line-width", [
@@ -64,7 +60,7 @@ export default function Switcher() {
 			]);
 		}
 
-		function onFaultLinesShrink(map) {
+		function onFaultLinesShrink(map: Map) {
 			showFaultLineLabels(false, map);
 
 			map.setPaintProperty("fault-lines-render-layer", "line-width", [
@@ -77,7 +73,7 @@ export default function Switcher() {
 				6,
 			]);
 		}
-		function updateFaultLineStyles(map) {
+		function updateFaultLineStyles(map: Map) {
 			if (faultLinesEnabled) {
 				showFaultLines(true, map);
 			} else {
@@ -85,45 +81,86 @@ export default function Switcher() {
 				showFaultLineLabels(false, map);
 			}
 		}
-		if (!!map && map.loaded()) {
-			updateFaultLineStyles(map);
-
+		function setupFaultlineHandlers(map: Map) {
 			map.on("mouseenter", "fault-lines-hitbox-layer", () => onFaultLinesExpand(map))
 				.on("mouseleave", "fault-lines-hitbox-layer", () => onFaultLinesShrink(map))
 				.on("click", "fault-lines-hitbox-layer", () => onFaultLinesExpand(map));
-
-			return () => {
-				map.off("mouseenter", "fault-lines-hitbox-layer", () => onFaultLinesExpand(map))
-					.off("mouseleave", "fault-lines-hitbox-layer", () => onFaultLinesShrink(map))
-					.off("click", "fault-lines-hitbox-layer", () => onFaultLinesExpand(map));
-			};
 		}
+		function cleanupFaultlineHandlers(map: Map) {
+			map.off("mouseenter", "fault-lines-hitbox-layer", () => onFaultLinesExpand(map))
+				.off("mouseleave", "fault-lines-hitbox-layer", () => onFaultLinesShrink(map))
+				.off("click", "fault-lines-hitbox-layer", () => onFaultLinesExpand(map));
+		}
+
+		const onLoad = ({ target: map }) => {
+			updateFaultLineStyles(map);
+		};
+		if (map?.loaded()) {
+			updateFaultLineStyles(map);
+			setupFaultlineHandlers(map);
+		} else {
+			map?.on("load", onLoad);
+		}
+		return () => {
+			if (!map) return;
+			cleanupFaultlineHandlers(map);
+			map.off("load", onLoad);
+		};
 	}, [map, faultLinesEnabled]);
 
 	useEffect(() => {
-		if (map?.loaded()) {
+		function updateFaultLineStyles(map: Map) {
 			for (const layer of geonetSensorsLayers) {
 				if (map.getLayer(layer)) map.setLayoutProperty(layer, "visibility", geonetEnabled ? "visible" : "none");
 			}
 		}
+		const onLoad = ({ target: map }) => updateFaultLineStyles(map);
+		if (map?.loaded()) {
+			updateFaultLineStyles(map);
+		} else {
+			map?.on("load", onLoad);
+		}
+
+		return () => {
+			map?.off("load", onLoad);
+		};
 	}, [map, geonetEnabled]);
 
 	useEffect(() => {
-		if (map?.loaded()) {
+		function updateCrisislabStyles(map: Map) {
 			for (const layer of crisislabSensorsLayers) {
 				if (map.getLayer(layer)) {
 					map.setLayoutProperty(layer, "visibility", crisislabEnabled ? "visible" : "none");
 				}
 			}
 		}
+		const onLoad = ({ target: map }) => updateCrisislabStyles(map);
+		if (map?.loaded()) {
+			updateCrisislabStyles(map);
+		} else {
+			map?.on("load", onLoad);
+		}
+		return () => {
+			map?.off("load", onLoad);
+		};
 	}, [map, crisislabEnabled]);
+
+	function toggleCrisislab() {
+		setCrisislabEnabled((oldState) => !oldState);
+	}
+	function toggleGeonet() {
+		setGeonetEnabled((oldState) => !oldState);
+	}
+	function toggleFaultLines() {
+		setFaultLinesEnabled((oldState) => !oldState);
+	}
 
 	return (
 		<Stack
 			sx={{
 				position: "fixed",
-				bottom: 35,
-				right: 20,
+				bottom: "35px",
+				right: 10,
 				flex: 0,
 			}}
 			justifyContent="flex-end"
@@ -135,8 +172,8 @@ export default function Switcher() {
 					flexDirection: "column",
 					alignItems: "center",
 					gap: 1,
-					backgroundColor: `color-mix(rgba(255,255,255,0), ${theme.palette.background.paper})`,
-					borderRadius: theme.spacing(1),
+					backgroundColor: (theme) => theme.vars.palette.background.paper,
+					borderRadius: 1,
 					padding: 1,
 					transition: "opacity 0.2s",
 					// alignItems: "flex-end",
@@ -146,27 +183,34 @@ export default function Switcher() {
 					Map layers
 				</Typography>
 				<Stack gap={1} direction="row">
-					<SquareToggleButton
-						selected={crisislabEnabled}
-						onClick={() => setCrisislabEnabled((oldState) => !oldState)}
-						color="primary"
-						text="CRISiSLab sensors"
-						Icon={CrisisAlertIcon}
-					/>
-					<SquareToggleButton
-						selected={geonetEnabled}
-						onClick={() => setGeonetEnabled((oldState) => !oldState)}
-						color="geonet"
-						text="Geonet sensors"
-						Icon={EmergencyShareIcon}
-					/>
-					<SquareToggleButton
-						selected={faultLinesEnabled}
-						onClick={() => setFaultLinesEnabled((oldState) => !oldState)}
-						color="error"
-						text="Fault lines"
-						Icon={BoltIcon}
-					/>
+					<Tooltip title="CRISiSLab sensors" placement="top">
+						<ToggleButton
+							value="crisislab"
+							selected={crisislabEnabled}
+							onChange={toggleCrisislab}
+							color="primary">
+							<CRISiSLabIcon />
+						</ToggleButton>
+					</Tooltip>{" "}
+					<Tooltip title="GeoNet sensors" placement="top">
+						<ToggleButton
+							value="geonet"
+							selected={geonetEnabled}
+							onChange={toggleGeonet}
+							// @ts-expect-error shush
+							color="geonet">
+							<GNSIcon />
+						</ToggleButton>
+					</Tooltip>
+					<Tooltip title="Fault lines" placement="top">
+						<ToggleButton
+							value="fault-lines"
+							selected={faultLinesEnabled}
+							onChange={toggleFaultLines}
+							color="error">
+							<BoltIcon />
+						</ToggleButton>
+					</Tooltip>
 				</Stack>
 				<Collapse in={crisislabEnabled}>
 					<ToggleButtonGroup

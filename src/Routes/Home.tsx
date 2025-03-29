@@ -1,12 +1,11 @@
 import { Box, Stack, Typography } from "@mui/material";
 
-import SensorsContext from "../contexts/SensorsContext";
+import { Sensors as SensorsIcon, SensorsOff as SensorsOffIcon } from "@mui/icons-material";
 import { useContext, useEffect } from "react";
 import MapContext from "../contexts/MapContext";
-import { flyTo } from "../utils";
+import SensorsContext from "../contexts/SensorsContext";
 import { CENTER_OF_NZ, SHOW_ALL_OF_NZ_ZOOM } from "../Map";
-import SensorsIcon from "@mui/icons-material/Sensors";
-import SensorsOffIcon from "@mui/icons-material/SensorsOff";
+import { flyTo } from "../utils";
 
 export default function Home() {
 	const { unfilteredSensors: sensors } = useContext(SensorsContext);

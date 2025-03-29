@@ -1,12 +1,12 @@
-import { Fade, IconButton, Tooltip, Box, Typography, Stack, Slide } from "@mui/material";
+import { Box, IconButton, Stack, Tooltip, Typography } from "@mui/material";
 
 import { OpenInNew } from "@mui/icons-material";
-import RPiIcon from "../assets/RPiIcon";
 import { useContext, useEffect } from "react";
-import SensorsContext from "../contexts/SensorsContext";
 import { useParams } from "react-router-dom";
-import { APIOrigin, flyTo } from "../utils";
+import RPiIcon from "../assets/RPiIcon";
 import MapContext from "../contexts/MapContext";
+import SensorsContext from "../contexts/SensorsContext";
+import { APIOrigin, flyTo } from "../utils";
 
 export default function Sensor() {
 	const { unfilteredSensors: sensors } = useContext(SensorsContext);

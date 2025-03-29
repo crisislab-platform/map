@@ -212,10 +212,6 @@ export default async function setupMap(
 				"text-color": "#000000",
 				"text-halo-width": 1,
 				"text-halo-color": "#ffffff",
-				// Other theme - try out later
-				// "text-color": theme.palette.error.main,
-				// "text-halo-width": 1,
-				// "text-halo-color": "#000000",
 			},
 		});
 

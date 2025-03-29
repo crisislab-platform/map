@@ -1,18 +1,19 @@
 import { Box, Button, Drawer, Fade, Grow, IconButton, InputAdornment, Stack, Tooltip } from "@mui/material";
 
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import MapIcon from "@mui/icons-material/Map";
-import PermDataSettingIcon from "@mui/icons-material/PermDataSetting";
-import SearchAndDataIcon from "@mui/icons-material/Troubleshoot";
+import {
+	AdminPanelSettings as AdminPanelSettingsIcon,
+	ArrowBack as ArrowBackIcon,
+	ArrowForward as ArrowForwardIcon,
+	Map as MapIcon,
+	PermDataSetting as PermDataSettingIcon,
+	Troubleshoot as SearchAndDataIcon,
+} from "@mui/icons-material";
 import { useContext } from "react";
 import { Link as RouterLink, useLocation } from "react-router-dom";
 import { DrawerOpenContext } from "../contexts/DrawerOpenContext";
 import Routes from "../Routes/index";
 import { setCustomAPIOrigin, useOnBigScreen } from "../utils";
 import SearchBar from "./SearchBar";
-
-import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 
 const desktopDrawerWidth = 500;
 

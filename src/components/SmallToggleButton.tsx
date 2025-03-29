@@ -1,5 +1,5 @@
+import { Check as CheckIcon } from "@mui/icons-material";
 import { Collapse, ToggleButton, ToggleButtonProps } from "@mui/material";
-import CheckIcon from "@mui/icons-material/Check";
 
 export function SmallToggleButton({ children, selected, sx = {}, ...props }: ToggleButtonProps) {
 	return (

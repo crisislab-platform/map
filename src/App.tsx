@@ -1,15 +1,15 @@
 import { Box, CssBaseline, Typography } from "@mui/material";
-import React, { Suspense, useDeferredValue, useEffect, useMemo, useState } from "react";
 import { Map as MapboxMap, Popup } from "mapbox-gl";
-import MapContext from "./contexts/MapContext";
-import MapSwitcher from "./MapSwitcher";
-import SensorsContext, { Sensor } from "./contexts/SensorsContext";
-import Sidebar from "./Sidebar/Sidebar";
+import React, { Suspense, useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
-import setupMap from "./setupMap";
 import { useNavigate } from "react-router-dom";
-import { APIOrigin, flyTo } from "./utils";
 import { DrawerOpenContext } from "./contexts/DrawerOpenContext";
+import MapContext from "./contexts/MapContext";
+import SensorsContext, { Sensor } from "./contexts/SensorsContext";
+import MapSwitcher from "./MapSwitcher";
+import setupMap from "./setupMap";
+import Sidebar from "./Sidebar/Sidebar";
+import { APIOrigin, flyTo } from "./utils";
 
 const MapComponent = React.lazy(() => import("./Map"));
 

@@ -1,7 +1,5 @@
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { useContext, useEffect, useMemo, useState } from "react";
+import { PinDrop as PinDropIcon } from "@mui/icons-material";
 import {
-	Box,
 	IconButton,
 	LinearProgress,
 	List,
@@ -13,14 +11,14 @@ import {
 	Tooltip,
 	Typography,
 } from "@mui/material";
-import MapContext from "../contexts/MapContext";
-import RPiIcon from "../assets/RPiIcon";
-import SensorsContext, { Sensor } from "../contexts/SensorsContext";
 import { getBounds, getCenter, getDistance, isPointWithinRadius } from "geolib";
-import { flyTo, titleCase } from "../utils";
-import PinDropIcon from "@mui/icons-material/PinDrop";
+import { useContext, useEffect, useMemo, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import RPiIcon from "../assets/RPiIcon";
 import { DrawerOpenContext } from "../contexts/DrawerOpenContext";
-import { LngLatBounds } from "mapbox-gl";
+import MapContext from "../contexts/MapContext";
+import SensorsContext, { Sensor } from "../contexts/SensorsContext";
+import { flyTo, titleCase } from "../utils";
 
 // The max distance for sensors to show up in the search results, in meters
 const MAX_METERS_AWAY_FROM_POS = 50 * 1000;
