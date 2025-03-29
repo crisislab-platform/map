@@ -1,17 +1,18 @@
-import { Box, Button, Collapse, Fade, Grow, IconButton, InputAdornment, Link, Slide, Tooltip } from "@mui/material";
-import { Drawer, Stack } from "@mui/material";
+import { Box, Button, Drawer, Fade, Grow, IconButton, InputAdornment, Stack, Tooltip } from "@mui/material";
 
-import MapIcon from "@mui/icons-material/Map";
-import SearchAndDataIcon from "@mui/icons-material/Troubleshoot";
-import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import MapIcon from "@mui/icons-material/Map";
 import PermDataSettingIcon from "@mui/icons-material/PermDataSetting";
-import Routes from "../Routes/index";
-import SearchBar from "./SearchBar";
-import { forwardRef, useContext } from "react";
-import { useLocation, Link as RouterLink } from "react-router-dom";
+import SearchAndDataIcon from "@mui/icons-material/Troubleshoot";
+import { useContext } from "react";
+import { Link as RouterLink, useLocation } from "react-router-dom";
 import { DrawerOpenContext } from "../contexts/DrawerOpenContext";
+import Routes from "../Routes/index";
 import { setCustomAPIOrigin, useOnBigScreen } from "../utils";
+import SearchBar from "./SearchBar";
+
+import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 
 const desktopDrawerWidth = 500;
 
@@ -95,13 +96,18 @@ export default function Sidebar() {
 					</Box>
 				</Fade>
 
-				<Box sx={{ ml: 1, mt: "auto" }}>
-					<Tooltip title="Use custom API origin" placement="right">
+				<Stack direction="row" gap={1} sx={{ ml: 1, mt: "auto" }}>
+					<Tooltip title="Change API origin">
 						<IconButton onClick={setCustomAPIOrigin} size="small">
 							<PermDataSettingIcon />
 						</IconButton>
 					</Tooltip>
-				</Box>
+					<Tooltip title="Admin panel">
+						<IconButton href="https://admin.crisislab.org.nz/auth" target="_blank" size="small">
+							<AdminPanelSettingsIcon />
+						</IconButton>
+					</Tooltip>
+				</Stack>
 			</Drawer>
 		</>
 	);
