@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@emotion/react':
+        specifier: ^11.14.0
+        version: 11.14.0(@types/react@19.0.12)(react@19.1.0)
       '@fontsource/nunito':
         specifier: ^5.2.5
         version: 5.2.5
@@ -1178,7 +1181,6 @@ snapshots:
       stylis: 4.2.0
     transitivePeerDependencies:
       - supports-color
-    optional: true
 
   '@emotion/cache@11.14.0':
     dependencies:
@@ -1212,7 +1214,6 @@ snapshots:
       '@types/react': 19.0.12
     transitivePeerDependencies:
       - supports-color
-    optional: true
 
   '@emotion/serialize@1.3.3':
     dependencies:
@@ -1245,7 +1246,6 @@ snapshots:
   '@emotion/use-insertion-effect-with-fallbacks@1.2.0(react@19.1.0)':
     dependencies:
       react: 19.1.0
-    optional: true
 
   '@emotion/utils@1.4.2': {}
 
@@ -1552,8 +1552,7 @@ snapshots:
       '@types/mapbox__point-geometry': 0.1.4
       '@types/pbf': 3.0.5
 
-  '@types/parse-json@4.0.2':
-    optional: true
+  '@types/parse-json@4.0.2': {}
 
   '@types/pbf@3.0.5': {}
 
@@ -1591,7 +1590,6 @@ snapshots:
       '@babel/runtime': 7.27.0
       cosmiconfig: 7.1.0
       resolve: 1.22.10
-    optional: true
 
   beryllium@1.2.1(@mui/material@7.0.1(@emotion/react@11.14.0(@types/react@19.0.12)(react@19.1.0))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@19.0.12)(react@19.1.0))(@types/react@19.0.12)(react@19.1.0))(@types/react@19.0.12)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)):
     dependencies:
@@ -1604,8 +1602,7 @@ snapshots:
       node-releases: 2.0.19
       update-browserslist-db: 1.1.2(browserslist@4.24.4)
 
-  callsites@3.1.0:
-    optional: true
+  callsites@3.1.0: {}
 
   caniuse-lite@1.0.30001692: {}
 
@@ -1613,8 +1610,7 @@ snapshots:
 
   clsx@2.1.1: {}
 
-  convert-source-map@1.9.0:
-    optional: true
+  convert-source-map@1.9.0: {}
 
   convert-source-map@2.0.0: {}
 
@@ -1627,7 +1623,6 @@ snapshots:
       parse-json: 5.2.0
       path-type: 4.0.0
       yaml: 1.10.2
-    optional: true
 
   csscolorparser@1.0.3: {}
 
@@ -1649,7 +1644,6 @@ snapshots:
   error-ex@1.3.2:
     dependencies:
       is-arrayish: 0.2.1
-    optional: true
 
   esbuild@0.25.1:
     optionalDependencies:
@@ -1681,17 +1675,14 @@ snapshots:
 
   escalade@3.2.0: {}
 
-  escape-string-regexp@4.0.0:
-    optional: true
+  escape-string-regexp@4.0.0: {}
 
-  find-root@1.1.0:
-    optional: true
+  find-root@1.1.0: {}
 
   fsevents@2.3.3:
     optional: true
 
-  function-bind@1.1.2:
-    optional: true
+  function-bind@1.1.2: {}
 
   gensync@1.0.0-beta.2: {}
 
@@ -1708,12 +1699,10 @@ snapshots:
   hasown@2.0.2:
     dependencies:
       function-bind: 1.1.2
-    optional: true
 
   hoist-non-react-statics@3.3.2:
     dependencies:
       react-is: 16.13.1
-    optional: true
 
   ieee754@1.2.1: {}
 
@@ -1721,29 +1710,24 @@ snapshots:
     dependencies:
       parent-module: 1.0.1
       resolve-from: 4.0.0
-    optional: true
 
-  is-arrayish@0.2.1:
-    optional: true
+  is-arrayish@0.2.1: {}
 
   is-core-module@2.16.1:
     dependencies:
       hasown: 2.0.2
-    optional: true
 
   js-tokens@4.0.0: {}
 
   jsesc@3.1.0: {}
 
-  json-parse-even-better-errors@2.3.1:
-    optional: true
+  json-parse-even-better-errors@2.3.1: {}
 
   json5@2.2.3: {}
 
   kdbush@4.0.2: {}
 
-  lines-and-columns@1.2.4:
-    optional: true
+  lines-and-columns@1.2.4: {}
 
   loose-envify@1.4.0:
     dependencies:
@@ -1797,7 +1781,6 @@ snapshots:
   parent-module@1.0.1:
     dependencies:
       callsites: 3.1.0
-    optional: true
 
   parse-json@5.2.0:
     dependencies:
@@ -1805,13 +1788,10 @@ snapshots:
       error-ex: 1.3.2
       json-parse-even-better-errors: 2.3.1
       lines-and-columns: 1.2.4
-    optional: true
 
-  path-parse@1.0.7:
-    optional: true
+  path-parse@1.0.7: {}
 
-  path-type@4.0.0:
-    optional: true
+  path-type@4.0.0: {}
 
   pbf@3.3.0:
     dependencies:
@@ -1878,8 +1858,7 @@ snapshots:
 
   regenerator-runtime@0.14.1: {}
 
-  resolve-from@4.0.0:
-    optional: true
+  resolve-from@4.0.0: {}
 
   resolve-protobuf-schema@2.1.0:
     dependencies:
@@ -1890,7 +1869,6 @@ snapshots:
       is-core-module: 2.16.1
       path-parse: 1.0.7
       supports-preserve-symlinks-flag: 1.0.0
-    optional: true
 
   rollup@4.30.1:
     dependencies:
@@ -1927,8 +1905,7 @@ snapshots:
 
   source-map-js@1.2.1: {}
 
-  source-map@0.5.7:
-    optional: true
+  source-map@0.5.7: {}
 
   stylis@4.2.0: {}
 
@@ -1936,8 +1913,7 @@ snapshots:
     dependencies:
       kdbush: 4.0.2
 
-  supports-preserve-symlinks-flag@1.0.0:
-    optional: true
+  supports-preserve-symlinks-flag@1.0.0: {}
 
   tinyqueue@3.0.0: {}
 
@@ -1967,5 +1943,4 @@ snapshots:
 
   yallist@3.1.1: {}
 
-  yaml@1.10.2:
-    optional: true
+  yaml@1.10.2: {}
