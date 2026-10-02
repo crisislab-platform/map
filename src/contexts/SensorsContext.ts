@@ -15,6 +15,6 @@ const SensorsContext = createContext<{
 	sensors: Record<number, Sensor>;
 	allowOnlineStatus: "all" | "online" | "offline";
 	setAllowOnlineStatus: React.Dispatch<React.SetStateAction<"all" | "online" | "offline">>;
-}>({ unfilteredSensors: {}, sensors: {}, allowOnlineStatus: "all", setAllowOnlineStatus: () => {} });
+}>({ unfilteredSensors: {}, sensors: {}, allowOnlineStatus: "online", setAllowOnlineStatus: () => {} });
 
 export default SensorsContext;
