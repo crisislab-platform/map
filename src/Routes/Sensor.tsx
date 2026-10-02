@@ -88,7 +88,7 @@ export default function Sensor() {
 				<iframe
 					key="live-data-embed"
 					id="live-data-embed"
-					src={`${APIOrigin}/consume/${id}?hide-hover-inspector=yes&sort-channels=display`}
+					src={`${APIOrigin}/consume/${id}?hide-hover-inspector=yes&sort-channels=display&disable-response-removal&time-window=15`}
 					style={{
 						position: "absolute",
 						top: 0,
